@@ -431,7 +431,7 @@ namespace WebApplication2.station
 
 
         [WebMethod]
-        public static string ODSExecuteTask(int id, string model_variant, long seat_data_id)
+        public static string ODSExecuteTask(int id, string model_variant, long seat_data_id, string station, string username)
         {
             try
             {
@@ -453,7 +453,10 @@ namespace WebApplication2.station
                             if (result == 1)
                             {
                                 UpdateSeatData(seat_data_id, "ODS", wr);
+                                InsertJITLineSeatMfgReport(seat_data_id, station, "ODS", wr, "OK", username);
+
                                 res.TaskStatus = "Done";
+
                                 //update next row status to running
                                 if(IsRunningTask(res.StationNameID, model_variant)){
                                     var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
@@ -463,6 +466,7 @@ namespace WebApplication2.station
                             } 
                             else if (result == 2)
                             {
+                                InsertJITLineSeatMfgReport(seat_data_id, station, "ODS", wr, "NG", username);
                                 RejectTask(seat_data_id, res.StationNameID);
                                 return "REJECTED";
                             } 
@@ -483,7 +487,7 @@ namespace WebApplication2.station
         
 
         [WebMethod]
-        public static string BeltBuckleExecuteTask(int id, string model_variant, long seat_data_id, string seat)
+        public static string BeltBuckleExecuteTask(int id, string model_variant, long seat_data_id, string seat, string station, string username)
         {
             try
             {
@@ -503,8 +507,10 @@ namespace WebApplication2.station
                             if (result == 1)
                             {
 
+                                InsertJITLineSeatMfgReport(seat_data_id, station, "BELT BUCKLE", registance.ToString(), "OK", username);
                                 UpdateSeatData(seat_data_id, "BELT_BUCKLE", registance.ToString());
-                                if(seat == "DRIVER")
+
+                                if (seat == "DRIVER")
                                 {
                                     UpdateSeatData(seat_data_id, "ODS", "NA"); 
                                 }
@@ -521,6 +527,7 @@ namespace WebApplication2.station
 
                             } else if (result == 2)
                             {
+                                InsertJITLineSeatMfgReport(seat_data_id, station, "BELT BUCKLE", registance.ToString(), "NG", username);
                                 RejectTask(seat_data_id, res.StationNameID);
                                 return "REJECTED";
                             } 
@@ -540,7 +547,7 @@ namespace WebApplication2.station
         }
         
         [WebMethod]
-        public static string SABExecuteTask(int id, string model_variant, long seat_data_id)
+        public static string SABExecuteTask(int id, string model_variant, long seat_data_id, string station, string username)
         {
             try
             {
@@ -550,6 +557,10 @@ namespace WebApplication2.station
                     var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
                     if (res != null)
                     {
+
+                        InsertJITLineSeatMfgReport(seat_data_id, station, "SAB", "value", "OK", username); 
+                        UpdateSeatData(seat_data_id, "SAB", "value");
+
                         res.TaskCurrentValue = "OK";
                         res.TaskStatus = "Done";
                         dbEntities.SaveChanges();
@@ -611,7 +622,7 @@ namespace WebApplication2.station
                             {
                                 seatDataRes.FinalBarcodeData = val + DateTime.Now.ToString("MMddyyyyHHmm");
                                 seatDataRes.FinalPrintDateTime = DateTime.Now;
-                                seatDataRes.STAUS = "OK";
+                                seatDataRes.STAUS = status == "" ? "OK" : "HOLD";
                                 res.TaskCurrentValue = val + DateTime.Now.ToString("MMddyyyyHHmm");
                                 res.TaskStatus = "Done";
 
@@ -753,6 +764,51 @@ namespace WebApplication2.station
                 return ex.Message;
             }
         }
+
+
+        public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string parameter_desc, string value, string status, string username)
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    //seat data id already assigned during scan built ticket so
+                    var station_desc = "";
+
+                    var station_res = db.StationAssignments.Where(i => i.StationNameID == station).FirstOrDefault();
+
+                    if (station_res != null) { station_desc = station_res.Station_Name; }
+
+                    var seat_data_res = db.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
+
+                    if (seat_data_res != null)
+                    {
+                        JITLineSeatMfgReport jITLineSeatMfgReport = new JITLineSeatMfgReport
+                        {
+                            Date = DateTime.Now.Date,
+                            Time = DateTime.Now.TimeOfDay,
+                            Shift = seat_data_res.Shift,
+                            BuildLabelNumber = seat_data_res.BuildLabelBarcode,
+                            StationNo = seat_data_res.StationNo + "0",
+                            StationDescription = station_desc,
+                            ParameterDescription = parameter_desc,
+                            DataValues = value,
+                            OverallStatus = status,
+                            OperatorName = username
+                        };
+                        db.JITLineSeatMfgReports.Add(jITLineSeatMfgReport);
+                        db.SaveChanges();
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                CurrentError = ex.Message;
+            }
+        }
+
 
         [WebMethod]
         public static bool FinishTask(string station, int seat_data_id)
@@ -979,18 +1035,7 @@ namespace WebApplication2.station
                         case "Station22": plc.Write(plcRes.Station22.ToString(), val); break;
                         case "Station23": plc.Write(plcRes.Station23.ToString(), val); break;
                         case "Station24": plc.Write(plcRes.Station24.ToString(), val); break;
-                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break;
-                        case "Station26": plc.Write(plcRes.Station26.ToString(), val); break;
-                        case "Station27": plc.Write(plcRes.Station27.ToString(), val); break;
-                        case "Station28": plc.Write(plcRes.Station28.ToString(), val); break;
-                        case "Station29": plc.Write(plcRes.Station29.ToString(), val); break;
-                        case "Station30": plc.Write(plcRes.Station30.ToString(), val); break;
-                        case "Station31": plc.Write(plcRes.Station31.ToString(), val); break;
-                        case "Station32": plc.Write(plcRes.Station32.ToString(), val); break;
-                        case "Station33": plc.Write(plcRes.Station33.ToString(), val); break;
-                        case "Station34": plc.Write(plcRes.Station34.ToString(), val); break;
-                        case "Station35": plc.Write(plcRes.Station35.ToString(), val); break;
-                        case "Station36": plc.Write(plcRes.Station36.ToString(), val); break;
+                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break; 
                         default: break;
                     }
                 }
@@ -1055,18 +1100,7 @@ namespace WebApplication2.station
                             case "Station22": return plcRes.Station22.ToString();
                             case "Station23": return plcRes.Station23.ToString();
                             case "Station24": return plcRes.Station24.ToString();
-                            case "Station25": return plcRes.Station25.ToString();
-                            case "Station26": return plcRes.Station26.ToString();
-                            case "Station27": return plcRes.Station27.ToString();
-                            case "Station28": return plcRes.Station28.ToString();
-                            case "Station29": return plcRes.Station29.ToString();
-                            case "Station30": return plcRes.Station30.ToString();
-                            case "Station31": return plcRes.Station31.ToString();
-                            case "Station32": return plcRes.Station32.ToString();
-                            case "Station33": return plcRes.Station33.ToString();
-                            case "Station34": return plcRes.Station34.ToString();
-                            case "Station35": return plcRes.Station35.ToString();
-                            case "Station36": return plcRes.Station36.ToString();
+                            case "Station25": return plcRes.Station25.ToString(); 
                             default: return "";
                         }
                     }

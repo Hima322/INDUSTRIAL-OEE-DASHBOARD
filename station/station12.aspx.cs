@@ -299,6 +299,7 @@ namespace WebApplication2.station
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return "0";
             }
             return "0";
@@ -686,18 +687,7 @@ namespace WebApplication2.station
                         case "Station22": plc.Write(plcRes.Station22.ToString(), val); break;
                         case "Station23": plc.Write(plcRes.Station23.ToString(), val); break;
                         case "Station24": plc.Write(plcRes.Station24.ToString(), val); break;
-                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break;
-                        case "Station26": plc.Write(plcRes.Station26.ToString(), val); break;
-                        case "Station27": plc.Write(plcRes.Station27.ToString(), val); break;
-                        case "Station28": plc.Write(plcRes.Station28.ToString(), val); break;
-                        case "Station29": plc.Write(plcRes.Station29.ToString(), val); break;
-                        case "Station30": plc.Write(plcRes.Station30.ToString(), val); break;
-                        case "Station31": plc.Write(plcRes.Station31.ToString(), val); break;
-                        case "Station32": plc.Write(plcRes.Station32.ToString(), val); break;
-                        case "Station33": plc.Write(plcRes.Station33.ToString(), val); break;
-                        case "Station34": plc.Write(plcRes.Station34.ToString(), val); break;
-                        case "Station35": plc.Write(plcRes.Station35.ToString(), val); break;
-                        case "Station36": plc.Write(plcRes.Station36.ToString(), val); break;
+                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break; 
                         default: break;
                     }
                 }
@@ -762,18 +752,7 @@ namespace WebApplication2.station
                             case "Station22": return plcRes.Station22.ToString();
                             case "Station23": return plcRes.Station23.ToString();
                             case "Station24": return plcRes.Station24.ToString();
-                            case "Station25": return plcRes.Station25.ToString();
-                            case "Station26": return plcRes.Station26.ToString();
-                            case "Station27": return plcRes.Station27.ToString();
-                            case "Station28": return plcRes.Station28.ToString();
-                            case "Station29": return plcRes.Station29.ToString();
-                            case "Station30": return plcRes.Station30.ToString();
-                            case "Station31": return plcRes.Station31.ToString();
-                            case "Station32": return plcRes.Station32.ToString();
-                            case "Station33": return plcRes.Station33.ToString();
-                            case "Station34": return plcRes.Station34.ToString();
-                            case "Station35": return plcRes.Station35.ToString();
-                            case "Station36": return plcRes.Station36.ToString();
+                            case "Station25": return plcRes.Station25.ToString(); 
                             default: return "";
                         }
                     }

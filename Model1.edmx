@@ -133,17 +133,6 @@
           <Property Name="Station23" Type="varchar" MaxLength="50" />
           <Property Name="Station24" Type="varchar" MaxLength="50" />
           <Property Name="Station25" Type="varchar" MaxLength="50" />
-          <Property Name="Station26" Type="varchar" MaxLength="50" />
-          <Property Name="Station27" Type="varchar" MaxLength="50" />
-          <Property Name="Station28" Type="varchar" MaxLength="50" />
-          <Property Name="Station29" Type="varchar" MaxLength="50" />
-          <Property Name="Station30" Type="varchar" MaxLength="50" />
-          <Property Name="Station31" Type="varchar" MaxLength="50" />
-          <Property Name="Station32" Type="varchar" MaxLength="50" />
-          <Property Name="Station33" Type="varchar" MaxLength="50" />
-          <Property Name="Station34" Type="varchar" MaxLength="50" />
-          <Property Name="Station35" Type="varchar" MaxLength="50" />
-          <Property Name="Station36" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ReworkTable">
           <Key>
@@ -481,17 +470,6 @@
           <Property Name="Station23" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Station24" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Station25" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station26" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station27" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station28" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station29" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station30" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station31" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station32" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station33" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station34" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station35" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station36" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ReworkTable">
           <Key>
@@ -771,17 +749,6 @@
           <EntitySetMapping Name="PLCAddressLists">
             <EntityTypeMapping TypeName="TMdbModel.PLCAddressList">
               <MappingFragment StoreEntitySet="PLCAddressList">
-                <ScalarProperty Name="Station36" ColumnName="Station36" />
-                <ScalarProperty Name="Station35" ColumnName="Station35" />
-                <ScalarProperty Name="Station34" ColumnName="Station34" />
-                <ScalarProperty Name="Station33" ColumnName="Station33" />
-                <ScalarProperty Name="Station32" ColumnName="Station32" />
-                <ScalarProperty Name="Station31" ColumnName="Station31" />
-                <ScalarProperty Name="Station30" ColumnName="Station30" />
-                <ScalarProperty Name="Station29" ColumnName="Station29" />
-                <ScalarProperty Name="Station28" ColumnName="Station28" />
-                <ScalarProperty Name="Station27" ColumnName="Station27" />
-                <ScalarProperty Name="Station26" ColumnName="Station26" />
                 <ScalarProperty Name="Station25" ColumnName="Station25" />
                 <ScalarProperty Name="Station24" ColumnName="Station24" />
                 <ScalarProperty Name="Station23" ColumnName="Station23" />

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="print.aspx.cs" Inherits="WebApplication2.station.print" %> 
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="print.aspx.cs" Inherits="WebApplication2.station.Print" %> 
 <%@ Import Namespace="System.Data" %>
 
 <!DOCTYPE html>
@@ -110,7 +110,7 @@
                 $.ajax({
                     type: "POST",
                     url: "print.aspx/FINEL_QRCODE_PRINT",
-                    data: `{sequence : '${seqNum}', seat : '${seatType}'}`,
+                    data: `{sequence : '${seqNum}', seat : '${seatType}' }`,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: "true",
@@ -172,8 +172,8 @@
             <input id="seqNumber" type="number" class="form-control" placeholder="eg. 00013" style="width:150px;" /> &ensp;
 
             <select class="form-select" id="seatType" style="width:150px;">
-                <option selected="selected">DRIVER</option>
-                <option>CO-DRIVER</option>
+                <option selected="selected" value="DRIVER">DRIVER-LH</option>
+                <option value="CO-DRIVER">CO-DRIVER-RH</option>
             </select> &ensp; 
 
             <select class="form-select" id="printType" style="width:200px;">

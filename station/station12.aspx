@@ -250,7 +250,7 @@
                         $("#LblModel").text(model_details.Model)
                         $("#LblVariant").text(model_details.Variant)
                         $("#LblFeature").text(model_details.Features)
-                        $("#LblSeatType").text(model_details.Seat)
+                        $("#LblSeatType").text(model_details.Seat == "DRIVER" ? `${model_details.Seat}-LH` : `${model_details.Seat}-RH`)
                         $("#LblDestination").text(model_details.Destination)
                         $("#LblCustPartNumber").text(model_details.CustPartNumber)
                         $("#LblFG_PartNumber").text(model_details.FG_PartNumber)

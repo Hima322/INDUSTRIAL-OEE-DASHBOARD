@@ -285,7 +285,7 @@
                         $("#LblModel").text(model_details.Model)
                         $("#LblVariant").text(model_details.Variant)
                         $("#LblFeature").text(model_details.Features)
-                        $("#LblSeatType").text(model_details.Seat)
+                        $("#LblSeatType").text(model_details.Seat == "DRIVER" ? `${model_details.Seat}-LH` : `${model_details.Seat}-RH`)
                         $("#LblDestination").text(model_details.Destination)
                         $("#LblCustPartNumber").text(model_details.CustPartNumber)
                         $("#LblFG_PartNumber").text(model_details.FG_PartNumber)
@@ -353,7 +353,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/ODSExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', station:'${station}', username:'${user_details.UserName}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -375,7 +375,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/BeltBuckleExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', seat :'${model_details.Seat}'}`,
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', seat :'${model_details.Seat}', station:'${station}', username:'${user_details.UserName}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -397,7 +397,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/SABExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', station:'${station}', username:'${user_details.UserName}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -827,8 +827,7 @@
                                 async: "true",
                                 cache: "false",
                                 success: function (res) {
-                                    if (res.d == "success") { location.reload() }
-                                    toast(res.d)
+                                    if (res.d == "success") { location.reload() } 
                                 },
                                 Error: function (x, e) {
                                     console.log(e);

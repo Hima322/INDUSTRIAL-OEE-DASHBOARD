@@ -40,7 +40,7 @@
             getDctoolList()
             getShiftSetting()
             getAndonTimingTarget()
-            $("#currentYear").val(new Date().getFullYear())
+            $("#currentYear").text(new Date().getFullYear())
             getProductionYearBase($("#yearPicker").val())
             $("#loading").hide()  
             //this function to show year inside line graph
@@ -71,7 +71,7 @@
                         }
 
                         $("#staion_data_container").html(
-                            new Array(36).fill().map((e, i) => `
+                            new Array(25).fill().map((e, i) => `
                              <tr>
                                  <td>Station-${i + 1}</td>
                                  <td ondrop="drop(event)" ondragover="allowDrop(event)" id="Station${i + 1}">
@@ -113,7 +113,7 @@
                             data.map(e => `
                              <tr>
                                  <td>${e.StationNameID == "Station-0" ? "Built Ticket" : e.StationNameID == "Station-16" ? "Rework" : e.StationNameID}</td > 
-                                 <td><input class="form-control bolrder-less-input form-control-sm" value="${e.Station_Name}" id="input${e.ID}" onkeyup=removeBtnDisabled(${e.ID}) /></td> 
+                                 <td><input class="form-control bolrder-less-input form-control-sm" value="${e.Station_Name}" id="input${e.ID}" onkeyup=removeBtnDisabled(${e.ID}) type="text" /></td> 
                                  <td><button type="button" class="btn btn-sm" disabled id="btn${e.ID}" onclick=updateStationName(${e.ID},$("#input${e.ID}").val()) >Edit</button></td>
                              </tr>
                          `)
@@ -349,11 +349,11 @@
             let conSta = ev.target.id.replace("Station", "")
             if (ev.target.innerText) return toast("Already it\'s station.", "error")
 
-            if (opt != "OP4" && opt != "OP5" && opt != "OP6" && opt != "OP7") {
-                if (conSta < start || conSta > end) {
-                    return toast("You can\' skip station.", "error")
-                }
-            }
+            //if (opt != "OP4" && opt != "OP5" && opt != "OP6" && opt != "OP7") {
+            //    if (conSta < start || conSta > end) {
+            //        return toast("You can\' skip station.", "error")
+            //    }
+            //}
 
             var data = ev.dataTransfer.getData("text");
             ev.target.append(document.getElementById(data));
@@ -670,7 +670,7 @@
         }
           
         function createColumnName() {
-            for (var i = 1; i < 37; i++) {
+            for (var i = 1; i < 26; i++) {
                 $(".table_column_name").append(`<td>Station${i}</td>`)
             }
         }

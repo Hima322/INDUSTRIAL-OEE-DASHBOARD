@@ -171,7 +171,7 @@
                         $("#model").text(data.model)
                         $("#variant").text(data.variant)
                         $("#fgpart").text(data.fgpart)
-                        $("#seat").text(data.seat)
+                        $("#seat").text(data.seat == "DRIVER" ? `${data.seat}-LH` : `${data.seat}-RH`)
                          
                     } else { 
                         $("#barcode_input").val("");

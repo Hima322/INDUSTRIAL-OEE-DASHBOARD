@@ -41,16 +41,5 @@ namespace WebApplication2
         public string Station23 { get; set; }
         public string Station24 { get; set; }
         public string Station25 { get; set; }
-        public string Station26 { get; set; }
-        public string Station27 { get; set; }
-        public string Station28 { get; set; }
-        public string Station29 { get; set; }
-        public string Station30 { get; set; }
-        public string Station31 { get; set; }
-        public string Station32 { get; set; }
-        public string Station33 { get; set; }
-        public string Station34 { get; set; }
-        public string Station35 { get; set; }
-        public string Station36 { get; set; }
     }
 }

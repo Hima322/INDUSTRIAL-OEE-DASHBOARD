@@ -64,14 +64,15 @@
                             if (startDateParse < endDateParse) {
                                 if ((Date.now() >= startDateParse) && (Date.now() < endDateParse)) {
                                     current_id = data[i].ID
+                                    console.log(current_id)
                                 }
                             } else {
-                                current_id = data[i].ID
+                                if ((Date.now() < Date.parse(new Date().toISOString().split('T')[0] + " 23:00:00 ")) && (Date.now() > startDateParse) || (Date.now() > Date.parse(new Date().toISOString().split('T')[0]) && Date.now() < endDateParse)) {
+                                    current_id = data[i].ID
+                                    console.log(current_id + "<<<")
+                                }
                             }
                         }
-
-                        console.log(current_id)
-
 
                         document.getElementById("andon_data").innerHTML = 
                             data.map(e => `<tr> 

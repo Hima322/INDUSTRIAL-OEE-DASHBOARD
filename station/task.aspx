@@ -65,7 +65,7 @@
                                                 <th class="px-2">TaskSequence</th>
                                                 ${ dataKey.filter((_, i) => i > 7).map(k => {
                                                     let modelVal= modelDetail.find(e => e.ModelVariant == k)
-                                                    return ` <th>${modelVal.Model}, ${modelVal.Variant} [${modelVal.Seat}] <br /> <i> (${modelVal.FG_PartNumber})</i></th>`
+                                                    return ` <th>${modelVal.Model}<br /> ${modelVal.Variant} [${modelVal.Seat == "DRIVER" ? modelVal.Seat + "-LH" : modelVal.Seat + "-RH" }] <br /> <i> (${modelVal.FG_PartNumber})</i></th>`
                                                 }).join('') 
                                                 } 
   
