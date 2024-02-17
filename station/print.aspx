@@ -162,7 +162,7 @@
             </big>   
             <div style="margin-right:20px;">
                 <span class="badge bg-danger" style="margin-right:5px;" id="printer1_badge">BUILT TICKET PRINTER</span>                  
-                <span class="badge bg-danger" id="printer2_badge">FINEL QRCODE PRINTER</span>
+                <span class="badge bg-danger" id="printer2_badge">FINEL QR PRINTER</span>
             </div>
         </div>
 
@@ -177,8 +177,8 @@
             </select> &ensp; 
 
             <select class="form-select" id="printType" style="width:200px;">
-                <option selected="selected" value="printer1">Built Ticket Print</option>
-                <option value="printer2">Finel QrCode Print</option>
+                <option selected="selected" value="printer1">Built Ticket</option>
+                <option value="printer2">Finel Qr</option>
             </select> &ensp;&ensp;
 
             <button onclick="handlePrint()" type="button" class="btn btn-primary">Print</button>   

@@ -295,11 +295,11 @@
             let conSta = ev.target.id.replace("Station", "")
             if (ev.target.innerText) return toast("Already it\'s station.", "error")
 
-            //if (opt != "OP4" && opt != "OP5" && opt != "OP6" && opt != "OP7") {
-            //    if (conSta < start || conSta > end) {
-            //        return toast("You can\' skip station.", "error")
-            //    }
-            //}
+            if (opt != "OP4" && opt != "OP5" && opt != "OP6" && opt != "OP7") {
+                if (conSta < start || conSta > end) {
+                    return toast("You can\' skip station.", "error")
+                }
+            }
 
             var data = ev.dataTransfer.getData("text");
             ev.target.append(document.getElementById(data));
