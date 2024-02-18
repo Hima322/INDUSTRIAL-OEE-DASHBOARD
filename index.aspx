@@ -78,7 +78,7 @@
 
                 <!--header menu-->
                 <div class="d-flex gap-2">
-                    <button class="btn btn-light" type="button"><a href="/monitor/index.aspx" target="blank" style="text-decoration:none;color:black;">Monitor</a></button>
+                    <button class="btn btn-light" type="button"><a href="/monitor/index.aspx" target="blank" style="text-decoration:none;color:black;">Monitor &amp; Control</a></button>
 
                     <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
                         Menu <img src="image/icon/quote.svg" height="20" />

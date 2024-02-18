@@ -394,7 +394,7 @@
                         console.log(data)
                          
                         $("#torqueList").append(
-                            [...new Set(torque_list.map(f => f.BomSeq))].map(e => `
+                            [...new Set(torque_list.map(f => f.BomSeq.trim()))].map(e => `
                                 <option>${e}</option>
                             `)
                         )

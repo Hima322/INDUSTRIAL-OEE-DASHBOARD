@@ -42,10 +42,10 @@
             $("#loading").hide()
             $('#imojiGroup').hide()
 
-            pwd = prompt("Hi admin enter your password : ")
+            <%--pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
                 pwd = prompt("Please enter password to access this page : ") 
-            toast("Success.")
+            toast("Success.")--%>
         }) 
 
         function getStationAssignments() {
@@ -432,6 +432,31 @@
                 }
             })
         }
+
+        function updateShiftSettingTiming(id, value,time) {  
+            $("#loading").show()
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/UPDATE_SHIFT_SETTING_TIMING",
+                data: `{id: '${id}', value : '${value}',time:'${time}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    $("#loading").hide()
+
+                    if (res.d == "Done") {
+                        toast("Success.")
+                    } else {
+                        toast(res.d,"error")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
         
         function getShiftSetting() { 
             $.ajax({
@@ -452,8 +477,8 @@
                             data.map(e => 
                                     `<tr>
                                         <td>${e.ShiftName}</td>
-                                        <td>${e.StartTime}</td> 
-                                        <td>${e.EndTime}</td> 
+                                        <td>${e.ShiftName.length > 3 ? `<input class="form-control bolrder-less-input" value="${e.StartTime}" onkeyup=updateShiftSettingTiming(${e.ID},this.value,'StartTime') />` : e.StartTime }</td> 
+                                        <td>${e.ShiftName.length > 3 ? `<input class="form-control bolrder-less-input" value="${e.EndTime}" onkeyup=updateShiftSettingTiming(${e.ID},this.value,'EndTime') />` : e.EndTime }</td>  
                                     </tr>
                                 `)
                             )

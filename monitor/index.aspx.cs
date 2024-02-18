@@ -264,6 +264,35 @@ namespace WebApplication2.monitor
         }
         
         [WebMethod]
+        public static string UPDATE_SHIFT_SETTING_TIMING( int id, TimeSpan value, string time)
+       {
+            try
+            {
+                using(TMdbEntities  db = new TMdbEntities())
+                { 
+                    var res = db.ShiftSettings.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        if(time == "StartTime")
+                        {
+                            res.StartTime = value;
+                        }
+                        else if(time == "EndTime")
+                        {
+                            res.EndTime = value;
+                        }
+                        db.SaveChanges(); 
+                        return "Done";
+                    }
+                } 
+            } catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            return "Something went wrong.";
+        }
+        
+        [WebMethod]
         public static string UPDATE_PLCTAG_NAME( int id, string station, string value)
         {
             try
