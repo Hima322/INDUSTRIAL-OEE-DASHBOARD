@@ -56,10 +56,10 @@
                 cache: "false",
                 success: (res) => { 
                     if (res.d == "Success") {
-                        printer1Connected = true
+                        printer2Connected = true
                         $("#printer2_badge").attr("class", "badge bg-success")
                     } else {
-                        printer1Connected = false
+                        printer2Connected = false
                         $("#printer2_badge").attr("class", "badge bg-danger")
                     }
                 },

@@ -384,6 +384,7 @@ namespace WebApplication2.station
                         if (res.StationNo == station)
                         {
                             plcReadTAg = ReadTagNameInPlc(plcStation);
+                            WriteTagValueInPlc(plcStation, "ScanBit");
                             return res.ID.ToString();
 
                         }
@@ -716,6 +717,9 @@ namespace WebApplication2.station
                                 }
                                 else
                                 {
+                                    if (id == PrevID)
+                                    { id += 1; }
+
                                     UpdateStatus("Error", TA, id);
 
                                     //insert JITLineSeatMfgReport value
@@ -805,33 +809,6 @@ namespace WebApplication2.station
             }
         }
 
-        public static void SelectPset(int PsetNo)
-        {
-            byte i = 0x00;
-            if (PsetNo == 1)
-            { i = 0x31; }
-            else if (PsetNo == 2)
-            { i = 0x32; }
-            else if (PsetNo == 3)
-            { i = 0x33; }
-            else if (PsetNo == 4)
-            { i = 0x34; }
-            byte[] byteFrom = new byte[1025];
-            byte[] byteData = { 0x30, 0x30, 0x32, 0x33, 0x30, 0x30, 0x31, 0x38, 0x30, 0x30, 0x31, 0x30, 0x20, 0x20, 0x20, 0x20, 0x30, 0x30, 0x20, 0x20, 0x30, 0x30, i, 0x00 };
-            try
-            {
-                if (DCserver.Connected)
-                {
-                    int sent = DCserver.Send(byteData, SocketFlags.None);
-                    int p = DCserver.Receive(byteFrom, SocketFlags.None);
-                }
-            }
-            catch (Exception ex)
-            {
-                CurrentError = "pset : " + ex.ToString();
-            }
-        }
-
         [WebMethod]
         public static string WriteBitExecuteTask(int id, string model_variant, string plc_station)
         {
@@ -845,7 +822,7 @@ namespace WebApplication2.station
                     {
                         if (IS_PLC_CONNECTED())
                         {
-                            WriteTagValueInPlc(plc_station);
+                            WriteTagValueInPlc(plc_station, "WriteBit");
                             res.TaskCurrentValue = "1";
                             res.TaskStatus = "Done";
 
@@ -1133,13 +1110,13 @@ namespace WebApplication2.station
             }
         }
 
-        public static void WriteTagValueInPlc(string station)
+        public static void WriteTagValueInPlc(string station, string tag)
         {
 
             using (TMdbEntities db = new TMdbEntities())
             {
                 //code for plc write bit enable
-                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'WriteBit'").FirstOrDefault();
+                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '" + tag + "'").FirstOrDefault();
                 DataTable dt = new DataTable();
 
                 if (plcRes != null)

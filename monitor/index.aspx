@@ -158,13 +158,29 @@
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
 
+                        console.log(data)
+
                         let WriteBit = data[0]
                         let ReadBit = data[1]
                         let MaintenanceDelay = data[2]
                         let OperatrorDelay = data[3]
                         let QualityDelay = data[4]
                         let MaterialDelay = data[5]
+                        let ScanBit = data[6]
 
+                        //fetch scan all tags 
+                        Object.keys(ScanBit).filter((f, i) => i > 1).map((sKey, i) =>
+                            $("#plc_scan_bit_tag").append(`
+                            <td>
+                                <input  
+                                    onfocus=readPlcTag(this.value)
+                                    class="bolrder-less-input form-control-sm"
+                                    value="${ScanBit[sKey]}"  
+                                    onkeyup=updatePlcTagName(${ScanBit.ID},'Station${i + 1}',this.value)
+                                    />
+                            </td> 
+                            `)
+                        )
                         //fetch write all tags 
                         Object.keys(WriteBit).filter((f, i) => i > 1).map((sKey, i) =>
                             $("#plc_write_bit_tag").append(`
@@ -470,8 +486,7 @@
                 success: (res) => {  
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
-
-                        console.log(data)
+                         
 
                         $("#shiftSetting").html(
                             data.map(e => 
@@ -530,7 +545,7 @@
                 success: (res) => {
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
-                        console.log(data)
+
                             data.forEach(e =>  
                             $("#dctoolshowlist").append(
                                 `<div class="container-fluid d-flex gap-2 mb-1">
@@ -846,6 +861,35 @@
                                     </div>
                                 </div>
 
+                                <%--scan bit tag data here--%>
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        <a class="btn" data-bs-toggle="collapse" href="#collapseZero">Show scan bit plc tag detail.
+                                        </a>
+                                    </div>
+                                    <div id="collapseZero" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+                                            <%--this is for show write plc bit tag--%>
+                                            <div class="container-fluid table-responsive">
+                                                <table class="table table-bordered text-center ">
+                                                    <thead>
+                                                        <tr class="table_column_name">
+                                                            <th class="table-primary">StationName</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <%--data will fetch from js--%>
+                                                        <tr id="plc_scan_bit_tag">
+                                                            <th class="table-primary">TagName</th>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <%--write plc tag data here--%>
                                 <div class="card mt-1">
                                     <div class="card-header">

@@ -263,7 +263,27 @@ namespace WebApplication2.station
                         }
                         if (res.StationNo == station)
                         {
-                            plcReadTAg = ReadTagNameInPlc(plcStation);
+                            plcReadTAg = ReadTagNameInPlc(plcStation); 
+                            //this is scan bit tag in plc 
+                            WriteTagValueInPlc(plcStation, "ScanBit");
+                            //this is for ods and all 
+                            if(res.Model == "PY1B" && res.SeatType == "DRIVER")
+                            {
+                                plc.Write("DB5.DW1218", 11); 
+                            } 
+                            else if(res.Model == "PY1B" && res.SeatType == "CO-DRIVER")
+                            {
+                                plc.Write("DB5.DW1218", 12);
+                            }
+                            else if(res.Model == "BBA" && res.SeatType == "DRIVER")
+                            {
+                                plc.Write("DB5.DW1218", 21);
+                            }
+                            else if (res.Model == "BBA" && res.SeatType == "CO-DRIVER")
+                            {
+                                plc.Write("DB5.DW1218", 22);
+                            }
+
                             return res.ID.ToString();
                         }
                     }
@@ -341,6 +361,57 @@ namespace WebApplication2.station
 
 
         [WebMethod]
+        public static string ODSExecuteTask(int id, string model_variant, long seat_data_id)
+        {
+            try
+            {
+                using (TMdbEntities dbEntities = new TMdbEntities())
+                {
+
+                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        if (IS_PLC_CONNECTED())
+                        {
+                            //plc.Write("DB5.DW1218", 11);
+
+
+                            //object ad = plc.Read(DataType.DataBlock, 5, 1217, VarType.DInt, 1);
+
+                            //int a = Convert.ToInt32(ad);
+
+                            int Result = (int)plc.Read(S7.Net.DataType.DataBlock, 5, 1217, S7.Net.VarType.DInt, 1);
+                            int a = Result / 256;
+
+                            if (a== 1)
+                            {
+                                res.TaskStatus = "Done"; 
+                                
+                                //update next row status to running
+                                var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
+                                if (nextRow != null) { nextRow.TaskStatus = "Running"; }
+
+                            } else if (a == 2)
+                            {
+                                RejectTask(seat_data_id, res.StationNameID);
+                                return "REJECTED";
+                            } 
+                           
+                            dbEntities.SaveChanges();
+
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentError = ex.Message;
+            }
+            return string.Empty;
+        }
+
+        [WebMethod]
         public static string WriteBitExecuteTask(int id, string model_variant, string plcStation)
         {
             try
@@ -353,7 +424,7 @@ namespace WebApplication2.station
                     {
                         if (IS_PLC_CONNECTED())
                         {
-                            WriteTagValueInPlc(plcStation);
+                            WriteTagValueInPlc(plcStation, "WriteBit");
                             res.TaskCurrentValue = "1";
                             res.TaskStatus = "Done";
 
@@ -458,7 +529,56 @@ namespace WebApplication2.station
             }
             return false;
         }
-         
+
+        [WebMethod]
+        public static bool RejectTask(long seat_data_id, string station)
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
+                    res.STAUS = "REJECT";
+
+                    var taskListRes = db.TaskListTables.Where(i => i.StationNameID == station).ToList();
+                    if (taskListRes != null)
+                    {
+                        taskListRes[0].TaskStatus = "Running";
+                        taskListRes[1].TaskStatus = "Pending";
+                        taskListRes[2].TaskStatus = "Pending";
+                        taskListRes[3].TaskStatus = "Pending";
+                        taskListRes[4].TaskStatus = "Pending";
+                        taskListRes[5].TaskStatus = "Pending";
+                        taskListRes[6].TaskStatus = "Pending";
+                        taskListRes[7].TaskStatus = "Pending";
+                        taskListRes[8].TaskStatus = "Pending";
+                        taskListRes[9].TaskStatus = "Pending";
+
+                        taskListRes[0].TaskCurrentValue = "";
+                        taskListRes[1].TaskCurrentValue = "";
+                        taskListRes[2].TaskCurrentValue = "";
+                        taskListRes[3].TaskCurrentValue = "";
+                        taskListRes[4].TaskCurrentValue = "";
+                        taskListRes[5].TaskCurrentValue = "";
+                        taskListRes[6].TaskCurrentValue = "";
+                        taskListRes[7].TaskCurrentValue = "";
+                        taskListRes[8].TaskCurrentValue = "";
+                        taskListRes[9].TaskCurrentValue = "";
+
+                        db.SaveChanges();
+
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentError = ex.Message;
+                return false;
+            }
+            return false;
+        }
+
         public static void UpdateSeatData(int id, string key, string value)
         {
             try
@@ -548,14 +668,13 @@ namespace WebApplication2.station
             }
         }
          
-        public static void WriteTagValueInPlc(string station)
+        public static void WriteTagValueInPlc(string station,string tag)
         {
 
             using (TMdbEntities db = new TMdbEntities())
             {
                 //code for plc write bit enable
-                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'WriteBit'").FirstOrDefault();
-                DataTable dt = new DataTable();
+                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '"+tag+"'").FirstOrDefault(); 
 
                 if (plcRes != null)
                 {

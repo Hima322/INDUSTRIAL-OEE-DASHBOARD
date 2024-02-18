@@ -285,6 +285,7 @@ namespace WebApplication2.station
                         if (res.StationNo == station)
                         {
                             plcReadTAg = ReadTagNameInPlc(plcStation);
+                            WriteTagValueInPlc(plcStation, "ScanBit");
                             return res.ID.ToString();
                         }
                     }
@@ -426,7 +427,7 @@ namespace WebApplication2.station
                     {
                         if (IS_PLC_CONNECTED())
                         {
-                            WriteTagValueInPlc(plcStation);
+                            WriteTagValueInPlc(plcStation, "WriteBit");
                             res.TaskCurrentValue = "1";
                             res.TaskStatus = "Done";
                             dbEntities.SaveChanges();
@@ -639,15 +640,14 @@ namespace WebApplication2.station
                 CurrentError = ex.Message;
             }
         }
-         
-        public static void WriteTagValueInPlc(string station)
+
+        public static void WriteTagValueInPlc(string station, string tag)
         {
 
             using (TMdbEntities db = new TMdbEntities())
             {
                 //code for plc write bit enable
-                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'WriteBit'").FirstOrDefault();
-                DataTable dt = new DataTable();
+                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '" + tag + "'").FirstOrDefault(); 
 
                 if (plcRes != null)
                 {

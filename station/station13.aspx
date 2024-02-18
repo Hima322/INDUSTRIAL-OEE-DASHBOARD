@@ -33,8 +33,7 @@
         $(document).ready(function () {
             callStationInfo()
             getAllPlcTagList() 
-            $("#partImage").attr("src", `../image/task/${station}/1.jpg`)
-            $("#inpection_task_list_modal").hide()
+            $("#partImage").attr("src", `../image/task/${station}/1.jpg`) 
             $('input').attr('autocomplete', 'off');
 
             //checking if station is not inspection station then redirect index page 
@@ -122,14 +121,9 @@
                         buildTicketExecuteTask(e.ID, build_ticket)
                     }
                 } else {
-
-                    if (e.TaskType == "Inspection") {
-                        $("#inpection_task_list_modal").hide()
-                    }
-
-                    if (e.TaskType == "Inspection" && e.BomSeq == "VISUAL" && e.TaskCurrentValue == "" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
-                        current_task_id = e.ID;
-                        $("#inpection_task_list_modal").show()
+                     
+                    if (e.TaskType == "Inspection" && e.BomSeq == "ODS" && e.TaskStatus == "Running") {
+                        odsExecuteTask(e.ID)
                     } else if (e.TaskType == "Write bit" && e.TaskStatus == "Running" || e.TaskStatus == "Error") {
                         writeBitExecuteTask(e.ID)
                     } else if (e.TaskType == "Read bit" && e.TaskStatus == "Running" && e.TaskCurrentValue == "") {
@@ -303,6 +297,29 @@
         } 
 
         //function for write bit task
+        const odsExecuteTask = (id) => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/ODSExecuteTask",
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    toast(res.d)
+                    if (res.d == "REJECTED") {
+                        toast("Seat Rejected.")
+                        setTimeout(_ => location.reloa(), 3000)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
+        //function for write bit task
         const writeBitExecuteTask = (id) => {
             $.ajax({
                 type: "POST",
@@ -436,18 +453,7 @@
             place-items: center;
             z-index: 9;
             backdrop-filter: blur(2px);
-        }  
-        #inpection_task_list_modal{
-            position: absolute;
-            top: 0;
-            left: 0; 
-            width: 100%;
-            height: 100vh;
-            display: flex;  
-            align-items:start;
-            z-index: 9;
-            backdrop-filter: blur(0px);
-        } 
+        }   
     </style>
 </head>
 <body class="bg-light">

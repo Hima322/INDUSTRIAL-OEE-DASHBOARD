@@ -225,7 +225,7 @@ namespace WebApplication2.monitor
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
-                    int[] plcTagIds = {2,3,4,5,6,7 };
+                    int[] plcTagIds = {2,3,4,5,6,7,8 };
                     var res = db.PLCAddressLists.Where(i => plcTagIds.Contains(i.ID)).ToList();
                     if (res != null)
                     {

@@ -716,6 +716,9 @@ namespace WebApplication2.station
                                 }
                                 else
                                 {
+                                    if (id == PrevID)
+                                    { id += 1; }
+
                                     UpdateStatus("Error", TA, id);
 
                                     //insert JITLineSeatMfgReport value
