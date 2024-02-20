@@ -148,6 +148,28 @@ namespace WebApplication2.monitor
             return "Error";
         }
          
+        [WebMethod]  
+        public static string GET_ANDON_TIMING_TARGET()
+        {
+            try
+            {
+                using(TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.Andons.ToList();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+            return "Error";
+        }
+         
 
         [WebMethod]
         public static string STATION_ASSIGNMENTS()
@@ -218,6 +240,28 @@ namespace WebApplication2.monitor
             }
         }
 
+        [WebMethod]
+        public static string GET_PRODUCTION_YEAR_BASE(string year)
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                { 
+                    var res = db.SEAT_DATA.Where(i => year.Equals(Convert.ToDateTime(i.FinalPrintDateTime).ToString("yyyy"))).ToList();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+
+                    return "Error";
+                }
+            }
+            catch (Exception ex)
+            { 
+                return ex.Message;
+            }
+        }
+        
         [WebMethod]
         public static string GET_PLC_TAG_NAME()
         {
@@ -290,6 +334,29 @@ namespace WebApplication2.monitor
                 return ex.Message;
             }
             return "Something went wrong.";
+        }
+        
+        [WebMethod]
+        public static string UPDATE_ANDON_TARGET( int id, int value)
+        {
+            try
+            {
+                using(TMdbEntities  db = new TMdbEntities())
+                {
+                    var res = db.Andons.Where(i => i.ID==id).FirstOrDefault();
+                    if(res != null)
+                    {
+                        res.Target = value;
+                        db.SaveChanges(); 
+                        return "Done";
+                    }
+                } 
+            } catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return "Something went wrong";
         }
         
         [WebMethod]

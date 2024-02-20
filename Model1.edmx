@@ -14,7 +14,6 @@
           <Property Name="Target" Type="int" />
           <Property Name="ShiftName" Type="varchar" MaxLength="50" />
           <Property Name="Production" Type="int" />
-          <Property Name="Status" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="BOM">
           <Key>
@@ -363,7 +362,6 @@
           <Property Name="Target" Type="Int32" />
           <Property Name="ShiftName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Production" Type="Int32" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="BOM">
           <Key>
@@ -668,7 +666,6 @@
           <EntitySetMapping Name="Andons">
             <EntityTypeMapping TypeName="TMdbModel.Andon">
               <MappingFragment StoreEntitySet="Andon">
-                <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Production" ColumnName="Production" />
                 <ScalarProperty Name="ShiftName" ColumnName="ShiftName" />
                 <ScalarProperty Name="Target" ColumnName="Target" />

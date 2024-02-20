@@ -10,7 +10,7 @@
     <script src="../js/libs/bootstrap.bundle.min.js"></script>
     <script src="../js/libs/sweetalert2.all.min.js"></script>
     <script src="../js/libs/plotly.min.js"></script>
-    <script type="text/javascript" src="../js/libs/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery.min.js"></script>  
     <script>
 
         var pwd = ""
@@ -39,8 +39,12 @@
             createColumnName()
             getDctoolList()
             getShiftSetting()
-            $("#loading").hide()
-            $('#imojiGroup').hide()
+            getAndonTimingTarget()
+            $("#currentYear").val(new Date().getFullYear())
+            getProductionYearBase($("#yearPicker").val())
+            $("#loading").hide()  
+            //this function to show year inside line graph
+            $("#yearPicker").prepend(new Array(new Date().getFullYear() - 2024).fill().map((_,i) => `<option>${2024+i}</option>`))
 
             <%--pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
@@ -88,26 +92,7 @@
                     console.log(e);
                 }
             })
-        }
-
-
-        function pageLoadFunction() {
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/PAGE_LOAD_FUNCTION",
-                data: ``,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => { 
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-        
+        } 
 
         function getStationName() {
             $.ajax({
@@ -130,6 +115,59 @@
                                  <td>${e.StationNameID == "Station-0" ? "Built Ticket" : e.StationNameID == "Station-16" ? "Rework" : e.StationNameID}</td > 
                                  <td><input class="form-control bolrder-less-input form-control-sm" value="${e.Station_Name}" id="input${e.ID}" onkeyup=removeBtnDisabled(${e.ID}) /></td> 
                                  <td><button type="button" class="btn btn-sm" disabled id="btn${e.ID}" onclick=updateStationName(${e.ID},$("#input${e.ID}").val()) >Edit</button></td>
+                             </tr>
+                         `)
+                        )
+
+                    } else {
+                        toast("Something went wrong.", "error")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        } 
+
+        function getAndonTimingTarget() {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_ANDON_TIMING_TARGET",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d) 
+
+                        $("#shiftATargetContainer").html(
+                            data.filter(f => f.ShiftName == "A").map((e,i) => `
+                              <tr>
+                                 <td>${i+1}</td>
+                                 <td>${e.HourName}</td>
+                                 <td><input value="${e.Target}" type="number" class="form-control bolrder-less-input m-auto" style="width:100px;" onkeyup="updateAndonTarget(${e.ID},this.value)" /></td> 
+                             </tr>
+                         `)
+                        )
+                        
+                        $("#shiftBTargetContainer").html(
+                            data.filter(f => f.ShiftName == "B").map((e,i) => `
+                              <tr>
+                                 <td>${i+1}</td>
+                                 <td>${e.HourName}</td>
+                                 <td><input value="${e.Target}" type="number" class="form-control bolrder-less-input m-auto" style="width:100px;" onkeyup="updateAndonTarget(${e.ID},this.value)" /></td> 
+                             </tr>
+                         `)
+                        )
+                        
+                        $("#shiftCTargetContainer").html(
+                            data.filter(f => f.ShiftName == "C").map((e,i) => `
+                              <tr>
+                                 <td>${i+1}</td>
+                                 <td>${e.HourName}</td>
+                                 <td><input value="${e.Target}" type="number" class="form-control bolrder-less-input m-auto" style="width:100px;" onkeyup="updateAndonTarget(${e.ID},this.value)" /></td> 
                              </tr>
                          `)
                         )
@@ -348,6 +386,31 @@
             })
         }
 
+        function updateAndonTarget(id, value) {
+            $("#loading").show()
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/UPDATE_ANDON_TARGET",
+                data: `{id : '${id}', value : '${value}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    $("#loading").hide()
+
+                    if (res.d == "Done") {
+                        toast("Success.") 
+                    } else {
+                        toast(res.d)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
         function updateStationName(id, value) {
             $("#loading").show()
             $.ajax({
@@ -508,12 +571,30 @@
             })
         }
         
+        function getProductionYearBase(year) { 
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_PRODUCTION_YEAR_BASE",
+                data: `{year : '${year}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    console.log(res.d)
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
         function handleUpdateSeftyLine() {
             $("#loading").show()
             $.ajax({
                 type: "POST",
                 url: "index.aspx/UPDATE_SEFTYLINE",
-                data: `{value : '${$("#seftyInput").val().replaceAll("#","&#")}'}`,
+                data: `{value : '${$("#seftyInput").val().replaceAll("#", "&#").replace("??", "") }'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -522,7 +603,7 @@
                     $("#loading").hide()
 
                     if (res.d == "Done") {
-                        toast("Success.")
+                        toast("Success.") 
                     } else {
                         toast(res.d,"error")
                     }
@@ -645,6 +726,14 @@
                         <%--this graph to represent delays like maintinace operator etc--%>
                         <div id="myPlot2" class="mx-3" style="width: calc(100% - 40px);"></div>
 
+                        <%--this date for graphs--%> 
+                        <div class="d-flex justify-content-between mx-3 gap-3 mt-3"> 
+                            <button>Year</button>
+                            <select class="form-select" id="yearPicker" style="width:200px;" onchange="getProductionYearBase(this.value)"> 
+                                <option selected="selected" id="currentYear"></option>
+                            </select>
+                        </div>
+
                         <%--this graph for another work--%> 
                         <div class="d-flex justify-content-around mx-3 gap-3 mt-3"> 
                             <div id="myPlot1" style="width: 50%;"></div>
@@ -652,32 +741,27 @@
                         </div>
 
                         <%--script for graph--%> 
-                        <script>
-                        //for 0
-                        const xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-                        const yArray = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
+                        <script> 
 
-                        // Define Data
-                        const data = [{
-                            x: xArray,
-                            y: yArray,
-                            mode: "lines",
-                            type: "scatter"
-                        }];
+                            //for 1  delay graph
+                            const xArray2 = ["Maintenance Delay", "Operatror Delay", "Quality Delay", "Material Delay", "Light Delay"];
+                            const yArray2 = [55, 49, 44, 24, 15];
 
-                        // Define Layout
-                        const layout = {
-                            xaxis: { range: [40, 160], title: "Time in year" },
-                            yaxis: { range: [5, 16], title: "Seat production" },
-                            title: "Seat Production and Time"
-                        };
+                            const data2 = [{
+                                x: xArray2,
+                                y: yArray2,
+                                type: "bar",
+                                orientation: "v",
+                                marker: { color: "#0d6efd" }
+                            }];
 
-                        // Display using Plotly
-                        Plotly.newPlot("myPlot", data, layout);
+                            const layout2 = { title: "Today current delay records." };
+
+                            Plotly.newPlot("myPlot2", data2, layout2);
 
 
 
-                        //for 1
+                        //for 2
                         const xArray1 = ["MID MT", "PRIMIUM MT", "UPPER MT", "MIT CVT", "E2", "CL"];
                         const yArray1 = [55, 49, 44, 24, 85,33];
 
@@ -688,24 +772,30 @@
                         Plotly.newPlot("myPlot1", data1, layout1);
 
 
+                            //for 3
+                            const xArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                            const yArray = [743, 834, 938, 839, 739, 909, 930, 821, 734, 943, 658, 843];
 
-                        //for 2  delay graph
-                        const xArray2 = ["Maintenance Delay", "Operatror Delay", "Quality Delay", "Material Delay", "Light Delay"];
-                        const yArray2 = [55, 49, 44, 24, 15];
+                            // Define Data
+                            const data = [{
+                                x: xArray,
+                                y: yArray,
+                                mode: "lines",
+                                type: "scatter"
+                            }];
 
-                        const data2 = [{
-                            x: xArray2,
-                            y: yArray2,
-                            type: "bar",
-                            orientation: "v",
-                            marker: { color: "#0d6efd" }
-                        }];
+                            // Define Layout
+                            const layout = {
+                                xaxis: { title: "Time in month" },
+                                yaxis: { title: "Seat production" },
+                                title: "Seat Production Year Basis"
+                            };
 
-                        const layout2 = { title: "Today current delay records." };
+                            // Display using Plotly
+                            Plotly.newPlot("myPlot", data, layout);
 
-                        Plotly.newPlot("myPlot2", data2, layout2);
 
-                    </script>
+                        </script>
                     </div> 
                      
 
@@ -728,7 +818,7 @@
                                         <%--data will fetch from js--%>
                                         <tr>
                                             <td colspan="2">
-                                                <img style="height: 200px; margin: 50px auto;" src="https://cdn.icon-icons.com/icons2/2483/PNG/512/empty_data_icon_149938.png" alt="error" />
+                                                <img style="height: 200px; margin: 50px auto;" src="../image/empty.png" alt="error" />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -755,7 +845,7 @@
                                         <%--data will fetch from js--%>
                                         <tr>
                                             <td colspan="3">
-                                                <img style="height: 200px; margin: 50px auto;" src="https://cdn.icon-icons.com/icons2/2483/PNG/512/empty_data_icon_149938.png" alt="error" />
+                                                <img style="height: 200px; margin: 50px auto;" src="../image/empty.png" alt="error" />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -786,7 +876,7 @@
                                         <%--data will fetch from js--%>
                                         <tr>
                                             <td colspan="2">
-                                                <img style="height: 200px; margin: 50px auto;" src="https://cdn.icon-icons.com/icons2/2483/PNG/512/empty_data_icon_149938.png" alt="error" />
+                                                <img style="height: 200px; margin: 50px auto;" src="../image/empty.png" alt="error" />
                                             </td>
                                         </tr>
                                     </tbody>
@@ -796,9 +886,9 @@
                             <%--this sectin for update andon name--%>
                             <div class="container-fluid">
                                <h5>Andon Sefty Title</h5> 
-                                <textarea onkeyup="$('#seftyTitleUpdateButton').attr('disabled',false) && $('#imojiGroup').show()" id="seftyInput" rows="3" class="form-control"><%=seftyTitle %></textarea> 
-                                <div class="d-flex mt-3"> 
-                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="imojiGroup">
+                                <textarea onkeyup="$('#seftyTitleUpdateButton').attr('disabled',false) && $('#imojiGroup').css({opacity:1})" id="seftyInput" rows="3" class="form-control"><%=seftyTitle %></textarea> 
+                                <div class="d-flex my-3"> 
+                                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group" id="imojiGroup" style="opacity:.5;">
                                           <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" />
                                           <label class="btn btn-outline-primary" for="btnradio1" onclick="$('#seftyInput').val($('#seftyInput').val() + ' ' + '#128516;' + ' ')">&#128516;</label>
 
@@ -831,6 +921,91 @@
                                      </div>
                                     <button type="button" class="btn btn-primary d-block ms-auto" disabled="disabled" id="seftyTitleUpdateButton" onclick="handleUpdateSeftyLine()">Update</button>
                                 </div>
+                                
+                                <%--for shift a target edit--%>   
+                                <div class="card mt-2">
+                                    <div class="card-header">
+                                        <a class="btn" data-bs-toggle="collapse" href="#collapseshiftATarget">Shift A Target.
+                                        </a>
+                                    </div>
+                                    <div id="collapseshiftATarget" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+                                            <%--this is for show write plc bit tag--%>
+                                            <div class="container-fluid">
+                                                <table class="table table-bordered text-center ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="table-primary"> # </th>
+                                                            <th class="table-primary"> Timing </th>
+                                                            <th class="table-primary"> Target </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="shiftATargetContainer">
+                                                        <%--data will fetch from js--%> 
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <%--for shift b target edit--%>   
+                                <div class="card mt-2">
+                                    <div class="card-header">
+                                        <a class="btn" data-bs-toggle="collapse" href="#collapseshiftBTarget">Shift B Target.
+                                        </a>
+                                    </div>
+                                    <div id="collapseshiftBTarget" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+                                            <%--this is for show write plc bit tag--%>
+                                            <div class="container-fluid">
+                                                <table class="table table-bordered text-center ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="table-primary"> # </th>
+                                                            <th class="table-primary"> Timing </th>
+                                                            <th class="table-primary"> Target </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="shiftBTargetContainer">
+                                                        <%--data will fetch from js--%> 
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <%--for shift c target edit--%>   
+                                <div class="card mt-2">
+                                    <div class="card-header">
+                                        <a class="btn" data-bs-toggle="collapse" href="#collapseshiftCTarget">Shift C Target.
+                                        </a>
+                                    </div>
+                                    <div id="collapseshiftCTarget" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+                                            <%--this is for show write plc bit tag--%>
+                                            <div class="container-fluid">
+                                                <table class="table table-bordered text-center ">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="table-primary"> # </th>
+                                                            <th class="table-primary"> Timing </th>
+                                                            <th class="table-primary"> Target </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="shiftCTargetContainer">
+                                                        <%--data will fetch from js--%> 
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
                     </div>

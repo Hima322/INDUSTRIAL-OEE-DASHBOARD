@@ -195,13 +195,13 @@
                          
                         finelArr.forEach((e,i) => { 
                             $("#leftSeatModalBody").append(
-                                `<ul>
-                                    <li><b>${e[i].model}</b></li>
-                                    <ul id="${e[i].model}"> </ul>
+                                `<ul> 
+                                    <li><b>${e[0].model}</b></li>
+                                    <ul id="${e[0].model}"> </ul>
                                 </ul>`
                             ) 
                             e.forEach(j =>
-                                document.getElementById(e[i].model).innerHTML += `<li>${j.variant} : <b>${j.length} seat</b></li>`
+                                document.getElementById(e[0].model).innerHTML += `<li>${j.variant} : <b>${j.length} seat</b></li>`
                             ) 
                         }) 
                     }

@@ -36,7 +36,7 @@ namespace WebApplication2.order
         {
             try
             {
-                using(TMdbEntities db = new TMdbEntities())
+                using (TMdbEntities db = new TMdbEntities())
                 {
                     var res = db.SEAT_DATA.Where(i => i.STAUS == null).ToList();
                     return JsonSerializer.Serialize(res);

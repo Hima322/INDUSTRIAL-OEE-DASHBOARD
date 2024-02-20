@@ -19,6 +19,5 @@ namespace WebApplication2
         public Nullable<int> Target { get; set; }
         public string ShiftName { get; set; }
         public Nullable<int> Production { get; set; }
-        public string Status { get; set; }
     }
 }

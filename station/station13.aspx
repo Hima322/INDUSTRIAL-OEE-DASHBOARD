@@ -100,10 +100,10 @@
             getCurrentUser()
             isScannerConnected()
             isPlcConnected()
-            //toast(inspection_task_id.size)
         }, 1000)
 
         setInterval(function () {
+            getWeightAndRegistanceValue()
             if (isValidBuildTicket) {
                 getModelAndTaskList();
                 handleTask()
@@ -124,6 +124,10 @@
                      
                     if (e.TaskType == "Inspection" && e.BomSeq == "ODS" && e.TaskStatus == "Running") {
                         odsExecuteTask(e.ID)
+                    } else if (e.TaskType == "Inspection" && e.BomSeq == "BELT BUCKLE" && e.TaskStatus == "Running") {
+                        beltBuckleExecuteTask(e.ID)
+                    } else if (e.TaskType == "Inspection" && e.BomSeq == "SAB" && e.TaskStatus == "Running") {
+                        sabExecuteTask(e.ID)
                     } else if (e.TaskType == "Write bit" && e.TaskStatus == "Running" || e.TaskStatus == "Error") {
                         writeBitExecuteTask(e.ID)
                     } else if (e.TaskType == "Read bit" && e.TaskStatus == "Running" && e.TaskCurrentValue == "") {
@@ -187,6 +191,30 @@
             })
         }
 
+        //function for get weight and registance
+        const getWeightAndRegistanceValue = () => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/GET_WEIGHT_AND_REGISTANCE_VALUE",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => { 
+                    if (res.d != "Error") {
+                        let w = res.d.split(",")[0]
+                        let r = res.d.split(",")[1]
+
+                        $("#weightBadge").html(w + " kg")
+                        $("#registanceBadge").html(r + " &#8486;")
+                    }   
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
         //function for get current user 
         const getCurrentUser = () => {
             $.ajax({
@@ -254,8 +282,14 @@
                                         <th>${i + 1}.</th> 
                                         <th>${e.TaskType == "Inspection" ? e.BomSeq : e.TaskName}</th>
                                         <th>${e.TaskType}</th>
-                                        <th >
-                                            <span class="animate__animated ${e.TaskStatus == 'Error' && new Date().getSeconds() % 4 == 0 ? 'animate__tada' : ''}">${e.TaskCurrentValue || "-"}<span> 
+                                        <th>
+                                            <span class="animate__animated ${e.TaskStatus == 'Error' && new Date().getSeconds() % 4 == 0 ? 'animate__tada' : ''}">
+                                                ${
+                                                    e.TaskCurrentValue == ""
+                                                        ? "-"
+                                                        : (e.BomSeq == "ODS" ? `<big><span class="badge bg-danger mb-2">${e.TaskCurrentValue.split(",")[0]} kg</span></big>  <big><span class="mb-2 badge bg-primary">${e.TaskCurrentValue.split(",")[1]} &#8486;</span></big>` : e.BomSeq == "BELT BUCKLE" ? `<big><span class="mb-2 badge bg-primary">${e.TaskCurrentValue} &#8486;</span></big>` : e.TaskCurrentValue)
+                                                 }
+                                           <span> 
                                         </th>
                                         <th>${e.TaskStatus == 'Pending' ? "-" : e.TaskStatus == 'Running' || e.TaskStatus == 'Error' ? '<i class="spinner-grow spinner-grow-sm"></i>' : e.TaskStatus}</th>  
                                     </tr> 
@@ -295,8 +329,7 @@
                 }
             })
         } 
-
-        //function for write bit task
+         
         const odsExecuteTask = (id) => {
             $.ajax({
                 type: "POST",
@@ -306,11 +339,55 @@
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => {
-                    toast(res.d)
+                success: (res) => { 
                     if (res.d == "REJECTED") {
                         toast("Seat Rejected.")
-                        setTimeout(_ => location.reloa(), 3000)
+                        $("#task_list_container").hide()
+                        setTimeout(_ => location.reload(), 3000)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+         
+        const beltBuckleExecuteTask = (id) => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/BeltBuckleExecuteTask",
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => { 
+                    if (res.d == "REJECTED") {
+                        toast("Seat Rejected.")
+                        $("#task_list_container").hide()
+                        setTimeout(_ => location.reload(), 3000)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+         
+        const sabExecuteTask = (id) => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/SABExecuteTask",
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => { 
+                    if (res.d == "REJECTED") {
+                        toast("Seat Rejected.")
+                        $("#task_list_container").hide()
+                        setTimeout(_ => location.reload(), 3000)
                     }
                 },
                 Error: function (x, e) {
@@ -688,8 +765,14 @@
 
                 </div> 
 
+                
+             <div style="position: fixed; bottom: 0; right: 0; margin-right: 105px;margin-bottom:13px;" class="d-flex gap-2"> 
+                    <h3><span id="weightBadge" class="badge bg-danger mb-2">00.00 kg</span></h3>  
+                    <h3><span id="registanceBadge" class="mb-2 badge bg-primary">00.00 &#8486;</span></h3>  
+                </div>
+
             <%--dropdown for setting--%>
-            <div style="position: fixed; bottom: 0; right: 0; margin: 30px;">
+            <div style="position: fixed; bottom: 0; right: 0; margin: 30px;"> 
                 <div class="dropdown shadow rounded">
                     <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown">
                         <img src="../image/icon/tools.svg" height="20" />

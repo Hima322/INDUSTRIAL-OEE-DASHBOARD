@@ -266,22 +266,23 @@ namespace WebApplication2.station
                             plcReadTAg = ReadTagNameInPlc(plcStation); 
                             //this is scan bit tag in plc 
                             WriteTagValueInPlc(plcStation, "ScanBit");
+
                             //this is for ods and all 
                             if(res.Model == "PY1B" && res.SeatType == "DRIVER")
-                            {
-                                plc.Write("DB5.DW1218", 11); 
+                            { 
+                                plc.Write("DB5.DBW1218", Convert.ToUInt16(11));
                             } 
                             else if(res.Model == "PY1B" && res.SeatType == "CO-DRIVER")
                             {
-                                plc.Write("DB5.DW1218", 12);
+                                plc.Write("DB5.DBW1218", Convert.ToUInt16(12));
                             }
                             else if(res.Model == "BBA" && res.SeatType == "DRIVER")
                             {
-                                plc.Write("DB5.DW1218", 21);
+                                plc.Write("DB5.DBW1218", Convert.ToUInt16(21));
                             }
                             else if (res.Model == "BBA" && res.SeatType == "CO-DRIVER")
                             {
-                                plc.Write("DB5.DW1218", 22);
+                                plc.Write("DB5.DBW1218", Convert.ToUInt16(22));
                             }
 
                             return res.ID.ToString();
@@ -344,6 +345,24 @@ namespace WebApplication2.station
             return string.Empty;
         }
 
+        [WebMethod]
+        public static string GET_WEIGHT_AND_REGISTANCE_VALUE()
+        {
+            try
+            {
+                if (IS_PLC_CONNECTED())
+                {
+                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
+                    decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10m;
+
+                    string wr = weight.ToString("00.00") + "," + registance.ToString("00.00");
+                    return wr;
+                }
+                return "Error";
+            }
+            catch { return "Error"; }
+        }
+        
         public static bool IsRunningTask(string station, string ModelVar)
         {
             try
@@ -372,26 +391,25 @@ namespace WebApplication2.station
                     if (res != null)
                     {
                         if (IS_PLC_CONNECTED())
-                        {
-                            //plc.Write("DB5.DW1218", 11);
+                        {  
+                            decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34"))/10m;
+                            decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24"))/10m;
 
+                            string wr = weight.ToString("00.00") + "," + registance.ToString("00.00");
+                            res.TaskCurrentValue = wr;
 
-                            //object ad = plc.Read(DataType.DataBlock, 5, 1217, VarType.DInt, 1);
-
-                            //int a = Convert.ToInt32(ad);
-
-                            int Result = (int)plc.Read(S7.Net.DataType.DataBlock, 5, 1217, S7.Net.VarType.DInt, 1);
-                            int a = Result / 256;
-
-                            if (a== 1)
+                            int result = (UInt16)plc.Read("DB98.DBW30"); 
+                            if (result == 1)
                             {
-                                res.TaskStatus = "Done"; 
-                                
+                                res.TaskStatus = "Done";
                                 //update next row status to running
-                                var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
-                                if (nextRow != null) { nextRow.TaskStatus = "Running"; }
+                                if(IsRunningTask(res.StationNameID, model_variant)){
+                                    var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
+                                    if (nextRow != null) { nextRow.TaskStatus = "Running"; } 
+                                }
 
-                            } else if (a == 2)
+                            } 
+                            else if (result == 2)
                             {
                                 RejectTask(seat_data_id, res.StationNameID);
                                 return "REJECTED";
@@ -401,6 +419,89 @@ namespace WebApplication2.station
 
 
                         }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentError = ex.Message;
+            }
+            return string.Empty;
+        }
+        
+
+        [WebMethod]
+        public static string BeltBuckleExecuteTask(int id, string model_variant, long seat_data_id)
+        {
+            try
+            {
+                using (TMdbEntities dbEntities = new TMdbEntities())
+                {
+
+                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        if (IS_PLC_CONNECTED())
+                        { 
+                            decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10m;
+
+                            res.TaskCurrentValue = registance.ToString();
+
+                            int result = (UInt16)plc.Read("DB98.DBW32");
+                            if (result == 1)
+                            {
+                                res.TaskStatus = "Done";
+                                //update next row status to running
+                                if (IsRunningTask(res.StationNameID, model_variant))
+                                {
+                                    var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
+                                    if (nextRow != null) { nextRow.TaskStatus = "Running"; }
+                                }
+
+                            } else if (result == 2)
+                            {
+                                RejectTask(seat_data_id, res.StationNameID);
+                                return "REJECTED";
+                            } 
+                           
+                            dbEntities.SaveChanges();
+
+
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentError = ex.Message;
+            }
+            return string.Empty;
+        }
+        
+        [WebMethod]
+        public static string SABExecuteTask(int id, string model_variant, long seat_data_id)
+        {
+            try
+            {
+                using (TMdbEntities dbEntities = new TMdbEntities())
+                {
+
+                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        res.TaskCurrentValue = "OK";
+                        res.TaskStatus = "Done";
+                        dbEntities.SaveChanges();
+
+                        //update next row status to running
+                        if (IsRunningTask(res.StationNameID, model_variant))
+                        {
+                            var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
+                            if (nextRow != null) { nextRow.TaskStatus = "Running"; }
+                            dbEntities.SaveChanges();
+                        } 
+
+
                     }
                 }
             }

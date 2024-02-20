@@ -38,7 +38,7 @@
 
         var station = localStorage.getItem("station")
         var user_details = {}
-        var PrinterConnected = false
+        var PrinterConnected = false 
 
         $(document).ready(function () {
             callStationInfo() 
@@ -77,7 +77,8 @@
             getCurrentUser()
             isPrinterConnected()
             isScannerConnected()
-            $("#barcode_input").focus()  
+            $("#barcode_input").focus()   
+
         }, 1000);
   
         //function for call station function for info
@@ -172,9 +173,9 @@
                         $("#fgpart").text(data.fgpart)
                         $("#seat").text(data.seat)
                          
-                    } else {
-                        toast(`Unavailable seat to print built ticket.`)
+                    } else { 
                         $("#barcode_input").val("");
+                        $("#result_container").html(`<img src="../image/empty.png" height="200px" class="mt-5" /><h2>Unavailable Seat to Print Built Ticket</h2>`)
                     }
                 },
                 Error: function (x, e) {
@@ -200,7 +201,7 @@
                         if (res.d != null) {
                             if (res.d.includes("Error")) return toast(res.d) 
                             $("#result_container").html(` <img src="/image/printing.gif" width="200" class="mt-5 my-4" /><h2>Printing QrCode</h2>`)
-                            setTimeout(_ => location.reload(),3000)
+                            setTimeout(_ => location.reload(),2000)
                         } else {
                             toast(`Invalid Barcode ${qr}`)
                             $("#barcode_input").val(""); 
@@ -362,7 +363,7 @@
 
                                 $.ajax({
                                     type: "POST",
-                                    url: "print_build_ticket.aspx/UserLogin",
+                                    url: "station0.aspx/UserLogin",
                                     data: `{ Userid: '${user_login_id}',Station: '${station.split("-")[1]}'}`,
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
@@ -389,7 +390,7 @@
                         function handleLogout() {
                             $.ajax({
                                 type: "POST",
-                                url: "print_build_ticket.aspx/UserLogout",
+                                url: "station0.aspx/UserLogout",
                                 data: `{ Userid: '${user_details.UserID}',Station: '${station.split("-")[1]}'}`,
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",

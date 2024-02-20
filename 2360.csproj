@@ -117,6 +117,7 @@
     <Content Include="css\libs\font-awesome.min.css" />
     <Content Include="css\libs\toastify.min.css" />
     <Content Include="image\dcnutrunner.png" />
+    <Content Include="image\empty.png" />
     <Content Include="image\icon\arrow-left.svg" />
     <Content Include="image\icon\check.svg" />
     <Content Include="image\icon\eye.svg" />

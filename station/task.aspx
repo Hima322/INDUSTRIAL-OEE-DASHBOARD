@@ -91,9 +91,9 @@
                                                         <td style="padding:5px 100px;"> 
                                                             <div class="btn-group w-100 mt-2 bg-light" role="group">
                                                                 <input ${j.ImageSeq == 1 || j.ImageSeq == 9 || j.ImageSeq == 10 ? "disabled" : ""} type="radio" class="btn-check" name="options-outlined${j.ID + k}" id="success-outlined${j.ID + k}" ${j[k] == 1 ? "checked" : ""} onchange="updateTaskListTable(${j.ID},'${k}',1)" />
-                                                                <label class="btn btn-outline-success btn-sm" for="success-outlined${j.ID + k}" >OK</label>
+                                                                <label class="btn btn-outline-success btn-sm" for="success-outlined${j.ID + k}" >YES</label>
                                                                 <input ${j.ImageSeq == 1 || j.ImageSeq == 9 || j.ImageSeq == 10 ? "disabled" : ""} type="radio" class="btn-check" name="options-outlined${j.ID + k}" id="danger-outlined${j.ID + k}" ${j[k] == 0 ? "checked" : ""} onchange="updateTaskListTable(${j.ID},'${k}',0)"/>
-                                                                <label class="btn btn-outline-danger btn-sm" for="danger-outlined${j.ID + k}">NG</label>
+                                                                <label class="btn btn-outline-danger btn-sm" for="danger-outlined${j.ID + k}">NO</label>
                                                             </div>
                                                         </td>
                                                         `).join('')
