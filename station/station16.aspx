@@ -72,6 +72,11 @@
                         cache: "false",
                         success: (res) => { 
                             if (res.d == "Rejected") return toast("Seat Rejected.") && $("#build_ticket").val("")
+
+                            if (res.d == "plcDiconnected") {
+                                return toast("Plc not connected.") && $("#build_ticket").val("")
+                            }
+
                             if (res.d != "Error") {
                                 const data = JSON.parse(res.d)
                                 seatId = data[0].SeatID
@@ -207,17 +212,19 @@
         const ToolStatus = _ => {
             $.ajax({
                 type: "POST",
-                url: "station16.aspx/ToolStatus",
+                url: "station2.aspx/ToolStatus",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => { 
-                    if (!res.d.includes("False")) {
-                        $("#startTorque").addClass("start")
-                    } else {
+                success: (res) => {
+                    if (res.d.toLowerCase().includes("false")) {
+                        $("#dctoolimage").css({ opacity: 0 })
                         $("#startTorque").removeClass("start")
+                    } else {
+                        $("#dctoolimage").css({ opacity: .3 })
+                        $("#startTorque").addClass("start")
                     }
                 },
                 Error: function (x, e) {
@@ -225,6 +232,7 @@
                 }
             })
         }
+
 
         function isPingDctool() {
             $.ajax({

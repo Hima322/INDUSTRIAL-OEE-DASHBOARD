@@ -386,6 +386,31 @@
             })
         }
 
+        function handleChangeAndonScreen(value) {
+            $("#loading").show()
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/HANDLE_CHANGE_ANDON_SCREEN",
+                data: `{ value : '${value}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    $("#loading").hide()
+
+                    if (res.d == "Done") {
+                        toast("Success.") 
+                    } else {
+                        toast(res.d)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
         function updateAndonTarget(id, value) {
             $("#loading").show()
             $.ajax({
@@ -885,6 +910,14 @@
 
                             <%--this sectin for update andon name--%>
                             <div class="container-fluid">
+                               <h5>Andon Current Screen</h5> 
+                                <select class="form-select" onchange="handleChangeAndonScreen(this.value)">
+                                    <option value="main">Main Screen</option>
+                                    <option value="operator_delay">Operartor Delay</option>
+                                    <option value="maintenance_delay">Maintenance Delay</option>
+                                    <option value="material_delay">Material Delay</option>
+                                </select> <br />
+
                                <h5>Andon Sefty Title</h5> 
                                 <textarea onkeyup="$('#seftyTitleUpdateButton').attr('disabled',false) && $('#imojiGroup').css({opacity:1})" id="seftyInput" rows="3" class="form-control"><%=seftyTitle %></textarea> 
                                 <div class="d-flex my-3"> 

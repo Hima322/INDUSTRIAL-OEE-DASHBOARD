@@ -384,6 +384,7 @@ namespace WebApplication2.station
                         if (res.StationNo == station)
                         {
                             plcReadTAg = ReadTagNameInPlc(plcStation);
+                            WriteTagValueInPlc(plcStation, "ScanBit");
                             return res.ID.ToString();
 
                         }
@@ -708,6 +709,7 @@ namespace WebApplication2.station
                                             {
                                                 //insert JITLineSeatMfgReport value
                                                 InsertJITLineSeatMfgReport(station, torque_seq, TA, "OK,OK", username);
+                                                DisableTool();
                                                 DCserver.Close();
                                                 return "Done";
                                             }
@@ -734,7 +736,7 @@ namespace WebApplication2.station
                                     {
                                         InsertJITLineSeatMfgReport(station, torque_seq, TA, "NG,NG", username);
                                     }
-
+                                    DisableTool();
                                     DCserver.Close();
                                     return "Error";
                                 }
@@ -765,7 +767,7 @@ namespace WebApplication2.station
                 {
                     int sent = DCserver.Send(byteData, SocketFlags.None);
                     int p = DCserver.Receive(byteFrom, SocketFlags.None);
-                    IsDcToolEnable = true;
+                    IsDcToolEnable = false;
                 }
             }
             catch (Exception ex)
@@ -808,33 +810,6 @@ namespace WebApplication2.station
             }
         }
 
-        public static void SelectPset(int PsetNo)
-        {
-            byte i = 0x00;
-            if (PsetNo == 1)
-            { i = 0x31; }
-            else if (PsetNo == 2)
-            { i = 0x32; }
-            else if (PsetNo == 3)
-            { i = 0x33; }
-            else if (PsetNo == 4)
-            { i = 0x34; }
-            byte[] byteFrom = new byte[1025];
-            byte[] byteData = { 0x30, 0x30, 0x32, 0x33, 0x30, 0x30, 0x31, 0x38, 0x30, 0x30, 0x31, 0x30, 0x20, 0x20, 0x20, 0x20, 0x30, 0x30, 0x20, 0x20, 0x30, 0x30, i, 0x00 };
-            try
-            {
-                if (DCserver.Connected)
-                {
-                    int sent = DCserver.Send(byteData, SocketFlags.None);
-                    int p = DCserver.Receive(byteFrom, SocketFlags.None);
-                }
-            }
-            catch (Exception ex)
-            {
-                CurrentError = "pset : " + ex.ToString();
-            }
-        }
-
         [WebMethod]
         public static string WriteBitExecuteTask(int id, string model_variant, string plc_station)
         {
@@ -848,7 +823,7 @@ namespace WebApplication2.station
                     {
                         if (IS_PLC_CONNECTED())
                         {
-                            WriteTagValueInPlc(plc_station);
+                            WriteTagValueInPlc(plc_station, "WriteBit");
                             res.TaskCurrentValue = "1";
                             res.TaskStatus = "Done";
 
@@ -874,7 +849,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string ReadBitExecuteTask(int id)
+        public static string ReadBitExecuteTask(int id, string plcStation)
         {
             try
             {
@@ -888,6 +863,8 @@ namespace WebApplication2.station
                         {
                             if ((bool)plc.Read(plcReadTAg))
                             {
+                                WriteTagValueInPlc(plcStation, "WriteBit", false);
+                                WriteTagValueInPlc(plcStation, "ScanBit", false);
                                 taskRes.TaskCurrentValue = "1";
                                 taskRes.TaskStatus = "Done";
                                 dbEntities.SaveChanges();
@@ -1136,55 +1113,55 @@ namespace WebApplication2.station
             }
         }
 
-        public static void WriteTagValueInPlc(string station)
+        public static void WriteTagValueInPlc(string station, string tag, bool val = true)
         {
 
             using (TMdbEntities db = new TMdbEntities())
             {
                 //code for plc write bit enable
-                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'WriteBit'").FirstOrDefault();
+                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '" + tag + "'").FirstOrDefault();
                 DataTable dt = new DataTable();
 
                 if (plcRes != null)
                 {
                     switch (station)
                     {
-                        case "Station1": plc.Write(plcRes.Station1.ToString(), true); break;
-                        case "Station2": plc.Write(plcRes.Station2.ToString(), true); break;
-                        case "Station3": plc.Write(plcRes.Station3.ToString(), true); break;
-                        case "Station4": plc.Write(plcRes.Station4.ToString(), true); break;
-                        case "Station5": plc.Write(plcRes.Station5.ToString(), true); break;
-                        case "Station6": plc.Write(plcRes.Station6.ToString(), true); break;
-                        case "Station7": plc.Write(plcRes.Station7.ToString(), true); break;
-                        case "Station8": plc.Write(plcRes.Station8.ToString(), true); break;
-                        case "Station9": plc.Write(plcRes.Station9.ToString(), true); break;
-                        case "Station10": plc.Write(plcRes.Station10.ToString(), true); break;
-                        case "Station11": plc.Write(plcRes.Station11.ToString(), true); break;
-                        case "Station12": plc.Write(plcRes.Station12.ToString(), true); break;
-                        case "Station13": plc.Write(plcRes.Station13.ToString(), true); break;
-                        case "Station14": plc.Write(plcRes.Station14.ToString(), true); break;
-                        case "Station15": plc.Write(plcRes.Station15.ToString(), true); break;
-                        case "Station16": plc.Write(plcRes.Station16.ToString(), true); break;
-                        case "Station17": plc.Write(plcRes.Station17.ToString(), true); break;
-                        case "Station18": plc.Write(plcRes.Station18.ToString(), true); break;
-                        case "Station19": plc.Write(plcRes.Station19.ToString(), true); break;
-                        case "Station20": plc.Write(plcRes.Station20.ToString(), true); break;
-                        case "Station21": plc.Write(plcRes.Station21.ToString(), true); break;
-                        case "Station22": plc.Write(plcRes.Station22.ToString(), true); break;
-                        case "Station23": plc.Write(plcRes.Station23.ToString(), true); break;
-                        case "Station24": plc.Write(plcRes.Station24.ToString(), true); break;
-                        case "Station25": plc.Write(plcRes.Station25.ToString(), true); break;
-                        case "Station26": plc.Write(plcRes.Station26.ToString(), true); break;
-                        case "Station27": plc.Write(plcRes.Station27.ToString(), true); break;
-                        case "Station28": plc.Write(plcRes.Station28.ToString(), true); break;
-                        case "Station29": plc.Write(plcRes.Station29.ToString(), true); break;
-                        case "Station30": plc.Write(plcRes.Station30.ToString(), true); break;
-                        case "Station31": plc.Write(plcRes.Station31.ToString(), true); break;
-                        case "Station32": plc.Write(plcRes.Station32.ToString(), true); break;
-                        case "Station33": plc.Write(plcRes.Station33.ToString(), true); break;
-                        case "Station34": plc.Write(plcRes.Station34.ToString(), true); break;
-                        case "Station35": plc.Write(plcRes.Station35.ToString(), true); break;
-                        case "Station36": plc.Write(plcRes.Station36.ToString(), true); break;
+                        case "Station1": plc.Write(plcRes.Station1.ToString(), val); break;
+                        case "Station2": plc.Write(plcRes.Station2.ToString(), val); break;
+                        case "Station3": plc.Write(plcRes.Station3.ToString(), val); break;
+                        case "Station4": plc.Write(plcRes.Station4.ToString(), val); break;
+                        case "Station5": plc.Write(plcRes.Station5.ToString(), val); break;
+                        case "Station6": plc.Write(plcRes.Station6.ToString(), val); break;
+                        case "Station7": plc.Write(plcRes.Station7.ToString(), val); break;
+                        case "Station8": plc.Write(plcRes.Station8.ToString(), val); break;
+                        case "Station9": plc.Write(plcRes.Station9.ToString(), val); break;
+                        case "Station10": plc.Write(plcRes.Station10.ToString(), val); break;
+                        case "Station11": plc.Write(plcRes.Station11.ToString(), val); break;
+                        case "Station12": plc.Write(plcRes.Station12.ToString(), val); break;
+                        case "Station13": plc.Write(plcRes.Station13.ToString(), val); break;
+                        case "Station14": plc.Write(plcRes.Station14.ToString(), val); break;
+                        case "Station15": plc.Write(plcRes.Station15.ToString(), val); break;
+                        case "Station16": plc.Write(plcRes.Station16.ToString(), val); break;
+                        case "Station17": plc.Write(plcRes.Station17.ToString(), val); break;
+                        case "Station18": plc.Write(plcRes.Station18.ToString(), val); break;
+                        case "Station19": plc.Write(plcRes.Station19.ToString(), val); break;
+                        case "Station20": plc.Write(plcRes.Station20.ToString(), val); break;
+                        case "Station21": plc.Write(plcRes.Station21.ToString(), val); break;
+                        case "Station22": plc.Write(plcRes.Station22.ToString(), val); break;
+                        case "Station23": plc.Write(plcRes.Station23.ToString(), val); break;
+                        case "Station24": plc.Write(plcRes.Station24.ToString(), val); break;
+                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break;
+                        case "Station26": plc.Write(plcRes.Station26.ToString(), val); break;
+                        case "Station27": plc.Write(plcRes.Station27.ToString(), val); break;
+                        case "Station28": plc.Write(plcRes.Station28.ToString(), val); break;
+                        case "Station29": plc.Write(plcRes.Station29.ToString(), val); break;
+                        case "Station30": plc.Write(plcRes.Station30.ToString(), val); break;
+                        case "Station31": plc.Write(plcRes.Station31.ToString(), val); break;
+                        case "Station32": plc.Write(plcRes.Station32.ToString(), val); break;
+                        case "Station33": plc.Write(plcRes.Station33.ToString(), val); break;
+                        case "Station34": plc.Write(plcRes.Station34.ToString(), val); break;
+                        case "Station35": plc.Write(plcRes.Station35.ToString(), val); break;
+                        case "Station36": plc.Write(plcRes.Station36.ToString(), val); break;
                         default: break;
                     }
                 }

@@ -33,8 +33,8 @@
          
 
         $(document).ready(function () {  
-            callStationInfo()
             getAllPlcTagList()
+            callStationInfo()
             getDcToolIp()
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`)
             $('input').attr('autocomplete', 'off');
@@ -190,24 +190,24 @@
             })
         }
         
-        
+
         //function for tool status function for info
         const ToolStatus = _ => {
             $.ajax({
                 type: "POST",
-                url: "station1.aspx/ToolStatus",
+                url: "station2.aspx/ToolStatus",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => { 
-                    if (!res.d.includes("False")) { 
-                        $("#dctoolimage").css({ opacity: .3 })
-                        $("#startTorque").addClass("start")
-                    } else { 
+                success: (res) => {
+                    if (res.d.toLowerCase().includes("false")) {
                         $("#dctoolimage").css({ opacity: 0 })
                         $("#startTorque").removeClass("start")
+                    } else {
+                        $("#dctoolimage").css({ opacity: .3 })
+                        $("#startTorque").addClass("start")
                     }
                 },
                 Error: function (x, e) {
@@ -215,6 +215,7 @@
                 }
             })
         }
+
         
         //function for call station function for info
         const callStationInfo = _ => {
@@ -333,7 +334,7 @@
             $.ajax({
                 type: "POST",
                 url: "station1.aspx/BuildTicketExecuteTask",
-                data: `{id : '${id}',val:'${value}',seat_data_id : '${seat_data_id}', model_variant : '${model_details.ModelVariant}'}`,
+                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -435,6 +436,7 @@
 
                         plcStation = newMes[op]
 
+                        console.log(newMes)
                     }
                 },
                 Error: function (x, e) {
@@ -467,7 +469,7 @@
             $.ajax({
                 type: "POST",
                 url: "station1.aspx/ReadBitExecuteTask",
-                data: `{id : '${id}', station: '${station.replace('-','')}'}`,
+                data: `{id : '${id}', plcStation: '${plcStation}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",

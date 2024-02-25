@@ -423,6 +423,29 @@ namespace WebApplication2.monitor
         }
         
         [WebMethod]
+        public static string HANDLE_CHANGE_ANDON_SCREEN(string value)
+        {
+            try
+            {
+                using(TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.VarTables.Where(i => i.VarName == "CurrentAndonScreen").FirstOrDefault();
+                    if(res != null)
+                    {
+                        res.VarValue = value;
+                        db.SaveChanges();
+                        return "Done";
+                    }
+                }
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ex.Message;
+            }
+            return "Something went wrong";
+        }
+        
+        [WebMethod]
         public static string UPDATE_IPADDRESS(string key, string value)
         {
             try

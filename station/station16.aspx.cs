@@ -574,6 +574,7 @@ namespace WebApplication2.station
                                 {
                                     //insert JITLineSeatMfgReport value
                                     InsertJITLineSeatMfgReport(station, torque_seq, TA, "OK,OK", username);
+                                    DisableTool();
                                     DCserver.Close();
                                     return "Done:" + TA;
                                 }
@@ -593,6 +594,7 @@ namespace WebApplication2.station
                                         InsertJITLineSeatMfgReport(station, torque_seq, TA, "NG,NG", username);
                                     }
 
+                                    DisableTool();
                                     DCserver.Close();
                                     return "Error:" + TA;
                                 }
@@ -607,6 +609,7 @@ namespace WebApplication2.station
             catch (Exception ex)
             {
                 StartTightening = false;
+                DisableTool();
                 DCserver.Close();
                 return ex.Message;
             }

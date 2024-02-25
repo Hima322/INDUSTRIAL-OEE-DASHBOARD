@@ -341,6 +341,7 @@ namespace WebApplication2.station
                         if (res.StationNo == station)
                         {
                             plcReadTAg = ReadTagNameInPlc(plcStation);
+                            WriteTagValueInPlc(plcStation, "ScanBit");
                             return res.ID.ToString();
 
                         }
@@ -381,7 +382,7 @@ namespace WebApplication2.station
                     //update next row status to running  
                     if (Update == true)
                     {
-                        if (IsRunningTask(res.StationNameID, model_variant) == true)
+                        if (IsRunningTask(res.StationNameID, model_variant))
                         {
                             var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
                             if (nextRow != null)
@@ -429,7 +430,7 @@ namespace WebApplication2.station
                         var seatDataRes = dbEntities.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
                         if (seatDataRes != null)
                         {
-                            if (PrintFinelQrCode(seq, seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType, seatDataRes.FG_PartNumber) == "Done")
+                            if (PrintFinelQrCode(val, seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType) == "Done")
                             {
                                 seatDataRes.FinalBarcodeData = val + DateTime.Now.ToString("MMddyyyyHHmm");
                                 seatDataRes.FinalPrintDateTime = DateTime.Now;
@@ -476,12 +477,11 @@ namespace WebApplication2.station
         }
 
 
-
         [WebMethod]
-        public static string PrintFinelQrCode(string seq, string model, string variant, string seat, string fgpart)
+        public static string PrintFinelQrCode(string val, string model, string variant, string seat)
         {
-            // ZPL command 
-            string ZPLString = "\u0010CT~~CD,~CC^~CT~\r\n^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI0^XZ\r\n^XA\r\n^MMT\r\n^PW531\r\n^LL0177\r\n^LS0\r\n^FT215,39^A0N,25,24^FH\\^FD" + fgpart + "-" + seq + "^FS\r\n^FT31,182^BQN,2,7\r\n^FH\\^FDLA," + fgpart + "-" + seq + "^FS\r\n^FT215,87^A0N,25,24^FH\\^FD" + variant + "^FS\r\n^FT407,88^A0N,25,24^FH\\^FD" + seat + "^FS\r\n^FT243,136^A0N,25,24^FH\\^FD" + model + "^FS\r\n^FT365,135^A0N,31,21^FH\\^FD" + DateTime.Now.ToShortDateString() + "^FS\r\n^PQ1,0,1,Y^XZ";
+            // ZPL command  
+            string ZPLString = "\u0010CT~~CD,~CC^~CT~\r\n^XA\r\n~TA000\r\n~JSN\r\n^LT0\r\n^MNW\r\n^MTT\r\n^PON\r\n^PMN\r\n^LH0,0\r\n^JMA\r\n^PR6,6\r\n~SD15\r\n^JUS\r\n^LRN\r\n^CI27\r\n^PA0,1,1,0\r\n^XZ\r\n^XA\r\n^MMT\r\n^PW1181\r\n^LL295\r\n^LS0\r\n^FT316,78^A0N,40,48^FH\\^CI28^FD" + model + "^FS^CI27\r\n^FT616,80^A0N,42,43^FH\\^CI28^FD" + DateTime.Now.ToString("dd-MM-yyyy HH:mm") + "^FS^CI27\r\n^FT321,158^A0N,42,43^FH\\^CI28^FD" + variant + "^FS^CI27\r\n^FT316,238^A0N,40,41^FH\\^CI28^FD" + val + DateTime.Now.ToString("ddMMyyyyHHmm") + "^FS^CI27\r\n^FT772,158^A0N,42,43^FH\\^CI28^FD" + seat + "^FS^CI27\r\n^FT593,158^A0N,42,43^FH\\^CI28^FD4W^FS^CI27\r\n^FT53,267^BQN,2,9\r\n^FH\\^FDLA,"+val + DateTime.Now.ToString("ddMMyyyyHHmm")+"^FS\r\n^PQ1,0,1,Y\r\n^XZ\r\n";
 
             // check after the ping is n success
             while (ISPRINTERCONNECTED() == "Success")
@@ -538,7 +538,7 @@ namespace WebApplication2.station
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
-                    var nextRow1 = db.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + station + "' and " + ModelVar + " = '1' and TaskStatus = 'Running' or TaskStatus = 'Error'").FirstOrDefault();
+                    var nextRow1 = db.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + station + "' and " + ModelVar + " = '1' and (TaskStatus = 'Running' or TaskStatus = 'Error')").FirstOrDefault();
                     if (nextRow1 == null)
                     { return true; }
                     else { return false; }
@@ -579,7 +579,7 @@ namespace WebApplication2.station
                     {
                         if (IS_PLC_CONNECTED())
                         {
-                            WriteTagValueInPlc(plc_station);
+                            WriteTagValueInPlc(plc_station, "WriteBit");
                             res.TaskCurrentValue = "1";
                             res.TaskStatus = "Done";
 
@@ -605,7 +605,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string ReadBitExecuteTask(int id)
+        public static string ReadBitExecuteTask(int id, string plcStation)
         {
             try
             {
@@ -619,6 +619,8 @@ namespace WebApplication2.station
                         {
                             if ((bool)plc.Read(plcReadTAg))
                             {
+                                WriteTagValueInPlc(plcStation, "WriteBit", false);
+                                WriteTagValueInPlc(plcStation, "ScanBit", false);
                                 taskRes.TaskCurrentValue = "1";
                                 taskRes.TaskStatus = "Done";
                                 dbEntities.SaveChanges();
@@ -773,56 +775,56 @@ namespace WebApplication2.station
                 CurrentError = ex.Message;
             }
         }
-         
-        public static void WriteTagValueInPlc(string station)
+
+        public static void WriteTagValueInPlc(string station, string tag, bool val = true)
         {
 
             using (TMdbEntities db = new TMdbEntities())
             {
                 //code for plc write bit enable
-                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'WriteBit'").FirstOrDefault();
+                var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '" + tag + "'").FirstOrDefault();
                 DataTable dt = new DataTable();
 
                 if (plcRes != null)
                 {
                     switch (station)
                     {
-                        case "Station1": plc.Write(plcRes.Station1.ToString(), true); break;
-                        case "Station2": plc.Write(plcRes.Station2.ToString(), true); break;
-                        case "Station3": plc.Write(plcRes.Station3.ToString(), true); break;
-                        case "Station4": plc.Write(plcRes.Station4.ToString(), true); break;
-                        case "Station5": plc.Write(plcRes.Station5.ToString(), true); break;
-                        case "Station6": plc.Write(plcRes.Station6.ToString(), true); break;
-                        case "Station7": plc.Write(plcRes.Station7.ToString(), true); break;
-                        case "Station8": plc.Write(plcRes.Station8.ToString(), true); break;
-                        case "Station9": plc.Write(plcRes.Station9.ToString(), true); break;
-                        case "Station10": plc.Write(plcRes.Station10.ToString(), true); break;
-                        case "Station11": plc.Write(plcRes.Station11.ToString(), true); break;
-                        case "Station12": plc.Write(plcRes.Station12.ToString(), true); break;
-                        case "Station13": plc.Write(plcRes.Station13.ToString(), true); break;
-                        case "Station14": plc.Write(plcRes.Station14.ToString(), true); break;
-                        case "Station15": plc.Write(plcRes.Station15.ToString(), true); break;
-                        case "Station16": plc.Write(plcRes.Station16.ToString(), true); break;
-                        case "Station17": plc.Write(plcRes.Station17.ToString(), true); break;
-                        case "Station18": plc.Write(plcRes.Station18.ToString(), true); break;
-                        case "Station19": plc.Write(plcRes.Station19.ToString(), true); break;
-                        case "Station20": plc.Write(plcRes.Station20.ToString(), true); break;
-                        case "Station21": plc.Write(plcRes.Station21.ToString(), true); break;
-                        case "Station22": plc.Write(plcRes.Station22.ToString(), true); break;
-                        case "Station23": plc.Write(plcRes.Station23.ToString(), true); break;
-                        case "Station24": plc.Write(plcRes.Station24.ToString(), true); break;
-                        case "Station25": plc.Write(plcRes.Station25.ToString(), true); break;
-                        case "Station26": plc.Write(plcRes.Station26.ToString(), true); break;
-                        case "Station27": plc.Write(plcRes.Station27.ToString(), true); break;
-                        case "Station28": plc.Write(plcRes.Station28.ToString(), true); break;
-                        case "Station29": plc.Write(plcRes.Station29.ToString(), true); break;
-                        case "Station30": plc.Write(plcRes.Station30.ToString(), true); break;
-                        case "Station31": plc.Write(plcRes.Station31.ToString(), true); break;
-                        case "Station32": plc.Write(plcRes.Station32.ToString(), true); break;
-                        case "Station33": plc.Write(plcRes.Station33.ToString(), true); break;
-                        case "Station34": plc.Write(plcRes.Station34.ToString(), true); break;
-                        case "Station35": plc.Write(plcRes.Station35.ToString(), true); break;
-                        case "Station36": plc.Write(plcRes.Station36.ToString(), true); break;
+                        case "Station1": plc.Write(plcRes.Station1.ToString(), val); break;
+                        case "Station2": plc.Write(plcRes.Station2.ToString(), val); break;
+                        case "Station3": plc.Write(plcRes.Station3.ToString(), val); break;
+                        case "Station4": plc.Write(plcRes.Station4.ToString(), val); break;
+                        case "Station5": plc.Write(plcRes.Station5.ToString(), val); break;
+                        case "Station6": plc.Write(plcRes.Station6.ToString(), val); break;
+                        case "Station7": plc.Write(plcRes.Station7.ToString(), val); break;
+                        case "Station8": plc.Write(plcRes.Station8.ToString(), val); break;
+                        case "Station9": plc.Write(plcRes.Station9.ToString(), val); break;
+                        case "Station10": plc.Write(plcRes.Station10.ToString(), val); break;
+                        case "Station11": plc.Write(plcRes.Station11.ToString(), val); break;
+                        case "Station12": plc.Write(plcRes.Station12.ToString(), val); break;
+                        case "Station13": plc.Write(plcRes.Station13.ToString(), val); break;
+                        case "Station14": plc.Write(plcRes.Station14.ToString(), val); break;
+                        case "Station15": plc.Write(plcRes.Station15.ToString(), val); break;
+                        case "Station16": plc.Write(plcRes.Station16.ToString(), val); break;
+                        case "Station17": plc.Write(plcRes.Station17.ToString(), val); break;
+                        case "Station18": plc.Write(plcRes.Station18.ToString(), val); break;
+                        case "Station19": plc.Write(plcRes.Station19.ToString(), val); break;
+                        case "Station20": plc.Write(plcRes.Station20.ToString(), val); break;
+                        case "Station21": plc.Write(plcRes.Station21.ToString(), val); break;
+                        case "Station22": plc.Write(plcRes.Station22.ToString(), val); break;
+                        case "Station23": plc.Write(plcRes.Station23.ToString(), val); break;
+                        case "Station24": plc.Write(plcRes.Station24.ToString(), val); break;
+                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break;
+                        case "Station26": plc.Write(plcRes.Station26.ToString(), val); break;
+                        case "Station27": plc.Write(plcRes.Station27.ToString(), val); break;
+                        case "Station28": plc.Write(plcRes.Station28.ToString(), val); break;
+                        case "Station29": plc.Write(plcRes.Station29.ToString(), val); break;
+                        case "Station30": plc.Write(plcRes.Station30.ToString(), val); break;
+                        case "Station31": plc.Write(plcRes.Station31.ToString(), val); break;
+                        case "Station32": plc.Write(plcRes.Station32.ToString(), val); break;
+                        case "Station33": plc.Write(plcRes.Station33.ToString(), val); break;
+                        case "Station34": plc.Write(plcRes.Station34.ToString(), val); break;
+                        case "Station35": plc.Write(plcRes.Station35.ToString(), val); break;
+                        case "Station36": plc.Write(plcRes.Station36.ToString(), val); break;
                         default: break;
                     }
                 }

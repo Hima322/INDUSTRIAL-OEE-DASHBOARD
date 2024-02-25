@@ -80,6 +80,10 @@
                                 if (res.d == "Rejected") {
                                     return toast("Seat rejected.") && $("#build_ticket").val("")
                                 }
+                                if (res.d == "plcDiconnected") {
+                                    return toast("Plc not connected.") && $("#build_ticket").val("")
+                                }
+
                                 seat_data_id = res.d
                                 isValidBuildTicket = true 
 
@@ -388,7 +392,7 @@
             $.ajax({
                 type: "POST",
                 url: "station12.aspx/ReadBitExecuteTask",
-                data: `{id : '${id}'}`,
+                data: `{id : '${id}', plcStation: '${plcStation}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",

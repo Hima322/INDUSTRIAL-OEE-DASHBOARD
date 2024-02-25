@@ -33,7 +33,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="DelayType" Type="varchar" MaxLength="50" />
           <Property Name="DelayTime" Type="datetime" />
           <Property Name="DelaySecond" Type="int" />
@@ -381,7 +381,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="DelayType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DelayTime" Type="DateTime" Precision="3" />
           <Property Name="DelaySecond" Type="Int32" />

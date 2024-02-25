@@ -32,7 +32,9 @@
 
         $(document).ready(function () {
             callStationInfo()
-            getAllPlcTagList() 
+            getAllPlcTagList()
+            isPrinterConnected()  
+            $("#odsBadge").hide()
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`) 
             $('input').attr('autocomplete', 'off');
 
@@ -71,15 +73,21 @@
                         async: "true",
                         cache: "false",
                         success: (res) => {
-                            if (res.d != 0) {
+                            if (res.d != 0) { 
                                 //matched build ticket code 
                                 if (res.d == "Rejected") {
                                     return toast("Seat rejected.") && $("#build_ticket").val("")
                                 }
+                                if (res.d == "plcDiconnected") {
+                                    return toast("Plc not connected.") && $("#build_ticket").val("")
+                                }
+
                                 seat_data_id = res.d
                                 isValidBuildTicket = true
+                                qrEntry = true
 
                             } else {
+                                toast("Invalid Build Ticket.")
                                 $("#task_list_container tr:first").css({ background: "red", color: "white" })
                                 $("#temp_build_ticket_data").text($("#build_ticket").val())
                                 $("#temp_build_ticket_data").addClass("animate__tada")
@@ -100,6 +108,10 @@
             getCurrentUser()
             isScannerConnected()
             isPlcConnected()
+            isPrinterConnected()  
+            if (model_details.Seat == "DRIVER") {
+                $("#odsBadge").show()
+            }
         }, 1000)
 
         setInterval(function () {
@@ -130,6 +142,12 @@
                         sabExecuteTask(e.ID)
                     } else if (e.TaskType == "Write bit" && e.TaskStatus == "Running" || e.TaskStatus == "Error") {
                         writeBitExecuteTask(e.ID)
+                    } else if (e.TaskType == "QrPrint" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
+                        $("#qr_scan_modal").hide()
+                        if (qrEntry) {
+                            qrEntry = false
+                            qrPrintExecuteTask(e.ID)
+                        }
                     } else if (e.TaskType == "Read bit" && e.TaskStatus == "Running" && e.TaskCurrentValue == "") {
                         readBitExecuteTask(e.ID)
                     } else if (!task_list.some(k => k.TaskCurrentValue == "") && task_list.every(k => k.TaskStatus == "Done")) {
@@ -215,6 +233,7 @@
                 }
             })
         }
+
         //function for get current user 
         const getCurrentUser = () => {
             $.ajax({
@@ -356,7 +375,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/BeltBuckleExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', seat :'${model_details.Seat}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -395,7 +414,37 @@
                 }
             })
         }
-        
+
+        var qrEntry = false
+        //function for build ticket execute task
+        const qrPrintExecuteTask = id => {
+            if (PrinterConnected) {
+                $.ajax({
+                    type: "POST",
+                    url: "station13.aspx/QRCODE_PRINT",
+                    data: `{id : '${id}', val:'${build_ticket}', model_variant : '${model_details.ModelVariant}', seat_data_id : '${seat_data_id}', feature : '${model_details.Features}'}`,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: "true",
+                    cache: "false",
+                    success: (res) => { 
+                        if (res.d == "Done") {
+
+                        } else {
+                            toast(res.d)
+                            setTimeout(_ => { qrEntry = true }, 5000)
+                        }
+                    },
+                    Error: function (x, e) {
+                        console.log(e);
+                    }
+                })
+            } else {
+                toast("Printer not connected.")
+                setTimeout(_ => { qrEntry = true }, 5000)
+            }
+        }
+
         //function for write bit task
         const writeBitExecuteTask = (id) => {
             $.ajax({
@@ -420,7 +469,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/ReadBitExecuteTask",
-                data: `{id : '${id}'}`,
+                data: `{id : '${id}', plcStation: '${plcStation}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -454,6 +503,31 @@
                 }
             })
         } 
+
+        //function for check is printer connected
+        const isPrinterConnected = () => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/ISPRINTERCONNECTED",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d == "Success") {
+                        PrinterConnected = true
+                        $("#printer_badge").attr("class", "badge bg-success")
+                    } else {
+                        PrinterConnected = false
+                        $("#printer_badge").attr("class", "badge bg-danger")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
 
         function isPlcConnected() {
             $.ajax({
@@ -575,6 +649,7 @@
                     <span class="badge bg-danger" id="database_badge">DATABASE</span>
                     <span class="badge bg-danger" id="plc_badge">PLC</span>
                     <br /> 
+                    <span class="badge bg-danger" id="printer_badge">PRINTER</span>
                     <span class="badge bg-danger" id="scanner_badge">SCANNER</span>
                 </div>
             </div>
@@ -767,7 +842,8 @@
 
                 
              <div style="position: fixed; bottom: 0; right: 0; margin-right: 105px;margin-bottom:13px;" class="d-flex gap-2"> 
-                    <h3><span id="weightBadge" class="badge bg-danger mb-2">00.00 kg</span></h3>  
+                    <h3><span id="odsBadge" class="badge bg-danger mb-2">ODS : NOT APPLICABLE</span></h3>  
+                    <h3><span id="weightBadge" class="badge bg-secondary mb-2">00.00 kg</span></h3>  
                     <h3><span id="registanceBadge" class="mb-2 badge bg-primary">00.00 &#8486;</span></h3>  
                 </div>
 

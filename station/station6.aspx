@@ -83,6 +83,10 @@
                                 if (res.d == "Rejected") { 
                                     return toast("Seat rejected.") && $("#build_ticket").val("")
                                 }
+                                if (res.d == "plcDiconnected") {
+                                    return toast("Plc not connected.") && $("#build_ticket").val("")
+                                }
+
                                 seat_data_id = res.d
                                 isValidBuildTicket = true
 
@@ -189,25 +193,24 @@
                 }
             })
         }
-        
-        
+
         //function for tool status function for info
         const ToolStatus = _ => {
             $.ajax({
                 type: "POST",
-                url: "station6.aspx/ToolStatus",
+                url: "station2.aspx/ToolStatus",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => { 
-                    if (!res.d.includes("False")) { 
-                        $("#dctoolimage").css({ opacity: .3 })
-                        $("#startTorque").addClass("start")
-                    } else { 
+                success: (res) => {
+                    if (res.d.toLowerCase().includes("false")) {
                         $("#dctoolimage").css({ opacity: 0 })
                         $("#startTorque").removeClass("start")
+                    } else {
+                        $("#dctoolimage").css({ opacity: .3 })
+                        $("#startTorque").addClass("start")
                     }
                 },
                 Error: function (x, e) {
@@ -215,6 +218,7 @@
                 }
             })
         }
+
         
         //function for call station function for info
         const callStationInfo = _ => {
@@ -355,7 +359,7 @@
             $.ajax({
                 type: "POST",
                 url: "station6.aspx/ScanExecuteTask",
-                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}'}`,
+                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -467,7 +471,7 @@
             $.ajax({
                 type: "POST",
                 url: "station6.aspx/ReadBitExecuteTask",
-                data: `{id : '${id}', station: '${station.replace('-','')}'}`,
+                data: `{id : '${id}', plcStation: '${plcStation}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",

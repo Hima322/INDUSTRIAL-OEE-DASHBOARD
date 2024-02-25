@@ -24,6 +24,16 @@
             button.first-active:hover {
                 background: #d3d4d5;
             }
+        /* width */
+        ::-webkit-scrollbar {
+          width: 10px;
+        } 
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+          background: lightgray;
+          border-radius:10px;
+        }
     </style>
     <script>
         //handle delete btn click function 
