@@ -67,9 +67,14 @@
                                     console.log(current_id)
                                 }
                             } else {
-                                if ((Date.now() < Date.parse(new Date().toISOString().split('T')[0] + " 23:00:00 ")) && (Date.now() > startDateParse) || (Date.now() > Date.parse(new Date().toISOString().split('T')[0]) && Date.now() < endDateParse)) {
+                                if ((Date.now() < Date.parse(new Date().toISOString().split('T')[0] + " 23:59:59 ")) && (Date.now() > startDateParse) || (Date.now() > Date.parse(new Date().toISOString().split('T')[0]) && Date.now() < endDateParse)) {
                                     current_id = data[i].ID
                                     console.log(current_id + "<<<")
+                                } else {
+                                    if ((Date.now() >= startDateParse) && (Date.now() < endDateParse)) {
+                                        current_id = data[i].ID
+                                        console.log(current_id)
+                                    } 
                                 }
                             }
                         }

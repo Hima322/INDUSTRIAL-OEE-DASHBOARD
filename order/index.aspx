@@ -95,6 +95,7 @@
             var variant = $("#variant_value").val().split(",")[0]
             var seatType = $("#seatType").val()
             var quantity = $("#quantity_value").val()
+            if (quantity < 1) return toast("Invalid quantity.")
             if (!quantity) {
                 toast("Please add quantity.")
             } else { 
@@ -131,6 +132,7 @@
             let modelVariant = $("#variant_value").val().split(",")[2]
             let seatType = $("#seatType").val() 
             let quantity = $("#quantity_value").val()
+            if (quantity < 1) return toast("Invalid quantity.")
             if (!quantity) {
                 toast("Please add quantity.")
             } else {

@@ -913,6 +913,7 @@
                                <h5>Andon Current Screen</h5> 
                                 <select class="form-select" onchange="handleChangeAndonScreen(this.value)">
                                     <option value="main">Main Screen</option>
+                                    <option value="projection">Production & Rejection</option>
                                     <option value="operator_delay">Operartor Delay</option>
                                     <option value="maintenance_delay">Maintenance Delay</option>
                                     <option value="material_delay">Material Delay</option>

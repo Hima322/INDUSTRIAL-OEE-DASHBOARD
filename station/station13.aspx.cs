@@ -427,8 +427,7 @@ namespace WebApplication2.station
                 }
             }
             catch { return false; }
-        }
-
+        } 
 
         [WebMethod]
         public static string ODSExecuteTask(int id, string model_variant, long seat_data_id, string station, string username)
