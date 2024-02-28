@@ -14,7 +14,7 @@
         })
 
         setInterval(function () {
-            //getProductionRejection()
+            getProductionRejection()
         }, 1000)
 
         //function for get left seat data in database 
@@ -30,6 +30,14 @@
                 success: (res) => {
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d) 
+
+                        let prod = data.filter(f => f.STAUS == "OK").length 
+                        let reject = data.filter(f => f.STAUS == "REJECT").length 
+                        let hold = data.filter(f => f.STAUS == "HOLD").length 
+
+                        $("#total_prod").text(prod)
+                        $("#total_reject").text(reject)
+                        $("#total_hold").text(hold)
 
                         let model = [...new Set(data.map(e => e.Model))]
                         let mdlVrt = [...new Set(data.map(e => e.ModelVariant))]
@@ -50,11 +58,12 @@
                             mdlVrtArr.filter(f => f.model == e)
                         ))
 
-                        finelArr.forEach((e, i) => {
-                            $("#dataContainer").append(`
+                        $("#dataContainer").html("")
 
-                            <div class="model_name_container">
-                                <h3>${e[0].model}</h3>
+                        finelArr.forEach((e, i) => {
+                            $("#dataContainer").append(
+
+                            `<div class="model_name_container" data-text="${e[0].model}"> 
                                 <div class="rowContainer" id="${e[0].model}">  
                                 </div>
                             </div> 
@@ -62,7 +71,7 @@
 
                             e.forEach(j =>
                                 $(`#${e[0].model}`).append(`
-                                    <div class="main_row_container">
+                                    <div class="main_row_container"> 
                                         <div>${j.variant}</div>
                                         <div>${j.prod}</div>
                                         <div>${j.reject}</div>
@@ -70,43 +79,7 @@
                                     </div>    
                                 `) 
                             )
-                        }) 
-
-                        
-
-                        console.log(finelArr)
-
-
-                        //let mdlVrtProd = [...new Set(prod.map(e => e.ModelVariant))]
-                        //let mdlVrtReject = [...new Set(reject.map(e => e.ModelVariant))]
-                        //let mdlVrtHold = [...new Set(hold.map(e => e.ModelVariant))]
-
-                        //let mdlVrtProdArr = []
-                        //let mdlVrtRejectArr = []
-                        //let mdlVrtHoldArr = []
-
-                        //mdlVrtProd.forEach(e => mdlVrtProdArr.push({
-                        //    model: prod.filter(f => f.ModelVariant == e)[0].Model,
-                        //    variant: prod.filter(f => f.ModelVariant == e)[0].Variant,
-                        //    length: prod.filter(f => f.ModelVariant == e).length,
-                        //}))
-
-                        //mdlVrtReject.forEach(e => mdlVrtRejectArr.push({
-                        //    model: reject.filter(f => f.ModelVariant == e)[0].Model,
-                        //    variant: reject.filter(f => f.ModelVariant == e)[0].Variant,
-                        //    length: reject.filter(f => f.ModelVariant == e).length,
-                        //}))
-
-                        //mdlVrtHold.forEach(e => mdlVrtHoldArr.push({
-                        //    model: hold.filter(f => f.ModelVariant == e)[0].Model,
-                        //    variant: hold.filter(f => f.ModelVariant == e)[0].Variant,
-                        //    length: hold.filter(f => f.ModelVariant == e).length,
-                        //}))
-
-                        //console.log(mdlVrtProdArr)
-                        //console.log(mdlVrtRejectArr)
-                        //console.log(mdlVrtHoldArr)
-
+                        })  
                     }
                 },
                 Error: function (x, e) {
@@ -146,6 +119,7 @@
             display:flex;
             flex-direction:column;
             justify-content:space-around; 
+            margin-left:60px;
         }
 
         .data_header{
@@ -153,7 +127,8 @@
             justify-content:space-around;
             align-items:center;
             height:65px;
-            background:lightblue;
+            background:lightblue; 
+            padding-left:60px;
         }
 
         .data_header span{
@@ -171,7 +146,7 @@
         }
 
         .rowContainer div{
-            height:60px; 
+            height:70px; 
             display:flex;
             justify-content:space-around;
             align-items:center;
@@ -185,17 +160,52 @@
             font-size:50px;
             font-weight:700;  
             color:yellow;  
-            flex:1;
+            flex:1; 
         }
 
         .rowContainer div:nth-child(2){
             color:limegreen;
         }
          
+        .rowContainer div:nth-child(3){
+            color:red;
+        }
+         
         .rowContainer div:nth-child(1){
             font-size:35px;
         }
+
+        .model_name_container{ 
+            position:relative; 
+        }
+
+        .model_name_container::before{
+            content:attr(data-text);
+            position:absolute;
+            top:0;
+            left:-60px;
+            background:yellow;
+            height:100%;
+            width:70px;
+            font-size:40px;
+            font-weight:700; 
+            writing-mode:vertical-rl;
+            display:grid; 
+            place-items:center;
+        }
+          
+        .model_name_container:nth-child(even)::after{
+            content:"";
+            position:absolute;
+            width:100%; 
+            top:0;
+            left:0;
+            border-top:2px solid lightblue;
+        }
          
+        .model_name_container:nth-child(even)::before{
+            background:lightblue;
+        } 
  
     </style>
 </head>
@@ -206,9 +216,9 @@
             <%--header part--%>
             <div class="header">
                 <p id="current_date"></p>
-                <p>ACTUAL : 40</p>
-                <p>REJECT : 30</p>
-                <p>HOLD : 30</p>
+                <p>ACTUAL : <span id="total_prod">0</span></p>
+                <p>REJECT : <span id="total_reject">0</span></p>
+                <p>HOLD : <span id="total_hold">0</span></p>
             </div>
 
             <script>
@@ -220,7 +230,7 @@
 
             <div id="main_data_div"> 
                 
-                <div class="data_header">
+                <div class="data_header"> 
                     <span>Variant</span>
                     <span>Actual</span>
                     <span>Reject</span>

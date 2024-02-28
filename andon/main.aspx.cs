@@ -86,6 +86,27 @@ namespace WebApplication2.andon
         }
          
         [WebMethod]
+        public static string GET_UPCOMMING_SEAT()
+        {
+            try
+            {
+                using (TMdbEntities entity = new TMdbEntities())
+                {
+                    var res = entity.SEAT_DATA.Where(i => i.StationNo == 0).Take(6).ToList();
+                    if (res.Count > 0)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+            } catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return "Error";
+            }
+            return "Error";
+        }
+        
+        [WebMethod]
         public static string GET_TODAY_REJECTED_SEAT()
         {
             try

@@ -23,8 +23,9 @@
             getAllAndonDetails()
             handleAndon()
             getSeaftyLine()
-            //getTotalDelay()
-            getTotalBreak()
+            getUpcommingSeat()
+            getTotalDelay()
+            //getTotalBreak()
             getTodayRejectTask()
             handleCalculateOEE() 
             //getCurrentShiftRowId()
@@ -32,9 +33,9 @@
 
         setInterval(function () { 
             getCurrentShiftName()
-            getAllAndonDetails()
-            getCurrentShiftName()
+            getAllAndonDetails() 
             handleAndon()
+            getUpcommingSeat()
             getTotalDelay()
             //getTotalBreak()
             getTodayRejectTask()
@@ -193,6 +194,35 @@
             $("#oeeId").text((oee || 0.0).toFixed(2))
         }
         
+        const getUpcommingSeat = () => {
+            $.ajax({
+                type: "POST",
+                url: "main.aspx/GET_UPCOMMING_SEAT",
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+                        console.log(data)
+                        $("#upcomming_seat").html(
+                            data.map((e,i) => `
+                            <div style="color:${i == 0 ? "limegreen" : "yellow"};">
+                                 <big>${e.Variant}</big>
+                                <i>${e.SeatType == "DRIVER" ? "DRIVER-LH" : "CO-DRIVER-RH" }</i>
+                            </div>
+                            `)
+                        )
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
         const getCurrentShiftName = () => {
             $.ajax({
                 type: "POST",
@@ -260,21 +290,9 @@
                         total_production = actualA + actualB + actualC;
 
                         document.getElementById("shift_details").innerHTML = `
-                          <h1 style="color: ${current_shift.at(0) == "A" ? "limegreen" : "yellow"}">
-                                <span>Shift A <div class="${current_shift.at(0) == "A" ? "high_lighter" : ""}" ></div> 
-                                </span>  
-                                <span>Prod. ${actualA}/${targetA}</span>  
-                            </h1>
-                          <h1 style="color: ${current_shift.at(0) == "B" ? "limegreen" : "yellow"}">
-                                <span>Shift B <div class="${current_shift.at(0) == "B" ? "high_lighter" : ""}" ></div> 
-                                </span>
-                                <span>Prod. ${actualB}/${targetB}</span>  
-                            </h1>
-                          <h1 style="color: ${current_shift.at(0) == "C" ? "limegreen" : "yellow"}">
-                                <span>Shift C <div class="${current_shift.at(0) == "C" ? "high_lighter" : ""}" ></div> 
-                                </span>   
-                                <span>Prod. ${actualC}/${targetC}</span>  
-                            </h1>  
+                              <div><span>SHIFT-A </span><i>${actualA}/${targetA}</i><section class="${current_shift.at(0) == "A" ? "high_lighter" : ""}" ></section></div>
+                              <div><span>SHIFT-B </span><i>${actualB}/${targetB}</i><section class="${current_shift.at(0) == "B" ? "high_lighter" : ""}" ></section></div>
+                              <div><span>SHIFT-C </span><i>${actualC}/${targetC}</i><section class="${current_shift.at(0) == "C" ? "high_lighter" : ""}" ></section></div>  
                           `
                     }
                 },
@@ -405,23 +423,25 @@
             align-items: center;
             flex-direction: column;
             color: yellow;
-            width: 350px;
+            width: 450px;
+            margin-top:10px;
         }
 
-            .main_data_div #shift_details h1 {
+            .main_data_div #shift_details div {
                 width: 100%;
                 height: 100%;
                 display: flex;
                 justify-content: center;
-                align-items: center;
-                flex-direction: column;
+                align-items: center; 
                 gap: 10px;
+                font-size:38px;  
             }
 
-                .main_data_div #shift_details h1 span {
+                .main_data_div #shift_details div span {
                     display: flex;
                     align-items: center;
                     gap: 10px;
+                    font-weight:650;
                 }
 
 
@@ -447,6 +467,17 @@
                 transform: scale(.9);
             }
         }
+
+        #upcomming_seat div{
+            color:yellow;
+            font-size:30px;
+            text-align:center;  
+        }
+        
+        #upcomming_seat div big{ 
+            font-weight:700;
+        }
+
     </style>
 </head>
 <body>
@@ -489,8 +520,12 @@
             </table>
 
             <%--previous shift data--%>
-            <div id="shift_details"></div>
-
+            <div style="display:flex;justify-content:space-between;flex-direction:column;margin-bottom:15px;"> 
+                <div id="shift_details"></div>
+                &nbsp;
+                <div style="background:yellow;font-size:30px;font-weight:700;text-align:center;padding:5px;">UPCOMMING VARIANTS</div>
+                <div id="upcomming_seat"></div> 
+            </div>
 
 
         </div>
