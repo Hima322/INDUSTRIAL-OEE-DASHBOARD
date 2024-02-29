@@ -41,6 +41,8 @@
             $("#qr_scan_modal").hide()
             $("#dctool_badge").hide()
             $("#showDctoolIndicate").hide()
+
+            if (station) { getJobCount() }
              
                 if (station != "Station-9") {
                     location.href = "index.aspx"
@@ -198,7 +200,7 @@
         const ToolStatus = _ => {
             $.ajax({
                 type: "POST",
-                url: "station2.aspx/ToolStatus",
+                url: "station9.aspx/ToolStatus",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -260,6 +262,24 @@
                         $("#database_badge").attr("class", "badge bg-success")
                     }
 
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        const getJobCount = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station9.aspx/GET_JOB_COUNT",
+                data: `{station : '${station.split("-")[1]}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    $("#LblJobCount").text(res.d)
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -789,11 +809,17 @@
                 <div>
                     <table class="table table-border text-center mb-0">
                         <tr>
+                            <th class="table-dark">JOB COUNT</th>
+                            <th class="table-secondary">
+                                <h5 id="LblJobCount"></h5>
+                            </th>
+                        </tr>
+                        <%--<tr>
                             <th class="table-dark">VIN NO</th>
                             <th class="table-secondary">
                                 <h5 id="LblVinNumber"></h5>
                             </th>
-                        </tr>
+                        </tr>--%>
                         <tr>
                             <th class="table-dark">SEQ NO</th>
                             <th class="table-secondary">
@@ -880,7 +906,7 @@
                                 $.ajax({
                                     type: "POST",
                                     url: "station9.aspx/UserLogin",
-                                    data: `{ Userid: '${user_login_id}',Station: '${station.split("-")[1]}'}`,
+                                    data: `{ Userid: '${user_login_id}',Station: '${plcStation.replace("Station", "") }'}`,
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
                                     async: "true",
@@ -907,7 +933,7 @@
                             $.ajax({
                                 type: "POST",
                                 url: "station9.aspx/UserLogout",
-                                data: `{ Userid: '${user_details.UserID}',Station: '${station.split("-")[1]}'}`,
+                                data: `{ Userid: '${user_details.UserID}',Station: '${plcStation.replace("Station", "") }'}`,
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",
                                 async: "true",

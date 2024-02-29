@@ -221,7 +221,28 @@ namespace WebApplication2.station
             }
             return station_name;
         }
-
+        
+        [WebMethod]
+        public static int GET_JOB_COUNT(int station)
+        {
+            try
+            {
+                using (TMdbEntities mdbEntities = new TMdbEntities())
+                {
+                     var res = mdbEntities.SEAT_DATA.Where(i => i.StationNo > station && i.BuildNoDatetime > DateTime.Today).ToList();
+                    if(res.Count > 0)
+                    {
+                       return res.Count;
+                    }
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+            return 0;
+        }
+        
         [WebMethod]
         public static string UserLogin(string Userid = "", string Station = "")
         {

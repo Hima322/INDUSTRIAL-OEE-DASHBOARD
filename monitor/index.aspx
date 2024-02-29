@@ -14,6 +14,9 @@
     <script>
 
         var pwd = ""
+        var delayArrayVAlue = [] 
+        var today = new Date()
+
         const Toast = Swal.mixin({
             toast: true,
             position: "bottom-end",
@@ -36,21 +39,77 @@
             getStationAssignments()
             getStationName()
             getPlcTagName()
+            getModelName()
             createColumnName()
             getDctoolList()
             getShiftSetting()
             getAndonTimingTarget()
             $("#currentYear").text(new Date().getFullYear())
+            $("#graphDateInput").val(today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2))
             getProductionYearBase($("#yearPicker").val())
             $("#loading").hide()  
-            //this function to show year inside line graph
-            $("#yearPicker").prepend(new Array(new Date().getFullYear() - 2024).fill().map((_,i) => `<option>${2024+i}</option>`))
 
+            //this function to show year inside line graph
+            $("#yearPicker").prepend(new Array(new Date().getFullYear() - 2024).fill().map((_, i) => `<option>${2024 + i}</option>`))
+            getDelayRecords()
+             
             <%--pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
                 pwd = prompt("Please enter password to access this page : ") 
             toast("Success.")--%>
         }) 
+
+        setInterval(function () {
+            getDelayRecords() 
+
+            const xArray2 = ["Maintenance Delay", "Operatror Delay", "Quality Delay", "Material Delay", "Light Delay"]; 
+            const data2 = [{
+                x: xArray2,
+                y: delayArrayVAlue,
+                type: "bar",
+                text: delayArrayVAlue.map(e => e.split(".")[0] + " Min " + e.split(".")[1] + " Sec" ),
+                textposition: 'auto',
+                hoverinfo: 'none',
+                orientation: "v", marker: {
+                    color: 'lightgray',
+                    opacity: 0.8,
+                    line: {
+                        color: 'gray',
+                        width: 1.5
+                    }
+                }
+            }]; 
+            const layout2 = {
+                title: `Delay records of ${$("#graphDateInput").val() }.`, 
+                yaxis: {
+                    title: 'Time'
+                },
+            }; 
+            Plotly.newPlot("myPlot2", data2, layout2); 
+             
+            const xArray1 = ["MID MT", "PRIMIUM MT", "UPPER MT", "MIT CVT", "E2", "CL"];
+            const yArray1 = [55, 49, 44, 24, 85, 33]; 
+            const layout1 = { title: `Production structure of ${$("#modelGraphContainer").val() }` }; 
+            const data1 = [{ labels: xArray1, values: yArray1, type: "pie" }]; 
+            Plotly.newPlot("myPlot1", data1, layout1);
+
+             
+            const xArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const yArray = [743, 834, 938, 839, 739, 909, 930, 821, 734, 943, 658, 843];  
+            const data = [{
+                x: xArray,
+                y: yArray,
+                mode: "lines",
+                type: "scatter"
+            }]; 
+            const layout = {
+                xaxis: { title: "Time in month" },
+                yaxis: { title: "Seat production" },
+                title: `Seat Production Year ${$("#yearPicker").val()}`
+            }; 
+            Plotly.newPlot("myPlot", data, layout); 
+        }, 500)
+
 
         function getStationAssignments() {
             $.ajax({
@@ -194,9 +253,7 @@
                 cache: "false",
                 success: (res) => {
                     if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-
-                        console.log(data)
+                        let data = JSON.parse(res.d) 
 
                         let WriteBit = data[0]
                         let ReadBit = data[1]
@@ -305,6 +362,70 @@
             })
         } 
 
+        function getDelayRecords() {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_DELAY_RECORDS",
+                data: `{date:'${$("#graphDateInput").val()}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    console.log(res.d)
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+
+                        let main_delay = data.filter(f => f.DelayType == "MaintenanceDelay").map(m => m.DelaySecond)
+                        main_delay = main_delay.length > 1 ? main_delay.reduce((a, i) => a + i) : main_delay[0] || 0
+
+                        let opt_delay = data.filter(f => f.DelayType == "OperatorDelay").map(m => m.DelaySecond)
+                        opt_delay = opt_delay.length > 1 ? opt_delay.reduce((a, i) => a + i) : opt_delay[0] || 0
+
+                        let qlt_delay = data.filter(f => f.DelayType == "QualityDelay").map(m => m.DelaySecond)
+                        qlt_delay = qlt_delay.length > 1 ? qlt_delay.reduce((a, i) => a + i) : qlt_delay[0] || 0
+
+                        let mate_delay = data.filter(f => f.DelayType == "MaterialDelay").map(m => m.DelaySecond)
+                        mate_delay = mate_delay.length > 1 ? mate_delay.reduce((a, i) => a + i) : mate_delay[0] || 0
+
+                        let light_delay = data.filter(f => f.DelayType == "LightDelay").map(m => m.DelaySecond)
+                        light_delay = light_delay.length > 1 ? light_delay.reduce((a, i) => a + i) : light_delay[0] || 0
+
+                        delayArrayVAlue = [(main_delay / 60).toFixed(2), (opt_delay / 60).toFixed(2), (qlt_delay / 60).toFixed(2), (mate_delay / 60).toFixed(2), (light_delay / 60).toFixed(2)] 
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        } 
+        
+        function getModelName() {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_MODEL_NAME",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d).map(e => e.ModelName)
+
+                        data.map(e => 
+                        $("#modelGraphContainer").append(
+                            `<option>${e}</option>`
+                            )
+                        )
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        } 
+        
         function readPlcTag(tag) {
             $.ajax({
                 type: "POST",
@@ -719,7 +840,7 @@
                 <div class="tab-content mt-3">
 
                     <%--all controll button group--%>
-                    <ul class="nav nav-pills" id="myTab" role="tablist">
+                    <ul class="nav nav-pills d-flex justify-content-center" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active border" id="monitor-tab" data-bs-toggle="tab" data-bs-target="#monitor" type="button" role="tab" aria-controls="station" aria-selected="true">MONITOR CONTROL</button>
                         </li>
@@ -749,11 +870,15 @@
                     <%--monitor control code--%>
                     <div class="mt-3 tab-pane fade show active" id="monitor">
                         <%--this graph to represent delays like maintinace operator etc--%>
+                        <input type="date" class="form-control m-3" style="width:200px;" id="graphDateInput" />
+
                         <div id="myPlot2" class="mx-3" style="width: calc(100% - 40px);"></div>
 
                         <%--this date for graphs--%> 
                         <div class="d-flex justify-content-between mx-3 gap-3 mt-3"> 
-                            <button>Year</button>
+                            <select id="modelGraphContainer" class="form-select" style="width:200px;" >
+                                <%-- data will fetch from ajax --%> 
+                            </select>
                             <select class="form-select" id="yearPicker" style="width:200px;" onchange="getProductionYearBase(this.value)"> 
                                 <option selected="selected" id="currentYear"></option>
                             </select>
@@ -764,63 +889,7 @@
                             <div id="myPlot1" style="width: 50%;"></div>
                             <div id="myPlot" style="width: 50%;"></div> 
                         </div>
-
-                        <%--script for graph--%> 
-                        <script> 
-
-                            //for 1  delay graph
-                            const xArray2 = ["Maintenance Delay", "Operatror Delay", "Quality Delay", "Material Delay", "Light Delay"];
-                            const yArray2 = [55, 49, 44, 24, 15];
-
-                            const data2 = [{
-                                x: xArray2,
-                                y: yArray2,
-                                type: "bar",
-                                orientation: "v",
-                                marker: { color: "#0d6efd" }
-                            }];
-
-                            const layout2 = { title: "Today current delay records." };
-
-                            Plotly.newPlot("myPlot2", data2, layout2);
-
-
-
-                        //for 2
-                        const xArray1 = ["MID MT", "PRIMIUM MT", "UPPER MT", "MIT CVT", "E2", "CL"];
-                        const yArray1 = [55, 49, 44, 24, 85,33];
-
-                        const layout1 = { title: "Variant wise production structure" };
-
-                        const data1 = [{ labels: xArray1, values: yArray1, type: "pie" }];
-
-                        Plotly.newPlot("myPlot1", data1, layout1);
-
-
-                            //for 3
-                            const xArray = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                            const yArray = [743, 834, 938, 839, 739, 909, 930, 821, 734, 943, 658, 843];
-
-                            // Define Data
-                            const data = [{
-                                x: xArray,
-                                y: yArray,
-                                mode: "lines",
-                                type: "scatter"
-                            }];
-
-                            // Define Layout
-                            const layout = {
-                                xaxis: { title: "Time in month" },
-                                yaxis: { title: "Seat production" },
-                                title: "Seat Production Year Basis"
-                            };
-
-                            // Display using Plotly
-                            Plotly.newPlot("myPlot", data, layout);
-
-
-                        </script>
+                         
                     </div> 
                      
 

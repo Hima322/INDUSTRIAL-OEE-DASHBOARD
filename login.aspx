@@ -75,7 +75,13 @@
                     </div>
                     <br />
 
-                    <button type="button" class="btn btn-primary d-block m-auto" onclick="AdminLogin()">Login</button>
+                    <button type="button" class="btn btn-primary d-block m-auto" onclick="AdminLogin()">Login</button> <br />
+
+                    <p style="text-align:center;">
+                        <a href="/station/index.aspx">Station</a> &nbsp; • &nbsp;
+                        <a href="user/entry.aspx">User Entry</a> &nbsp; • &nbsp;
+                        <a href="station/print.aspx">Print QR</a> 
+                    </p>
 
                 </div>
             </div>

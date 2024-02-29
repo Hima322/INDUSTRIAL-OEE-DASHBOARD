@@ -198,7 +198,7 @@
         const ToolStatus = _ => {
             $.ajax({
                 type: "POST",
-                url: "station2.aspx/ToolStatus",
+                url: "station15.aspx/ToolStatus",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -881,7 +881,7 @@
                                 $.ajax({
                                     type: "POST",
                                     url: "station15.aspx/UserLogin",
-                                    data: `{ Userid: '${user_login_id}',Station: '${station.split("-")[1]}'}`,
+                                    data: `{ Userid: '${user_login_id}',Station: '${plcStation.replace("Station", "") }'}`,
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
                                     async: "true",
@@ -908,7 +908,7 @@
                             $.ajax({
                                 type: "POST",
                                 url: "station15.aspx/UserLogout",
-                                data: `{ Userid: '${user_details.UserID}',Station: '${station.split("-")[1]}'}`,
+                                data: `{ Userid: '${user_details.UserID}',Station: '${plcStation.replace("Station", "") }'}`,
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",
                                 async: "true",

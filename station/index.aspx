@@ -200,9 +200,7 @@
                                 <button class="btn btn-primary" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Built Ticket Station </button>
                             <%  } else if (i == 16) {  %>
                                 <button class="btn btn-danger" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Rework Station </button>
-                            <% } else if( i == 14) {  %>
-                                <button class="btn btn-primary" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Finel Build Ticket </button>
-                            <% } else { %>
+                            <% }  else { %>
                                 <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()">MES OP<%=i %></button>
                             <% } %>
                             <% } %>

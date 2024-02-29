@@ -176,7 +176,8 @@
         }
 
         .model_name_container{ 
-            position:relative; 
+            position:relative;  
+            min-height:100px;
         }
 
         .model_name_container::before{
@@ -199,7 +200,7 @@
             position:absolute;
             width:100%; 
             top:0;
-            left:0;
+            left:0; 
             border-top:2px solid lightblue;
         }
          

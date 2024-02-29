@@ -23,7 +23,6 @@ namespace WebApplication2.station
     {
         public static int station_number = 0;
         public static int sequence_number = 0;
-        public static long seatDataId = 0;
         public static string CurrentError = "";
         public static string station_name = "";
         public static string station_id = "";
@@ -161,6 +160,10 @@ namespace WebApplication2.station
                         if (torqueIpRes != null)
                         {
                             CurrentDcToolIp = torqueIpRes.TorqueToolIPAddress;
+                            if (IS_DCTOOL_CONNECTED())
+                            {
+                                DisableTool();
+                            }
                             return torqueIpRes.TorqueToolIPAddress;
                         }
                     }
@@ -217,6 +220,27 @@ namespace WebApplication2.station
                 CurrentError = ex.Message;
             }
             return station_name;
+        }
+
+        [WebMethod]
+        public static int GET_JOB_COUNT(int station)
+        {
+            try
+            {
+                using (TMdbEntities mdbEntities = new TMdbEntities())
+                {
+                    var res = mdbEntities.SEAT_DATA.Where(i => i.StationNo > station && i.BuildNoDatetime > DateTime.Today).ToList();
+                    if (res.Count > 0)
+                    {
+                        return res.Count;
+                    }
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+            return 0;
         }
 
         [WebMethod]
@@ -383,9 +407,16 @@ namespace WebApplication2.station
                         }
                         if (res.StationNo == station)
                         {
-                            plcReadTAg = ReadTagNameInPlc(plcStation);
-                            WriteTagValueInPlc(plcStation, "ScanBit");
-                            return res.ID.ToString();
+                            if (IS_PLC_CONNECTED())
+                            {
+                                plcReadTAg = ReadTagNameInPlc(plcStation);
+                                WriteTagValueInPlc(plcStation, "ScanBit");
+                                return res.ID.ToString();
+                            }
+                            else
+                            {
+                                return "plcDiconnected";
+                            }
 
                         }
                     }
@@ -393,7 +424,8 @@ namespace WebApplication2.station
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                Console.WriteLine(ex.Message.ToString());
+                return "0";
             }
             return "0";
         }
@@ -403,7 +435,6 @@ namespace WebApplication2.station
         [WebMethod]
         public static string BuildTicketExecuteTask(int id, string val, long seat_data_id, string model_variant)
         {
-            seatDataId = seat_data_id;
 
             try
             {
@@ -454,7 +485,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string ScanExecuteTask(int id, string fgpart, string bom, string val, string model_variant)
+        public static string ScanExecuteTask(int id, string fgpart, string bom, string val, string model_variant, long seat_data_id)
         {
             try
             {
@@ -475,7 +506,7 @@ namespace WebApplication2.station
                             res.TaskCurrentValue = val;
                             res.TaskStatus = "Done";
                             dbEntities.SaveChanges();
-                            UpdateSeatData(seatDataId, bom, val);
+                            UpdateSeatData(seat_data_id, bom, val);
 
                             var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
                             if (nextRow != null)
@@ -589,7 +620,7 @@ namespace WebApplication2.station
         {
             try
             {
-                return "Conn: " + DCserver.Connected + ", Ena: " + IsDcToolEnable.ToString() + ", Sub: " + Subscribed.ToString() + ", Tigh: " + StartTightening.ToString();
+                return "Conn: " + DCserver.Connected.ToString() + ", Ena: " + IsDcToolEnable.ToString() + ", Sub: " + Subscribed.ToString() + ", Tigh: " + StartTightening.ToString();
             }
             catch (Exception ex) { Console.Write(ex.ToString()); return "false"; }
         }
@@ -657,8 +688,6 @@ namespace WebApplication2.station
         [WebMethod]
         public static string TorqueExecuteTask(int id, string torque_seq, string model_variant, string username, long seat_data_id, string station)
         {
-            seatDataId = seat_data_id;
-
             bool isTGood = false;
             bool isAGood = false;
             bool isTAGood = false;
@@ -687,7 +716,7 @@ namespace WebApplication2.station
                                 string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                                 var t = "T" + receivedData.Substring(142, 2) + "." + receivedData.Substring(144, 2);
                                 var a = "A" + receivedData.Substring(171, 3) + ".0";
-                                var TA = t + a;
+                                var TA = t + "-" + a;
 
                                 if (receivedData.Substring(107, 1) == "1") { isTAGood = true; }
                                 if (receivedData.Substring(110, 1) == "1") { isTGood = true; }
@@ -708,7 +737,7 @@ namespace WebApplication2.station
                                             if (UpdateNextTask(station, model_variant))
                                             {
                                                 //insert JITLineSeatMfgReport value
-                                                InsertJITLineSeatMfgReport(station, torque_seq, TA, "OK,OK", username);
+                                                InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "OK,OK", username);
                                                 DisableTool();
                                                 DCserver.Close();
                                                 return "Done";
@@ -726,15 +755,15 @@ namespace WebApplication2.station
                                     //insert JITLineSeatMfgReport value
                                     if (isTGood && !isAGood)
                                     {
-                                        InsertJITLineSeatMfgReport(station, torque_seq, TA, "OK,NG", username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "OK,NG", username);
                                     }
                                     else if (!isTGood && isAGood)
                                     {
-                                        InsertJITLineSeatMfgReport(station, torque_seq, TA, "NG,OK", username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "NG,OK", username);
                                     }
                                     else
                                     {
-                                        InsertJITLineSeatMfgReport(station, torque_seq, TA, "NG,NG", username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "NG,NG", username);
                                     }
                                     DisableTool();
                                     DCserver.Close();
@@ -743,9 +772,9 @@ namespace WebApplication2.station
                             }
 
                         }
-                        else { DisableTool(); }
                     }
                 }
+                DisableTool();
                 DCserver.Close();
             }
             catch (Exception ex)
@@ -884,12 +913,11 @@ namespace WebApplication2.station
         [WebMethod]
         public static bool FinishTask(string station, long seat_data_id)
         {
-            seatDataId = seat_data_id;
             try
             {
                 using (TMdbEntities dbEntities = new TMdbEntities())
                 {
-                    var seatDataRes = dbEntities.SEAT_DATA.Where(i => i.ID == seatDataId).FirstOrDefault();
+                    var seatDataRes = dbEntities.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
                     if (seatDataRes != null)
                     {
                         seatDataRes.StationNo = Convert.ToInt32(station.Split('-')[1]) + 1;
@@ -1070,7 +1098,7 @@ namespace WebApplication2.station
             }
         }
 
-        public static void InsertJITLineSeatMfgReport(string station, string parameter_desc, string value, string status, string username)
+        public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string parameter_desc, string value, string status, string username)
         {
             try
             {
@@ -1083,7 +1111,7 @@ namespace WebApplication2.station
 
                     if (station_res != null) { station_desc = station_res.Station_Name; }
 
-                    var seat_data_res = db.SEAT_DATA.Where(i => i.ID == seatDataId).FirstOrDefault();
+                    var seat_data_res = db.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
 
                     if (seat_data_res != null)
                     {
@@ -1150,7 +1178,7 @@ namespace WebApplication2.station
                         case "Station22": plc.Write(plcRes.Station22.ToString(), val); break;
                         case "Station23": plc.Write(plcRes.Station23.ToString(), val); break;
                         case "Station24": plc.Write(plcRes.Station24.ToString(), val); break;
-                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break; 
+                        case "Station25": plc.Write(plcRes.Station25.ToString(), val); break;
                         default: break;
                     }
                 }
@@ -1194,7 +1222,7 @@ namespace WebApplication2.station
                             case "Station22": return plcRes.Station22.ToString();
                             case "Station23": return plcRes.Station23.ToString();
                             case "Station24": return plcRes.Station24.ToString();
-                            case "Station25": return plcRes.Station25.ToString(); 
+                            case "Station25": return plcRes.Station25.ToString();
                             default: return "";
                         }
                     }

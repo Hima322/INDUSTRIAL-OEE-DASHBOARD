@@ -38,6 +38,8 @@
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`) 
             $('input').attr('autocomplete', 'off');
 
+            if (station) { getJobCount() } 
+
             //checking if station is not inspection station then redirect index page 
             if (station != "Station-13") {
                 location.href = "index.aspx"
@@ -202,6 +204,24 @@
                 cache: "false",
                 success: (res) => {
                     $(".station_name").text(res.d)
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        const getJobCount = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/GET_JOB_COUNT",
+                data: `{station : '${station.split("-")[1]}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    $("#LblJobCount").text(res.d)
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -709,11 +729,17 @@
                 <div>
                     <table class="table table-border text-center mb-0">
                         <tr>
+                            <th class="table-dark">JOB COUNT</th>
+                            <th class="table-secondary">
+                                <h5 id="LblJobCount"></h5>
+                            </th>
+                        </tr>
+                        <%--<tr>
                             <th class="table-dark">VIN NO</th>
                             <th class="table-secondary">
                                 <h5 id="LblVinNumber"></h5>
                             </th>
-                        </tr>
+                        </tr>--%>
                         <tr>
                             <th class="table-dark">SEQ NO</th>
                             <th class="table-secondary">
@@ -794,7 +820,7 @@
                                 $.ajax({
                                     type: "POST",
                                     url: "station13.aspx/UserLogin",
-                                    data: `{ Userid: '${user_login_id}',Station: '${station.split("-")[1]}'}`,
+                                    data: `{ Userid: '${user_login_id}',Station: '${plcStation.replace("Station", "") }'}`,
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
                                     async: "true",
@@ -821,7 +847,7 @@
                             $.ajax({
                                 type: "POST",
                                 url: "station13.aspx/UserLogout",
-                                data: `{ Userid: '${user_details.UserID}',Station: '${station.split("-")[1]}'}`,
+                                data: `{ Userid: '${user_details.UserID}',Station: '${plcStation.replace("Station", "") }'}`,
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",
                                 async: "true",

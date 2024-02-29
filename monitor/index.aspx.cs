@@ -263,6 +263,55 @@ namespace WebApplication2.monitor
         }
         
         [WebMethod]
+        public static string GET_MODEL_NAME()
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                { 
+                    var res = db.MODELs.Select(i => new {i.ModelName}).ToArray();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+
+                    return "Error";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+        }
+        
+        [WebMethod]
+        public static string GET_DELAY_RECORDS(string date)
+        {
+            DateTime currentDate = DateTime.Parse(date);
+            DateTime nextDate = DateTime.Parse(date).AddDays(1);
+
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                { 
+                    var res = db.DelayRecords.Where(i => i.DelayTime > currentDate && i.DelayTime < nextDate).ToList();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+
+                    return "Error";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+        }
+        
+        [WebMethod]
         public static string GET_PLC_TAG_NAME()
         {
             try

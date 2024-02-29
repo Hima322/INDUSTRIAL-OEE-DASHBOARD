@@ -68,15 +68,20 @@
                                     console.log(current_id)
                                 }
                             } else {
-                                if ((Date.now() < Date.parse(new Date().toISOString().split('T')[0] + " 23:59:59 ")) && (Date.now() > startDateParse) || (Date.now() > Date.parse(new Date().toISOString().split('T')[0]) && Date.now() < endDateParse)) {
-                                    current_id = data[i].ID
-                                    console.log(current_id + "<<<")
-                                } else {
-                                    if ((Date.now() >= startDateParse) && (Date.now() < endDateParse)) {
-                                        current_id = data[i].ID
-                                        console.log(current_id)
-                                    } 
+                                //if ((Date.now() < Date.parse(new Date().toISOString().split('T')[0] + " 23:59:59 ")) || (Date.now() > startDateParse) || (Date.now() > Date.parse(new Date().toISOString().split('T')[0]) && Date.now() < endDateParse)) {
+                                //    current_id = data[i].ID
+                                //    console.log(current_id + "<<<")
+                                //} else {
+                                //    if ((Date.now() >= startDateParse) && (Date.now() < endDateParse)) {
+                                //        current_id = data[i].ID
+                                //        console.log(current_id)
+                                //    }
+                                //}
+
+                                if (Date.now() > Date.parse(new Date().toISOString().split('T')[0] + " 23:30 ") && Date.now() < Date.parse(new Date().toISOString().split('T')[0]) + 86400) {
+                                    current_id = e.ID
                                 }
+
                             }
                         }
 
@@ -206,7 +211,7 @@
                 success: (res) => {
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
-                        console.log(data)
+
                         $("#upcomming_seat").html(
                             data.map((e,i) => `
                             <div style="color:${i == 0 ? "limegreen" : "yellow"};">
