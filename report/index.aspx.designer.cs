@@ -11,7 +11,7 @@ namespace WebApplication2.report
 {
 
 
-    public partial class index
+    public partial class Index
     {
 
         /// <summary>

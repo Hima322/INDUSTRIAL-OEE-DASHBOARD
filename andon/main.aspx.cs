@@ -227,34 +227,34 @@ namespace WebApplication2.andon
 
 
         [WebMethod]
-        public static string GetCurrentShiftRowId()
-        { 
+        public static int GetCurrentShiftRowId()
+        {
             try
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
-
-                    //fetch data from shiftsetting table 
                     var andonRes = db.Andons.ToList();
-                    //check condition for current shift  
-                            CultureInfo culture = CultureInfo.InvariantCulture;
-                            DateTime StartTime = Convert.ToDateTime(DateTime.Now.ToString("dd-MM-yyyy") + " " + andonRes[10].HourName.Split('-')[0], culture);
-                            DateTime EndTime = Convert.ToDateTime(DateTime.Now.ToString("dd-MM-yyyy") + " " + andonRes[10].HourName.Split('-')[1], culture);
-                            if (DateTime.Now <= StartTime && DateTime.Now > EndTime)
-                            {
-                                return andonRes[10].ID.ToString();
-                            }
+                    foreach (var item in andonRes)
+                    {
+                        DateTime start = Convert.ToDateTime(item.HourName.Split('-')[0]);
+                        DateTime end = Convert.ToDateTime(item.HourName.Split('-')[1]);
 
-                            //var ar = StartTime.ToString() + " " + EndTime.ToString();
-                            //r = Result1.ToString() + " " + Result2.ToString(); 
-                            //r += Result1.ToString() + Result2.ToString() + "\n" + ar + "\n" + DateTime.Now + "\n";
+                        if(DateTime.Now >= start && DateTime.Now <= end)
+                        {
+                            return item.ID;
                         } 
-                } 
+                        else if(DateTime.Now <= start && DateTime.Now >= end)
+                        {
+                            return item.ID;
+                        } 
+                    }
+                }
+            }
             catch (Exception e)
             {
-                return e.Message;
+                return 0;
             }
-            return "no match";
+            return 0;
         }
 
 

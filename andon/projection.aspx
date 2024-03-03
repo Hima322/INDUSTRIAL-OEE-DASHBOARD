@@ -149,7 +149,7 @@
             height:70px; 
             display:flex;
             justify-content:space-around;
-            align-items:center;
+            align-items:center; 
         }
 
         .rowContainer .main_row_container:nth-child(even) {
@@ -160,7 +160,7 @@
             font-size:50px;
             font-weight:700;  
             color:yellow;  
-            flex:1; 
+            flex:1;  
         }
 
         .rowContainer div:nth-child(2){
@@ -177,7 +177,7 @@
 
         .model_name_container{ 
             position:relative;  
-            min-height:100px;
+            min-height:130px; 
         }
 
         .model_name_container::before{
@@ -195,6 +195,14 @@
             place-items:center;
         }
           
+        .model_name_container:first-child::after{
+            content:"";
+            position:absolute;
+            width:100%; 
+            top:0;
+            left:0; 
+            border:none !important;
+        }
         .model_name_container:nth-child(even)::after{
             content:"";
             position:absolute;
@@ -202,6 +210,15 @@
             top:0;
             left:0; 
             border-top:2px solid lightblue;
+        }
+         
+        .model_name_container:nth-child(odd)::after{
+            content:"";
+            position:absolute;
+            width:100%; 
+            top:0;
+            left:0; 
+            border-top:2px solid yellow;
         }
          
         .model_name_container:nth-child(even)::before{

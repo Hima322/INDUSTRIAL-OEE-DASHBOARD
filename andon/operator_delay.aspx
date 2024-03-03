@@ -42,8 +42,10 @@
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)    
 
-                        let operator_delay = data.map(e => e.DelaySecond).reduce((e, a) => e + a)                        
-                        $("#delayLabel").text(operator_delay)
+                        let total_delay = data.map(e => e.DelaySecond).reduce((e, a) => e + a)
+                        let total_time = (total_delay / 60).toFixed(2).split(".")
+                        let time_text = total_time[0] + " MIN " + Math.round(parseFloat(0 + "." + total_time[1]) * 60) + " SEC "
+                        $("#delayLabel").text(time_text)
 
                         let stationArr = new Array(25).fill(0)
                         data.map(e => (stationArr[e.StationNo - 1] = e.DelaySecond)) 
@@ -119,7 +121,7 @@
         <div class="header">
             <p id="current_date"></p>
             <p>OPERATOR DELAY</p>
-            <p>TOTAL : <span id="delayLabel">00</span> SEC</p>
+            <p>TOTAL : <span id="delayLabel">00</span></p>
         </div>
 
         <script>

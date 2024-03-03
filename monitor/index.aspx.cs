@@ -317,9 +317,8 @@ namespace WebApplication2.monitor
             try
             {
                 using (TMdbEntities db = new TMdbEntities())
-                {
-                    int[] plcTagIds = {2,3,4,5,6,7,8 };
-                    var res = db.PLCAddressLists.Where(i => plcTagIds.Contains(i.ID)).ToList();
+                { 
+                    var res = db.PLCAddressLists.Where(i => i.ID > 1).ToList();
                     if (res != null)
                     {
                         return JsonSerializer.Serialize(res);

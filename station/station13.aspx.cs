@@ -403,8 +403,8 @@ namespace WebApplication2.station
             {
                 if (IS_PLC_CONNECTED())
                 {
-                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
-                    decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10m;
+                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10;
+                    decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10;
 
                     string wr = weight.ToString("00.00") + "," + registance.ToString("00.00");
                     return wr;
@@ -630,6 +630,18 @@ namespace WebApplication2.station
                                 {
                                     andonRes.Production++;
                                 }
+
+                                string q = "update JITLineSeatMfgReport set SeatSerialNumber = '"+ val + DateTime.Now.ToString("MMddyyyyHHmm") + "' where BuildLabelNumber = '"+ val + "' ";
+                                dbEntities.Database.ExecuteSqlCommand(q); 
+
+                                //var jitRes = dbEntities.JITLineSeatMfgReports.Where(i => i.BuildLabelNumber == val).ToList();
+                                //if (jitRes != null)
+                                //{
+                                //    foreach (var i in jitRes)
+                                //    {
+                                //        i.SeatSerialNumber = val + DateTime.Now.ToString("MMddyyyyHHmm");
+                                //    }
+                                //}
 
                                 dbEntities.SaveChanges();
 

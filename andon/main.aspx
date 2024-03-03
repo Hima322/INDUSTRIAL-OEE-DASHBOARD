@@ -28,7 +28,7 @@
             //getTotalBreak()
             getTodayRejectTask()
             handleCalculateOEE() 
-            //getCurrentShiftRowId()
+            getCurrentShiftRowId()
         }) 
 
         setInterval(function () { 

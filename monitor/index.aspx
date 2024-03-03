@@ -67,7 +67,7 @@
                 x: xArray2,
                 y: delayArrayVAlue,
                 type: "bar",
-                text: delayArrayVAlue.map(e => e.split(".")[0] + " Min " + e.split(".")[1] + " Sec" ),
+                text: delayArrayVAlue.map(e => e.split(".")[0] + " Min " + Math.round(parseFloat(0+"."+e.split(".")[1]) * 60) + " Sec"),
                 textposition: 'auto',
                 hoverinfo: 'none',
                 orientation: "v", marker: {
@@ -253,7 +253,7 @@
                 cache: "false",
                 success: (res) => {
                     if (res.d != "Error") {
-                        let data = JSON.parse(res.d) 
+                        let data = JSON.parse(res.d)  
 
                         let WriteBit = data[0]
                         let ReadBit = data[1]
@@ -262,7 +262,9 @@
                         let QualityDelay = data[4]
                         let MaterialDelay = data[5]
                         let ScanBit = data[6]
-
+                        let IndexBit = data[7]
+                        let TackTimeBit = data[8] 
+                         
                         //fetch scan all tags 
                         Object.keys(ScanBit).filter((f, i) => i > 1).map((sKey, i) =>
                             $("#plc_scan_bit_tag").append(`
@@ -350,6 +352,32 @@
                             </td> 
                             `)
                         )
+                         
+                        //fetch MaterialDelay all tags
+                        Object.keys(IndexBit).filter((f, i) => i > 1).map((sKey, i) =>
+                            $("#plc_index_bit_tag").append(`
+                            <td>
+                                <input  
+                                    class="bolrder-less-input form-control-sm"
+                                    value="${IndexBit[sKey]}"  
+                                    onkeyup=updatePlcTagName(${IndexBit.ID},'Station${i + 1}',this.value)
+                                    />
+                            </td> 
+                            `)
+                        )
+                         
+                        //fetch MaterialDelay all tags
+                        Object.keys(TackTimeBit).filter((f, i) => i > 1).map((sKey, i) =>
+                            $("#plc_tacttime_bit_tag").append(`
+                            <td>
+                                <input  
+                                    class="bolrder-less-input form-control-sm"
+                                    value="${TackTimeBit[sKey]}"  
+                                    onkeyup=updatePlcTagName(${TackTimeBit.ID},'Station${i + 1}',this.value)
+                                    />
+                            </td> 
+                            `)
+                        )
 
 
                     } else {
@@ -371,8 +399,7 @@
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => {
-                    console.log(res.d)
+                success: (res) => { 
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
 
@@ -981,6 +1008,7 @@
                             <div class="container-fluid">
                                <h5>Andon Current Screen</h5> 
                                 <select class="form-select" onchange="handleChangeAndonScreen(this.value)">
+                                    <option selected="selected" hidden="hidden">Select Screen</option>
                                     <option value="main">Main Screen</option>
                                     <option value="projection">Production & Rejection</option>
                                     <option value="operator_delay">Operartor Delay</option>
@@ -1312,8 +1340,8 @@
                                         </div>
                                     </div>
                                 </div>
-
-
+                                
+                                
                                 <%--this is for show material plc bit tag--%>
                                 <div class="card mt-1">
                                     <div class="card-header">
@@ -1342,6 +1370,67 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <%--this is for show index plc bit tag--%>
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseSeven">Show index bit plc tag detail.
+                                        </a>
+                                    </div>
+                                    <div id="collapseSeven" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+
+                                            <div class="container-fluid table-responsive">
+                                                <table class="table table-bordered text-center ">
+                                                    <thead>
+                                                        <tr class="table_column_name">
+                                                            <th class="table-primary">StationName</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <%--data will fetch from js--%>
+                                                        <tr id="plc_index_bit_tag">
+                                                            <th class="table-primary">TagName</th>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                 
+                                
+                                <%--this is for show tacttime plc bit tag--%>
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseEight">Show tact time bit plc tag detail.
+                                        </a>
+                                    </div>
+                                    <div id="collapseEight" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+
+                                            <div class="container-fluid table-responsive">
+                                                <table class="table table-bordered text-center ">
+                                                    <thead>
+                                                        <tr class="table_column_name">
+                                                            <th class="table-primary">StationName</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <%--data will fetch from js--%>
+                                                        <tr id="plc_tacttime_bit_tag">
+                                                            <th class="table-primary">TagName</th>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
                             </div>
                         </div>
                     </div>

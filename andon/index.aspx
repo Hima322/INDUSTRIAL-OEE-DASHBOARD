@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication2.andon.index" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication2.andon.Index" %>
 
 <!DOCTYPE html>
 
@@ -7,19 +7,70 @@
     <title>Andon Screen</title>
     <script type="text/javascript" src="../js/libs/jquery.min.js"></script>  
     <script>
+
         var currentScreen = "main";
+        var totalLightDelay = 0;
 
         $(document).ready(function () {
             getCurrentAnonScreen()
+            isPlcConnected()
+            insertDelayInDatabase()
         })
 
         setInterval(_ => {
+            insertDelayInDatabase() 
+        }, 500)
+        
+        setInterval(_ => {
             getCurrentAnonScreen()
+            isPlcConnected()
             if (currentScreen != $("#obj").attr("data")) {
                 $("#obj").attr("data", currentScreen)
             }
         }, 1000)
 
+        const isPlcConnected = () => {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/IS_PLC_CONNECTED",
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => { 
+                    if (res.d) {
+                        if (totalLightDelay > 5) {
+                            addLightDelay()
+                        }
+                        totalLightDelay = 0
+                    } else {
+                        totalLightDelay++
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
+        const addLightDelay = () => {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/ADD_DELAY_RECORD",
+                data: `{delayType:'LightDelay', delaySecond:'${totalLightDelay}', station:'all'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => { 
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
         const getCurrentAnonScreen = () => {
             $.ajax({
                 type: "POST",
@@ -33,6 +84,24 @@
                     if (res.d != "Error") {
                         currentScreen  = res.d + ".aspx" 
                     } 
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        const insertDelayInDatabase = () => {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/INSERT_DELAY_IN_DATABASE",
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    
                 },
                 Error: function (x, e) {
                     console.log(e);
