@@ -1,6 +1,8 @@
-﻿using S7.Net;
+﻿using DocumentFormat.OpenXml.Vml;
+using S7.Net;
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text.Json;
@@ -199,6 +201,84 @@ namespace WebApplication2.andon
                 Console.WriteLine(ex.Message);
             }
         }
+         
+        
+        [WebMethod]
+        public static void HANDLE_SHIFT_CHAGNE_LOGOUT()
+        {
+            try
+            {
+                using(TMdbEntities db = new TMdbEntities())
+                {
+                    string userQuery = "update USER set WorkingAtStationID = '' and Authenticated = 0 ";
+                    db.Database.ExecuteSqlCommand(userQuery);
+
+                    string wrokTimeQuery = "update OperatorWorkTime set LogoutTime = '"+DateTime.Now+"' where LogoutTime = null ";
+                    db.Database.ExecuteSqlCommand(wrokTimeQuery);
+                    
+                    db.SaveChanges();
+                }
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+         
+
+        [WebMethod]
+        public static string GetCurrentShift()
+        {
+            try
+            {
+                var cs = "";
+
+                using (TMdbEntities db = new TMdbEntities())
+                {
+
+                    //fetch data from shiftsetting table 
+                    var shiftRes = db.ShiftSettings.ToList();
+                    TimeSpan H = TimeSpan.FromHours(8);
+                    //check condition for current shift 
+                    foreach (var item in shiftRes)
+                    {
+
+                        if (item.ID < 4)
+                        {
+                            if (cs == "")
+                            {
+                                DateTime StartTime = DateTime.ParseExact(DateTime.Now.ToString("dd-MM-yyyy") + " " + item.StartTime, "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                                DateTime EndTime = StartTime.AddHours(8);
+                                int Result1 = DateTime.Compare(DateTime.Now, StartTime);
+                                int Result2 = DateTime.Compare(EndTime, DateTime.Now);
+                                if (Result1 == 1 && Result2 == 1)
+                                {
+                                    cs = item.ShiftName;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (cs == "")
+                            {
+                                cs = "C";
+                            }
+                            if (DateTime.Now.TimeOfDay >= item.StartTime && DateTime.Now.TimeOfDay < item.EndTime)
+                            {
+                                cs = item.ShiftName;
+                            }
+                        }
+                    }
+                }
+                return cs;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return "";
+            }
+        }
+
 
     }
 }

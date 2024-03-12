@@ -10,11 +10,14 @@
 
         var currentScreen = "main";
         var totalLightDelay = 0;
+        var current_shift = "";
 
         $(document).ready(function () {
             getCurrentAnonScreen()
             isPlcConnected()
             insertDelayInDatabase()
+            getCurrentShift()
+            //handleShiftChangeLogout()
         })
 
         setInterval(_ => {
@@ -24,6 +27,7 @@
         setInterval(_ => {
             getCurrentAnonScreen()
             isPlcConnected()
+            getCurrentShift()
             if (currentScreen != $("#obj").attr("data")) {
                 $("#obj").attr("data", currentScreen)
             }
@@ -53,7 +57,47 @@
                 }
             })
         }
-        
+
+        const handleShiftChangeLogout = _ => {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/HANDLE_SHIFT_CHAGNE_LOGOUT",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+         
+        const getCurrentShift = () => {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GetCurrentShift",
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    //if (res.d.at(0) != current_shift) {
+                    //    handleShiftChangeLogout()
+                    //}
+                    current_shift = res.d.at(0)
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
+
         const addLightDelay = () => {
             $.ajax({
                 type: "POST",

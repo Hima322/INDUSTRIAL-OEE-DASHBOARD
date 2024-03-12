@@ -1014,6 +1014,7 @@
                                     <option value="operator_delay">Operartor Delay</option>
                                     <option value="maintenance_delay">Maintenance Delay</option>
                                     <option value="material_delay">Material Delay</option>
+                                    <option value="quality_delay">Quality Delay</option>
                                 </select> <br />
 
                                <h5>Andon Sefty Title</h5> 

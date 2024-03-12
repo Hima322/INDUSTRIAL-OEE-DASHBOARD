@@ -589,18 +589,12 @@ namespace WebApplication2.station
         public static string QRCODE_PRINT(int id, string val, string model_variant, long seat_data_id, string feature)
         {
             var seq = val.Split('-')[2];
-            int andonRowId = 0;
+            int andonRowId = GetCurrentShiftRowId();
 
             try
             {
                 using (TMdbEntities dbEntities = new TMdbEntities())
-                {
-
-                    var varTableRes = dbEntities.VarTables.Where(i => i.VarName == "CurrentShiftRowId").FirstOrDefault();
-                    if (varTableRes != null)
-                    {
-                        andonRowId = int.Parse(varTableRes.VarValue);
-                    }
+                { 
 
                     var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
                     if (res != null)
@@ -624,7 +618,7 @@ namespace WebApplication2.station
                                 seatDataRes.STAUS = status == "" ? "OK" : "HOLD";
                                 res.TaskCurrentValue = val + DateTime.Now.ToString("MMddyyyyHHmm");
                                 res.TaskStatus = "Done";
-
+                                 
                                 var andonRes = dbEntities.Andons.Where(i => i.ID == andonRowId).FirstOrDefault();
                                 if (andonRes != null)
                                 {
@@ -632,17 +626,7 @@ namespace WebApplication2.station
                                 }
 
                                 string q = "update JITLineSeatMfgReport set SeatSerialNumber = '"+ val + DateTime.Now.ToString("MMddyyyyHHmm") + "' where BuildLabelNumber = '"+ val + "' ";
-                                dbEntities.Database.ExecuteSqlCommand(q); 
-
-                                //var jitRes = dbEntities.JITLineSeatMfgReports.Where(i => i.BuildLabelNumber == val).ToList();
-                                //if (jitRes != null)
-                                //{
-                                //    foreach (var i in jitRes)
-                                //    {
-                                //        i.SeatSerialNumber = val + DateTime.Now.ToString("MMddyyyyHHmm");
-                                //    }
-                                //}
-
+                                dbEntities.Database.ExecuteSqlCommand(q);  
                                 dbEntities.SaveChanges();
 
                                 //update next row status to running   
@@ -704,6 +688,41 @@ namespace WebApplication2.station
             return "Error";
 
         }
+
+
+        [WebMethod]
+        public static int GetCurrentShiftRowId()
+        {
+            try
+            {
+                int ID = 0;
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var andonRes = db.Andons.ToList();
+                    foreach (var item in andonRes)
+                    {
+                        DateTime start = Convert.ToDateTime(item.HourName.Split('-')[0]);
+                        DateTime end = Convert.ToDateTime(item.HourName.Split('-')[1]);
+
+                        if (start < end)
+                        {
+                            if (DateTime.Now >= start && DateTime.Now <= end)
+                            {
+                                ID = item.ID;
+                                break;
+                            }
+                        }
+                        else { ID = 18; }
+                    }
+                    return ID;
+                }
+            }
+            catch
+            {
+                return 0;
+            } 
+        }
+
 
         [WebMethod]
         public static string WriteBitExecuteTask(int id, string model_variant, string plcStation)

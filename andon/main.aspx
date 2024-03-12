@@ -14,7 +14,7 @@
         var total_target = 0;
         var total_production = 0; 
         var total_delay = 0;
-        var total_break = 60 * 60;
+        var total_break = 0;
         var total_reject_seat = 0
 
 
@@ -25,7 +25,7 @@
             getSeaftyLine()
             getUpcommingSeat()
             getTotalDelay()
-            //getTotalBreak()
+            getTotalBreak()
             getTodayRejectTask()
             handleCalculateOEE() 
             getCurrentShiftRowId()
@@ -37,9 +37,10 @@
             handleAndon()
             getUpcommingSeat()
             getTotalDelay()
-            //getTotalBreak()
+            getTotalBreak()
             getTodayRejectTask()
             handleCalculateOEE()
+            getCurrentShiftRowId() 
         }, 1000);
          
 
@@ -48,42 +49,14 @@
             $.ajax({
                 type: "POST",
                 url: "main.aspx/GetShift",
-                data: `{ cs : '${current_shift.at(0)}', CurrentShiftRowId : '${current_id}' }`,
+                data: `{ cs : '${current_shift.at(0)}' }`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
                 cache: "false",
                 success: (res) => {
                     if (res.d != "Error") {
-                        var data = JSON.parse(res.d)
-
-                        for (var i = 0; i < data.length; i++) {
-
-                            let startDateParse = Date.parse(new Date().toISOString().split('T')[0] + " " + String(data[i].HourName.split("-")[0]))
-                            let endDateParse = Date.parse(new Date().toISOString().split('T')[0] + " " + String(data[i].HourName.split("-")[1]))
-
-                            if (startDateParse < endDateParse) {
-                                if ((Date.now() >= startDateParse) && (Date.now() < endDateParse)) {
-                                    current_id = data[i].ID
-                                    console.log(current_id)
-                                }
-                            } else {
-                                //if ((Date.now() < Date.parse(new Date().toISOString().split('T')[0] + " 23:59:59 ")) || (Date.now() > startDateParse) || (Date.now() > Date.parse(new Date().toISOString().split('T')[0]) && Date.now() < endDateParse)) {
-                                //    current_id = data[i].ID
-                                //    console.log(current_id + "<<<")
-                                //} else {
-                                //    if ((Date.now() >= startDateParse) && (Date.now() < endDateParse)) {
-                                //        current_id = data[i].ID
-                                //        console.log(current_id)
-                                //    }
-                                //}
-
-                                if (Date.now() > Date.parse(new Date().toISOString().split('T')[0] + " 23:30 ") && Date.now() < Date.parse(new Date().toISOString().split('T')[0]) + 86400) {
-                                    current_id = e.ID
-                                }
-
-                            }
-                        }
+                        var data = JSON.parse(res.d) 
 
                         document.getElementById("andon_data").innerHTML = 
                             data.map(e => `<tr> 
@@ -154,10 +127,11 @@
                 async: "true",
                 cache: "false",
                 success: (res) => { 
-
                     if (res.d != "Error") {
-                        let data = JSON.parse(res.d) 
-                        total_break = data.map(e => e.DelaySecond).reduce((e, a) => e + a) 
+                        let data = JSON.parse(res.d)  
+                        let ar = []
+                        data.map(e => ar.push((Date.parse(`01-01-2024 ${e.EndTime}`) - Date.parse(`01-01-2024 ${e.StartTime}`)) / 1000)) 
+                        total_break = ar.reduce((e, a) => e + a) 
                     } 
                 },
                 Error: function (x, e) {
@@ -179,7 +153,7 @@
 
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d) 
-                        total_delay = data.map(e => e.DelaySecond).reduce((e, a) => e + a) 
+                        total_delay = data.map(e => e.DelaySecond).reduce((e, a) => e + a)  
                     } 
                 },
                 Error: function (x, e) {
@@ -257,7 +231,7 @@
                 async: "true",
                 cache: "false",
                 success: (res) => {
-                    console.log(res.d)
+                    current_id = res.d
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -295,9 +269,9 @@
                         total_production = actualA + actualB + actualC;
 
                         document.getElementById("shift_details").innerHTML = `
-                              <div><span>SHIFT-A </span><i>${actualA}/${targetA}</i><section class="${current_shift.at(0) == "A" ? "high_lighter" : ""}" ></section></div>
-                              <div><span>SHIFT-B </span><i>${actualB}/${targetB}</i><section class="${current_shift.at(0) == "B" ? "high_lighter" : ""}" ></section></div>
-                              <div><span>SHIFT-C </span><i>${actualC}/${targetC}</i><section class="${current_shift.at(0) == "C" ? "high_lighter" : ""}" ></section></div>  
+                              <div style="color:${current_shift.at(0) == "A" ? "limegreen" : "yellow"};"><span>SHIFT-A </span><i>${actualA}/${targetA}</i><section class="${current_shift.at(0) == "A" ? "high_lighter" : ""}" ></section></div>
+                              <div style="color:${current_shift.at(0) == "B" ? "limegreen" : "yellow"};"><span>SHIFT-B </span><i>${actualB}/${targetB}</i><section class="${current_shift.at(0) == "B" ? "high_lighter" : ""}" ></section></div>
+                              <div style="color:${current_shift.at(0) == "C" ? "limegreen" : "yellow"};"><span>SHIFT-C </span><i>${actualC}/${targetC}</i><section class="${current_shift.at(0) == "C" ? "high_lighter" : ""}" ></section></div>  
                           `
                     }
                 },
@@ -526,10 +500,9 @@
 
             <%--previous shift data--%>
             <div style="display:flex;justify-content:space-between;flex-direction:column;margin-bottom:15px;"> 
+                <div style="background:yellow;font-size:35px;font-weight:700;display:grid;place-items:center;height:62px;">UPCOMMING VARIANTS</div>
+                <div id="upcomming_seat"></div> &nbsp;
                 <div id="shift_details"></div>
-                &nbsp;
-                <div style="background:yellow;font-size:30px;font-weight:700;text-align:center;padding:5px;">UPCOMMING VARIANTS</div>
-                <div id="upcomming_seat"></div> 
             </div>
 
 

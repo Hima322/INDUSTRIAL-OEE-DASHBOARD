@@ -48,11 +48,12 @@ namespace WebApplication2.andon
             {
                 using (TMdbEntities entity = new TMdbEntities())
                 {
-                    var res = entity.DelayRecords.Where(i => i.DelayTime > DateTime.Today).ToList();
-
+                    var res = entity.ShiftSettings.Where(i => i.ID > 3).ToList(); 
                     if (res.Count > 0)
-                    { 
-                        return JsonSerializer.Serialize(res);
+                    {
+                      var lst =  res.Where(o => o.StartTime < DateTime.Now.TimeOfDay && o.StartTime > DateTime.Today.TimeOfDay && o.EndTime < DateTime.Now.TimeOfDay && o.EndTime > DateTime.Today.TimeOfDay).ToList();
+
+                        return JsonSerializer.Serialize(lst);
                     }
                 }
             } catch(Exception ex)
@@ -146,22 +147,12 @@ namespace WebApplication2.andon
         }
         
         [WebMethod]
-        public static string GetShift(string cs, string CurrentShiftRowId)
+        public static string GetShift(string cs)
         {
             try
             {
                 using (TMdbEntities entity = new TMdbEntities())
-                {
-                    if (CurrentShiftRowId != null)
-                    {
-                        var varTableRes = entity.VarTables.Where(i => i.VarName == "CurrentShiftRowId").FirstOrDefault();
-                        if (varTableRes != null)
-                        {
-                            varTableRes.VarValue = CurrentShiftRowId;
-                            entity.SaveChanges();
-                        }
-                    }
-
+                { 
                     var res = entity.Andons.Where(i => i.ShiftName == cs).ToList();
                     return JsonSerializer.Serialize(res);
                 }
@@ -231,6 +222,7 @@ namespace WebApplication2.andon
         {
             try
             {
+                int ID = 0;
                 using (TMdbEntities db = new TMdbEntities())
                 {
                     var andonRes = db.Andons.ToList();
@@ -239,22 +231,23 @@ namespace WebApplication2.andon
                         DateTime start = Convert.ToDateTime(item.HourName.Split('-')[0]);
                         DateTime end = Convert.ToDateTime(item.HourName.Split('-')[1]);
 
-                        if(DateTime.Now >= start && DateTime.Now <= end)
+                        if (start < end)
                         {
-                            return item.ID;
-                        } 
-                        else if(DateTime.Now <= start && DateTime.Now >= end)
-                        {
-                            return item.ID;
-                        } 
+                            if (DateTime.Now >= start && DateTime.Now <= end)
+                            {
+                                ID =  item.ID;
+                                break;
+                            }
+                         }
+                        else { ID = 18; }
                     }
+                    return ID;
                 }
             }
-            catch (Exception e)
+            catch 
             {
                 return 0;
-            }
-            return 0;
+            } 
         }
 
 
