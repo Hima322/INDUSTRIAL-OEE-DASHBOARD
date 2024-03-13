@@ -37,6 +37,28 @@ namespace WebApplication2.report
             }
             return "Error";
         }
+        
+        [WebMethod]
+        public static string GET_VARIANT_LIST()
+        {
+            try
+            { 
+                using(TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.MODEL_DEATILS.ToList();
+                    if (res.Count > 0)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+            }
+            catch (Exception ex)
+            { 
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+            return "Error";
+        }
 
         [WebMethod]
         public static string GET_DAY_REPORT(DateTime from, DateTime to)
@@ -114,6 +136,30 @@ namespace WebApplication2.report
                 {
                     //var res = db.JITLineSeatMfgReports.Where(i => i.Date >= from && i.Date <= to).ToList();
                     var res = db.JITLineSeatMfgReports.SqlQuery("select * from JITLineSeatMfgReport where BuildLabelNumber like '%" + model + "%' and Date >= '"+from+"' and Date <= '"+to+"'").ToList();
+                    if (res.Count > 0)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+            return "Error";
+        }
+
+        
+        [WebMethod]
+        public static string GET_VARIANT_REPORT(string variant, DateTime from, DateTime to)
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    //var res = db.JITLineSeatMfgReports.Where(i => i.Date >= from && i.Date <= to).ToList();
+                    var res = db.JITLineSeatMfgReports.SqlQuery("select * from JITLineSeatMfgReport where BuildLabelNumber like '%" + variant + "%' and Date >= '"+from+"' and Date <= '"+to+"'").ToList();
                     if (res.Count > 0)
                     {
                         return JsonSerializer.Serialize(res);

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="entry.aspx.cs" Inherits="WebApplication2.user.entry" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="info.aspx.cs" Inherits="WebApplication2.user.Info" %> 
 
 <!DOCTYPE html>
 
@@ -12,28 +12,44 @@
     <script type="text/javascript" src="../js/libs/jquery.min.js"></script> 
     <link rel="stylesheet" type="text/css" href="../css/libs/toastify.min.css" />
     <script type="text/javascript" src="../js/libs/toastify-js.js"></script> 
+    <script type="text/javascript" src="../js/libs/moment.min.js"></script> 
 </head> 
 
 <script type="text/javascript">   
-    //Called this method on any button click  event for Testing
-    function UserLogin() { 
-        let username = $("#username").val()
+
+    $(document).ready(_ => { 
+        $("#userList").hide()
+    })
+
+    function searchUser() { 
+        let date = $("#date").val()
         let station = $("#station").val()
 
-        if (!username) return toast("Username is required.");
+        if (!date) return toast("Date is required.");
 
             $.ajax({
                 type: "POST",
-                url: "entry.aspx/UserLogin",
-                data: `{username : '${username}', station : '${station}'}`,
+                url: "info.aspx/SEARCH_USER",
+                data: `{date : '${date}', station : '${station}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: function (msg) {
-                    if (msg.d == "Done") {
-                        toast("Success.")
-                        setTimeout(_ => location.reload())
+                success: function (res) {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+                        $("#userList").show()
+                        $("#userList tbody").html(
+                            data.map(e => `
+                                <tr>
+                                    <td>${e.OperatorName}</td>
+                                    <td>${moment(e.LoginTime).format("lll")}</td>
+                                    <td>${moment(e.LogoutTime).format("lll")}</td> 
+                                </tr>
+                            `)
+                        )
+                    } else {
+                        toast("User Not Found.")
                     }
                 },
                 Error: function (x, e) {
@@ -55,31 +71,43 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="modal-title">
                         <img src="../image/icon/arrow-left.svg" onclick="history.back()" class="btn" />
-                        Manual User Login </h5>
+                        Search Station Operator </h5>
                 </div>
 
 
-                <div class=" d-flex align-items-start gap-5 justify-content-center m-auto " style="width: 1000px;">
+                <div class=" d-flex align-items-start gap-5 justify-content-center m-auto ">
 
                     <table class="table table-borderless flex-1" id="userTable">
                         <%--content will be fetch from ajax query--%>
                         <tr class="d-flex justify-content-start gap-2">
                             <td>Station No :
-                                <select id="station" class="form-select">
+                                <select id="station" class="form-select" onchange='$("#userList").hide()' >
                                     <%for(int i =1; i < 26; i++){ %>
                                         <option value="<%=i %>">Station-<%=i %></option>
                                     <%  } %>
                                 </select></td>
                             <td>User Name :
-                                <input id="username" class="form-control" /></td>
+                                <input id="date" type="date" class="form-control" onchange='$("#userList").hide()' /></td>
                             <td>
-                                <button type="button" class="btn btn-primary mt-4" onclick="UserLogin()">Login</button></td>
+                                <button type="button" class="btn btn-primary mt-4" onclick="searchUser()">Search</button></td>
                         </tr>
                     </table>
 
                 </div>
 
-        </div>
+                <table class="table table-bordered text-center" id="userList">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>User Name</th>
+                            <th>Login Time</th>
+                            <th>Logout Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+            </div>
     </form>
     <br />
     <script>

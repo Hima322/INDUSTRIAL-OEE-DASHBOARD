@@ -12,7 +12,6 @@
         <EntityTypeShape EntityType="TMdbModel.JITLineSeatMfgReport" Width="1.5" PointX="2.75" PointY="4.75" />
         <EntityTypeShape EntityType="TMdbModel.MODEL" Width="1.5" PointX="4.75" PointY="3.75" />
         <EntityTypeShape EntityType="TMdbModel.MODEL_DEATILS" Width="1.5" PointX="6.75" PointY="0.75" />
-        <EntityTypeShape EntityType="TMdbModel.OperatorWorkTime" Width="1.5" PointX="4.75" PointY="6.75" />
         <EntityTypeShape EntityType="TMdbModel.PLCAddressList" Width="1.5" PointX="6.75" PointY="5.75" />
         <EntityTypeShape EntityType="TMdbModel.ReworkTable" Width="1.5" PointX="8.75" PointY="0.75" />
         <EntityTypeShape EntityType="TMdbModel.SEAT_DATA" Width="1.5" PointX="8.75" PointY="4.75" />
@@ -23,6 +22,7 @@
         <EntityTypeShape EntityType="TMdbModel.Tool_IPAddress" Width="1.5" PointX="12.75" PointY="0.75" />
         <EntityTypeShape EntityType="TMdbModel.USER" Width="1.5" PointX="0.75" PointY="12.75" />
         <EntityTypeShape EntityType="TMdbModel.VarTable" Width="1.5" PointX="2.75" PointY="12.75" />
+        <EntityTypeShape EntityType="TMdbModel.OperatorWorkTime" Width="1.5" PointX="5.375" PointY="12.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

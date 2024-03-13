@@ -511,6 +511,13 @@
     <Compile Include="user\index.aspx.designer.cs">
       <DependentUpon>index.aspx</DependentUpon>
     </Compile>
+    <Compile Include="user\info.aspx.cs">
+      <DependentUpon>info.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="user\info.aspx.designer.cs">
+      <DependentUpon>info.aspx</DependentUpon>
+    </Compile>
     <Compile Include="variant\add.aspx.cs">
       <DependentUpon>add.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -550,6 +557,7 @@
     <Content Include="Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
+    <None Include="other\TMdb.bak" />
     <None Include="packages.config" />
     <Content Include="report\index.aspx" />
     <Content Include="station\index.aspx" />
@@ -576,6 +584,7 @@
     <Content Include="user\edit.aspx" />
     <Content Include="user\entry.aspx" />
     <Content Include="user\index.aspx" />
+    <Content Include="user\info.aspx" />
     <Content Include="variant\add.aspx" />
     <Content Include="variant\edit.aspx" />
     <Content Include="Web.Config" />

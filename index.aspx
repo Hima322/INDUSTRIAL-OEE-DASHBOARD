@@ -7,7 +7,7 @@
     <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="css/libs/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/libs/font-awesome.min.css" /> 
+    <link rel="stylesheet" href="css/libs/font-awesome.min.css" />
     <script src="js/libs/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/libs/jquery.min.js"></script>
 
@@ -26,13 +26,13 @@
             }
         /* width */
         ::-webkit-scrollbar {
-          width: 10px;
-        } 
+            width: 10px;
+        }
 
         /* Handle */
         ::-webkit-scrollbar-thumb {
-          background: lightgray;
-          border-radius:10px;
+            background: lightgray;
+            border-radius: 10px;
         }
     </style>
     <script>
@@ -83,39 +83,48 @@
 
             <%--navbar header--%>
             <div class="navbar navbar-light d-flex px-5" style="background: lightgray;">
-                <!--header logo--> 
+                <!--header logo-->
                 <img src="image/logo.png" alt="error" height="45" />
 
                 <!--header menu-->
                 <div class="d-flex gap-2">
-                    <button class="btn btn-light" type="button"><a href="/monitor/index.aspx" target="blank" style="text-decoration:none;color:black;">Monitor &amp; Control</a></button>
+                    <button class="btn btn-light" type="button"><a href="/monitor/index.aspx" target="blank" style="text-decoration: none; color: black;">Monitor &amp; Control</a></button>
 
                     <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
-                        Menu <img src="image/icon/quote.svg" height="20" />
+                        Menu
+                        <img src="image/icon/quote.svg" height="20" />
                     </button>
 
                     <div class="offcanvas offcanvas-end" id="demo">
                         <div class="offcanvas-header">
                             &nbsp;
                             <button class="btn btn-outline-danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
-                                Close <img src="image/icon/x.svg" />
+                                Close
+                                <img src="image/icon/x.svg" />
                             </button>
                         </div>
-                        <div class="offcanvas-body px-5 text-center"> 
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/station/index.aspx'">Station</button> &nbsp;
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/andon/index.aspx'">Andon</button> <br />
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/user/entry.aspx'">Entry</button> &nbsp;
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/report/index.aspx'">Report</button> &nbsp;
+                        <div class="offcanvas-body px-5 text-center">
+                            <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/order/index.aspx'">Production</button>
+                            &nbsp;
+                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/station/print.aspx'">Print Qr</button>
+                            <br />
+                            <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/user/entry.aspx'">Entry</button>
+                            &nbsp;
+                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/report/index.aspx'">Report</button>
+                            &nbsp;
                                 <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/user/index.aspx'">User</button>&nbsp;
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/station/task.aspx'">Task</button> <br />
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/order/index.aspx'">Production</button> &nbsp;
-                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/station/print.aspx'">Print Qr</button> <br />
-                                <button class="btn btn-danger mb-3 shadow" type="button" onclick="localStorage.removeItem('admin') || location.reload()">Logout</button> 
+                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/station/task.aspx'">Task</button>
+                            <br /> 
+                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/user/info.aspx'">Station User Info</button>
+                            <br />
+                            <button class="btn btn-danger mb-3 shadow" type="button" onclick="localStorage.removeItem('admin') || location.reload()">Logout</button>
                         </div>
                         <div class="offcanvas-footer">
-                            <p class="text-center">&copy; Pioneer Machine & Automation Pvt Ltd
+                            <p class="text-center">
+                                &copy; Pioneer Machine & Automation Pvt Ltd
                                 <script>document.write(new Date().getFullYear())</script>
-                                .</p>
+                                .
+                            </p>
                         </div>
                     </div>
 
@@ -132,7 +141,7 @@
 
                         <%foreach (var model in ModelList)
                             { %>
-                        <button type="button" onclick="location.href = 'index.aspx?model=<%=model.ModelName %>'" class="btn <%=Request.Params.Get("model") == null ? "first-active" : Request.Params.Get("model") == model.ModelName ? "btn-secondary" : "btn-light" %>"><%= model.ModelName %></button>
+                        <button type="button" onclick="location.replace('index.aspx?model=<%=model.ModelName %>')" class="btn <%=Request.Params.Get("model") == null ? "first-active" : Request.Params.Get("model") == model.ModelName ? "btn-secondary" : "btn-light" %>"><%= model.ModelName %></button>
                         <% } %>
 
                         <!-- Button to Open the Modal -->
@@ -219,7 +228,7 @@
                                         onclick="handleDelete(<%=variant.ID %>)"
                                         type="button"
                                         class="btn btn-danger btn-sm">
-                                         <img src="image/icon/trash.svg" height="17" />
+                                        <img src="image/icon/trash.svg" height="17" />
                                     </button>
                                 </div>
                             </td>
@@ -288,9 +297,9 @@
                                         dataType: "json",
                                         async: "true",
                                         cache: "false",
-                                        success: (res) => { 
+                                        success: (res) => {
                                             if (res.d) {
-                                                window.location.reload() 
+                                                window.location.reload()
                                             } else {
                                                 alert("Somthing went wrong.")
                                             }
@@ -333,7 +342,7 @@
             setTimeout(function () {
                 document.getElementById("toast").classList.remove("show")
                     <%CurrentError = "";%>
-                }, 3000)
+            }, 3000)
         }
 
 

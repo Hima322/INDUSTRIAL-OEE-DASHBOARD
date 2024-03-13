@@ -79,8 +79,8 @@
 
                     <p style="text-align:center;">
                         <a href="/station/index.aspx">Station</a> &nbsp; • &nbsp;
-                        <a href="user/entry.aspx">User Entry</a> &nbsp; • &nbsp;
-                        <a href="station/print.aspx">Print QR</a> 
+                        <a href="/andon/index.aspx">Andon</a> &nbsp; • &nbsp;
+                        <a href="/station/print.aspx">Print QR</a> 
                     </p>
 
                 </div>

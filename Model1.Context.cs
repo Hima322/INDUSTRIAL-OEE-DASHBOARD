@@ -32,7 +32,6 @@ namespace WebApplication2
         public virtual DbSet<JITLineSeatMfgReport> JITLineSeatMfgReports { get; set; }
         public virtual DbSet<MODEL> MODELs { get; set; }
         public virtual DbSet<MODEL_DEATILS> MODEL_DEATILS { get; set; }
-        public virtual DbSet<OperatorWorkTime> OperatorWorkTimes { get; set; }
         public virtual DbSet<PLCAddressList> PLCAddressLists { get; set; }
         public virtual DbSet<ReworkTable> ReworkTables { get; set; }
         public virtual DbSet<SEAT_DATA> SEAT_DATA { get; set; }
@@ -43,5 +42,6 @@ namespace WebApplication2
         public virtual DbSet<Tool_IPAddress> Tool_IPAddress { get; set; }
         public virtual DbSet<USER> USERs { get; set; }
         public virtual DbSet<VarTable> VarTables { get; set; }
+        public virtual DbSet<OperatorWorkTime> OperatorWorkTimes { get; set; }
     }
 }

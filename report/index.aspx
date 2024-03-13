@@ -25,16 +25,17 @@
         const table = {
             show: _ => {
                 $("#table").show()
-                $("#downloadBtn").show()
+                $(".downloadBtn").show()
             },
             hide: _ => {
                 $("#table").hide()
-                $("#downloadBtn").hide()
+                $(".downloadBtn").hide()
             }
         }
 
         $(document).ready(function () {
             getModelList();
+            getVariantList()
             table.hide()
 
         })
@@ -71,6 +72,31 @@
                 }
             })
         }
+        
+        const getVariantList = _ => {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_VARIANT_LIST",
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+                        $("#variantContainer").html(
+                            data.map(e => `
+                                <option value="${e.FG_PartNumber}">${e.Variant} (${e.FG_PartNumber})</option>
+                            `)
+                        )
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
 
         const handleShowModelReport = _ => {
             let model = $("#modelContainer").val()
@@ -83,6 +109,54 @@
                 type: "POST",
                 url: "index.aspx/GET_MODEL_REPORT",
                 data: `{model:'${model}',from:'${from}',to:'${to}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+
+                        $("#table tbody").html(
+                            data.map(e => `
+                                <tr>
+                                    <td>${e.Date.split("T")[0]}</td>
+                                    <td>${e.Time.split(".")[0]}</td>
+                                    <td>${e.Shift}</td>
+                                    <td>${e.SeatSerialNumber}</td>
+                                    <td>${e.BuildLabelNumber}</td>
+                                    <td>${e.StationNo}</td>
+                                    <td>${e.StationDescription}</td>
+                                    <td>${e.ParameterDescription}</td>
+                                    <td>${e.DataValues}</td>
+                                    <td>${e.OverallStatus}</td>
+                                    <td>${e.OperatorName}</td>
+                                </tr>
+                            `)
+                        )
+                        table.show()
+                    } else {
+                        toast("Record not found.")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+         
+
+        const handleShowVariantReport = _ => {
+            let variant = $("#variantContainer").val()
+            let from = $("#variantFrom").val()
+            let to = $("#variantTo").val()
+
+            if (!from || !to) return toast("Please select date.")
+
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_VARIANT_REPORT",
+                data: `{variant:'${variant}',from:'${from}',to:'${to}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -305,6 +379,10 @@
                     </li>
 
                     <li class="nav-item ms-2" role="presentation">
+                        <button class="nav-link border " id="variant-tab" data-bs-toggle="tab" data-bs-target="#variant" type="button" role="tab" aria-controls="variant" aria-selected="false" onclick="table.hide()">Variant</button>
+                    </li>
+                    
+                    <li class="nav-item ms-2" role="presentation">
                         <button class="nav-link border " id="day-tab" data-bs-toggle="tab" data-bs-target="#day" type="button" role="tab" aria-controls="day" aria-selected="false" onclick="table.hide()">Date</button>
                     </li>
 
@@ -316,8 +394,7 @@
                         <button class="nav-link border" id="serial-tab" data-bs-toggle="tab" data-bs-target="#serial" type="button" role="tab" aria-controls="serial" aria-selected="false" onclick="table.hide()">Serial</button>
                     </li>
                 </ul>
-
-                <button type="button" class="btn btn-primary" id="downloadBtn" onclick="ExportToExcel()">Download Report</button>
+                 
 
             </div>
 
@@ -342,9 +419,41 @@
                                 <b>To : </b>
                                 <input type="date" class="form-control" id="modelTo" />
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-1">
                                 <br />
                                 <button class="btn btn-primary" type="button" onclick="handleShowModelReport()">SHOW</button> 
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <%--day wise report code--%>
+                    <div class=" collapse tab-pane fade" id="variant">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <b>Variant :</b> 
+                                <select class="form-select" id="variantContainer">
+                                    <option>Variant</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <b>From :</b>
+                                <input type="date" class="form-control" id="variantFrom" />
+                            </div>
+                            <div class="col-sm-2">
+                                <b>To : </b>
+                                <input type="date" class="form-control" id="variantTo" />
+                            </div>
+                            <div class="col-sm-1">
+                                <br />
+                                <button class="btn btn-primary" type="button" onclick="handleShowVariantReport()">SHOW</button> 
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
                             </div>
                         </div>
                     </div>
@@ -360,9 +469,13 @@
                                 <b>To : </b>
                                 <input type="date" class="form-control" id="dayTo" />
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-1">
                                 <br />
                                 <button class="btn btn-primary" type="button" onclick="handleShowDayReport()">SHOW</button> 
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
                             </div>
                         </div>
                     </div>
@@ -386,9 +499,13 @@
                                 <b>To : </b>
                                 <input type="date" class="form-control" id="shiftTo" />
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-1">
                                 <br />
                                 <button class="btn btn-primary" type="button" onclick="handleShowShiftReport()">SHOW</button> 
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
                             </div>
                         </div>
                     </div>
@@ -400,9 +517,13 @@
                                 <b>Serial Number :</b>
                                 <input class="form-control" placeholder="eg. ER4NS5-32000-00042241220021022" id="serialNumber" />
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-1">
                                 <br />
                                 <button class="btn btn-primary" type="button" onclick="handleShowSerialNumberReport()">SHOW</button>  
+                            </div>
+                            <div class="col-sm-2">
+                                <br />
+                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
                             </div>
                         </div>
                     </div>

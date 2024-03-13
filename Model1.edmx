@@ -5,6 +5,8 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="TMdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.Andon' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Andon">
           <Key>
             <PropertyRef Name="ID" />
@@ -15,11 +17,13 @@
           <Property Name="ShiftName" Type="varchar" MaxLength="50" />
           <Property Name="Production" Type="int" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.BOM' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BOM">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="PartName" Type="varchar" MaxLength="255" />
           <Property Name="PartNumber" Type="varchar" MaxLength="255" />
           <Property Name="Model" Type="varchar" MaxLength="255" />
@@ -29,16 +33,20 @@
           <Property Name="AssyStationID" Type="int" />
           <Property Name="ScanSequence" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.DelayRecord' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="DelayRecord">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="DelayType" Type="varchar" MaxLength="50" />
           <Property Name="DelayTime" Type="datetime" />
           <Property Name="DelaySecond" Type="int" />
           <Property Name="StationNo" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.InspectionList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="InspectionList">
           <Key>
             <PropertyRef Name="ID" />
@@ -48,11 +56,13 @@
           <Property Name="InspectionType" Type="varchar" MaxLength="50" />
           <Property Name="StationNameID" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.JITLineSeatMfgReport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="JITLineSeatMfgReport">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Date" Type="date" />
           <Property Name="Time" Type="time" Precision="7" />
           <Property Name="Shift" Type="varchar" MaxLength="10" />
@@ -65,20 +75,24 @@
           <Property Name="OverallStatus" Type="varchar" MaxLength="10" />
           <Property Name="OperatorName" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.MODEL' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="MODEL">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ModelName" Type="varchar" MaxLength="150" />
           <Property Name="PartNumber" Type="varchar" MaxLength="150" />
           <Property Name="CustomerName" Type="varchar" MaxLength="100" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.MODEL_DEATILS' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="MODEL_DEATILS">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Model" Type="varchar" MaxLength="50" />
           <Property Name="Variant" Type="varchar" MaxLength="100" />
           <Property Name="VariantID" Type="int" />
@@ -92,21 +106,26 @@
           <Property Name="Destination" Type="varchar" MaxLength="50" />
           <Property Name="VIN" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.OperatorWorkTime' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="OperatorWorkTime">
           <Key>
             <PropertyRef Name="ID" />
+            <PropertyRef Name="StationNameID" />
           </Key>
-          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
           <Property Name="StationNameID" Type="int" Nullable="false" />
           <Property Name="OperatorName" Type="varchar" MaxLength="100" />
           <Property Name="LoginTime" Type="datetime" />
           <Property Name="LogoutTime" Type="datetime" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.PLCAddressList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="PLCAddressList">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="PLCTagName" Type="varchar" MaxLength="50" />
           <Property Name="Station1" Type="varchar" MaxLength="50" />
           <Property Name="Station2" Type="varchar" MaxLength="50" />
@@ -134,11 +153,13 @@
           <Property Name="Station24" Type="varchar" MaxLength="50" />
           <Property Name="Station25" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.ReworkTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ReworkTable">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="BuildLabelNumber" Type="varchar" MaxLength="100" />
           <Property Name="InspectionName" Type="varchar" MaxLength="200" />
           <Property Name="InspectionType" Type="varchar" MaxLength="50" />
@@ -149,11 +170,13 @@
           <Property Name="SeatStatus" Type="varchar" MaxLength="50" />
           <Property Name="ReworkDatetime" Type="datetime" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.SEAT_DATA' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="SEAT_DATA">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="SequenceNo" Type="int" />
           <Property Name="FinalBarcodeData" Type="varchar" MaxLength="100" />
           <Property Name="FinalPrintDateTime" Type="datetime" />
@@ -201,6 +224,8 @@
           <Property Name="BELT_BUCKLE" Type="varchar" MaxLength="50" />
           <Property Name="SAB" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.ShiftSetting' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ShiftSetting">
           <Key>
             <PropertyRef Name="ID" />
@@ -210,6 +235,8 @@
           <Property Name="StartTime" Type="time" Precision="7" />
           <Property Name="EndTime" Type="time" Precision="7" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.StationAssignment' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="StationAssignment">
           <Key>
             <PropertyRef Name="ID" />
@@ -218,6 +245,8 @@
           <Property Name="Station_Name" Type="varchar" MaxLength="100" />
           <Property Name="StationNameID" Type="varchar" MaxLength="100" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.STD_TorqueTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="STD_TorqueTable">
           <Key>
             <PropertyRef Name="ID" />
@@ -226,6 +255,8 @@
           <Property Name="TorqueName" Type="varchar" MaxLength="100" />
           <Property Name="TorqueToolIPAddress" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.TaskListTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="TaskListTable">
           <Key>
             <PropertyRef Name="ID" />
@@ -269,6 +300,8 @@
           <Property Name="ModelVariant29" Type="varchar" MaxLength="50" />
           <Property Name="ModelVariant30" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.Tool_IPAddress' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Tool_IPAddress">
           <Key>
             <PropertyRef Name="ID" />
@@ -278,6 +311,8 @@
           <Property Name="SttaionNameID" Type="varchar" MaxLength="50" />
           <Property Name="IPaddress" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.USER' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="USER">
           <Key>
             <PropertyRef Name="ID" />
@@ -290,33 +325,292 @@
           <Property Name="Authenticated" Type="int" />
           <Property Name="WorkingAtStationID" Type="varchar" MaxLength="50" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="VarTable">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="VarName" Type="varchar" MaxLength="100" />
           <Property Name="VarValue" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityContainer Name="TMdbModelStoreContainer">
-          <EntitySet Name="Andon" EntityType="Self.Andon" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="BOM" EntityType="Self.BOM" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="DelayRecord" EntityType="Self.DelayRecord" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="InspectionList" EntityType="Self.InspectionList" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="JITLineSeatMfgReport" EntityType="Self.JITLineSeatMfgReport" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="MODEL" EntityType="Self.MODEL" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="MODEL_DEATILS" EntityType="Self.MODEL_DEATILS" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="OperatorWorkTime" EntityType="Self.OperatorWorkTime" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="PLCAddressList" EntityType="Self.PLCAddressList" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ReworkTable" EntityType="Self.ReworkTable" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="SEAT_DATA" EntityType="Self.SEAT_DATA" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ShiftSetting" EntityType="Self.ShiftSetting" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="StationAssignment" EntityType="Self.StationAssignment" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="STD_TorqueTable" EntityType="Self.STD_TorqueTable" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="TaskListTable" EntityType="Self.TaskListTable" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Tool_IPAddress" EntityType="Self.Tool_IPAddress" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="USER" EntityType="Self.USER" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="VarTable" EntityType="Self.VarTable" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Andon" EntityType="Self.Andon" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Andon].[ID] AS [ID], 
+    [Andon].[HourName] AS [HourName], 
+    [Andon].[Target] AS [Target], 
+    [Andon].[ShiftName] AS [ShiftName], 
+    [Andon].[Production] AS [Production]
+    FROM [dbo].[Andon] AS [Andon]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="BOM" EntityType="Self.BOM" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [BOM].[ID] AS [ID], 
+    [BOM].[PartName] AS [PartName], 
+    [BOM].[PartNumber] AS [PartNumber], 
+    [BOM].[Model] AS [Model], 
+    [BOM].[Variant] AS [Variant], 
+    [BOM].[FG_PartNumber] AS [FG_PartNumber], 
+    [BOM].[Side] AS [Side], 
+    [BOM].[AssyStationID] AS [AssyStationID], 
+    [BOM].[ScanSequence] AS [ScanSequence]
+    FROM [dbo].[BOM] AS [BOM]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="DelayRecord" EntityType="Self.DelayRecord" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [DelayRecord].[ID] AS [ID], 
+    [DelayRecord].[DelayType] AS [DelayType], 
+    [DelayRecord].[DelayTime] AS [DelayTime], 
+    [DelayRecord].[DelaySecond] AS [DelaySecond], 
+    [DelayRecord].[StationNo] AS [StationNo]
+    FROM [dbo].[DelayRecord] AS [DelayRecord]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="InspectionList" EntityType="Self.InspectionList" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [InspectionList].[ID] AS [ID], 
+    [InspectionList].[InspectionName] AS [InspectionName], 
+    [InspectionList].[InspectionType] AS [InspectionType], 
+    [InspectionList].[StationNameID] AS [StationNameID]
+    FROM [dbo].[InspectionList] AS [InspectionList]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="JITLineSeatMfgReport" EntityType="Self.JITLineSeatMfgReport" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [JITLineSeatMfgReport].[ID] AS [ID], 
+    [JITLineSeatMfgReport].[Date] AS [Date], 
+    [JITLineSeatMfgReport].[Time] AS [Time], 
+    [JITLineSeatMfgReport].[Shift] AS [Shift], 
+    [JITLineSeatMfgReport].[SeatSerialNumber] AS [SeatSerialNumber], 
+    [JITLineSeatMfgReport].[BuildLabelNumber] AS [BuildLabelNumber], 
+    [JITLineSeatMfgReport].[StationNo] AS [StationNo], 
+    [JITLineSeatMfgReport].[StationDescription] AS [StationDescription], 
+    [JITLineSeatMfgReport].[ParameterDescription] AS [ParameterDescription], 
+    [JITLineSeatMfgReport].[DataValues] AS [DataValues], 
+    [JITLineSeatMfgReport].[OverallStatus] AS [OverallStatus], 
+    [JITLineSeatMfgReport].[OperatorName] AS [OperatorName]
+    FROM [dbo].[JITLineSeatMfgReport] AS [JITLineSeatMfgReport]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="MODEL" EntityType="Self.MODEL" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MODEL].[ID] AS [ID], 
+    [MODEL].[ModelName] AS [ModelName], 
+    [MODEL].[PartNumber] AS [PartNumber], 
+    [MODEL].[CustomerName] AS [CustomerName]
+    FROM [dbo].[MODEL] AS [MODEL]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="MODEL_DEATILS" EntityType="Self.MODEL_DEATILS" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [MODEL_DEATILS].[ID] AS [ID], 
+    [MODEL_DEATILS].[Model] AS [Model], 
+    [MODEL_DEATILS].[Variant] AS [Variant], 
+    [MODEL_DEATILS].[VariantID] AS [VariantID], 
+    [MODEL_DEATILS].[ModelVariant] AS [ModelVariant], 
+    [MODEL_DEATILS].[5S/7F] AS [5S/7F], 
+    [MODEL_DEATILS].[Seat] AS [Seat], 
+    [MODEL_DEATILS].[CustPartNumber] AS [CustPartNumber], 
+    [MODEL_DEATILS].[FG_PartNumber] AS [FG_PartNumber], 
+    [MODEL_DEATILS].[Features] AS [Features], 
+    [MODEL_DEATILS].[PartName] AS [PartName], 
+    [MODEL_DEATILS].[Destination] AS [Destination], 
+    [MODEL_DEATILS].[VIN] AS [VIN]
+    FROM [dbo].[MODEL_DEATILS] AS [MODEL_DEATILS]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="OperatorWorkTime" EntityType="Self.OperatorWorkTime" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OperatorWorkTime].[ID] AS [ID], 
+    [OperatorWorkTime].[StationNameID] AS [StationNameID], 
+    [OperatorWorkTime].[OperatorName] AS [OperatorName], 
+    [OperatorWorkTime].[LoginTime] AS [LoginTime], 
+    [OperatorWorkTime].[LogoutTime] AS [LogoutTime]
+    FROM [dbo].[OperatorWorkTime] AS [OperatorWorkTime]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="PLCAddressList" EntityType="Self.PLCAddressList" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [PLCAddressList].[ID] AS [ID], 
+    [PLCAddressList].[PLCTagName] AS [PLCTagName], 
+    [PLCAddressList].[Station1] AS [Station1], 
+    [PLCAddressList].[Station2] AS [Station2], 
+    [PLCAddressList].[Station3] AS [Station3], 
+    [PLCAddressList].[Station4] AS [Station4], 
+    [PLCAddressList].[Station5] AS [Station5], 
+    [PLCAddressList].[Station6] AS [Station6], 
+    [PLCAddressList].[Station7] AS [Station7], 
+    [PLCAddressList].[Station8] AS [Station8], 
+    [PLCAddressList].[Station9] AS [Station9], 
+    [PLCAddressList].[Station10] AS [Station10], 
+    [PLCAddressList].[Station11] AS [Station11], 
+    [PLCAddressList].[Station12] AS [Station12], 
+    [PLCAddressList].[Station13] AS [Station13], 
+    [PLCAddressList].[Station14] AS [Station14], 
+    [PLCAddressList].[Station15] AS [Station15], 
+    [PLCAddressList].[Station16] AS [Station16], 
+    [PLCAddressList].[Station17] AS [Station17], 
+    [PLCAddressList].[Station18] AS [Station18], 
+    [PLCAddressList].[Station19] AS [Station19], 
+    [PLCAddressList].[Station20] AS [Station20], 
+    [PLCAddressList].[Station21] AS [Station21], 
+    [PLCAddressList].[Station22] AS [Station22], 
+    [PLCAddressList].[Station23] AS [Station23], 
+    [PLCAddressList].[Station24] AS [Station24], 
+    [PLCAddressList].[Station25] AS [Station25]
+    FROM [dbo].[PLCAddressList] AS [PLCAddressList]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ReworkTable" EntityType="Self.ReworkTable" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ReworkTable].[ID] AS [ID], 
+    [ReworkTable].[BuildLabelNumber] AS [BuildLabelNumber], 
+    [ReworkTable].[InspectionName] AS [InspectionName], 
+    [ReworkTable].[InspectionType] AS [InspectionType], 
+    [ReworkTable].[StationNameID] AS [StationNameID], 
+    [ReworkTable].[OperatorName] AS [OperatorName], 
+    [ReworkTable].[InspectionDateTime] AS [InspectionDateTime], 
+    [ReworkTable].[SeatID] AS [SeatID], 
+    [ReworkTable].[SeatStatus] AS [SeatStatus], 
+    [ReworkTable].[ReworkDatetime] AS [ReworkDatetime]
+    FROM [dbo].[ReworkTable] AS [ReworkTable]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="SEAT_DATA" EntityType="Self.SEAT_DATA" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [SEAT_DATA].[ID] AS [ID], 
+    [SEAT_DATA].[SequenceNo] AS [SequenceNo], 
+    [SEAT_DATA].[FinalBarcodeData] AS [FinalBarcodeData], 
+    [SEAT_DATA].[FinalPrintDateTime] AS [FinalPrintDateTime], 
+    [SEAT_DATA].[Shift] AS [Shift], 
+    [SEAT_DATA].[BuildLabelBarcode] AS [BuildLabelBarcode], 
+    [SEAT_DATA].[BuildNoDatetime] AS [BuildNoDatetime], 
+    [SEAT_DATA].[Model] AS [Model], 
+    [SEAT_DATA].[Variant] AS [Variant], 
+    [SEAT_DATA].[FG_PartNumber] AS [FG_PartNumber], 
+    [SEAT_DATA].[SeatType] AS [SeatType], 
+    [SEAT_DATA].[ModelVariant] AS [ModelVariant], 
+    [SEAT_DATA].[StationNo] AS [StationNo], 
+    [SEAT_DATA].[STAUS] AS [STAUS], 
+    [SEAT_DATA].[SCAN_BOM1] AS [SCAN_BOM1], 
+    [SEAT_DATA].[SCAN_BOM2] AS [SCAN_BOM2], 
+    [SEAT_DATA].[SCAN_BOM3] AS [SCAN_BOM3], 
+    [SEAT_DATA].[SCAN_BOM4] AS [SCAN_BOM4], 
+    [SEAT_DATA].[SCAN_BOM5] AS [SCAN_BOM5], 
+    [SEAT_DATA].[SCAN_BOM6] AS [SCAN_BOM6], 
+    [SEAT_DATA].[SCAN_BOM7] AS [SCAN_BOM7], 
+    [SEAT_DATA].[SCAN_BOM8] AS [SCAN_BOM8], 
+    [SEAT_DATA].[SCAN_BOM9] AS [SCAN_BOM9], 
+    [SEAT_DATA].[SCAN_BOM10] AS [SCAN_BOM10], 
+    [SEAT_DATA].[SCAN_BOM11] AS [SCAN_BOM11], 
+    [SEAT_DATA].[SCAN_BOM12] AS [SCAN_BOM12], 
+    [SEAT_DATA].[SCAN_BOM13] AS [SCAN_BOM13], 
+    [SEAT_DATA].[SCAN_BOM14] AS [SCAN_BOM14], 
+    [SEAT_DATA].[SCAN_BOM15] AS [SCAN_BOM15], 
+    [SEAT_DATA].[SCAN_BOM1_DATETIME] AS [SCAN_BOM1_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM2_DATETIME] AS [SCAN_BOM2_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM3_DATETIME] AS [SCAN_BOM3_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM4_DATETIME] AS [SCAN_BOM4_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM5_DATETIME] AS [SCAN_BOM5_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM6_DATETIME] AS [SCAN_BOM6_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM7_DATETIME] AS [SCAN_BOM7_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM8_DATETIME] AS [SCAN_BOM8_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM9_DATETIME] AS [SCAN_BOM9_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM10_DATETIME] AS [SCAN_BOM10_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM11_DATETIME] AS [SCAN_BOM11_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM12_DATETIME] AS [SCAN_BOM12_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM13_DATETIME] AS [SCAN_BOM13_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM14_DATETIME] AS [SCAN_BOM14_DATETIME], 
+    [SEAT_DATA].[SCAN_BOM15_DATETIME] AS [SCAN_BOM15_DATETIME], 
+    [SEAT_DATA].[ODS] AS [ODS], 
+    [SEAT_DATA].[BELT_BUCKLE] AS [BELT_BUCKLE], 
+    [SEAT_DATA].[SAB] AS [SAB]
+    FROM [dbo].[SEAT_DATA] AS [SEAT_DATA]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ShiftSetting" EntityType="Self.ShiftSetting" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ShiftSetting].[ID] AS [ID], 
+    [ShiftSetting].[ShiftName] AS [ShiftName], 
+    [ShiftSetting].[StartTime] AS [StartTime], 
+    [ShiftSetting].[EndTime] AS [EndTime]
+    FROM [dbo].[ShiftSetting] AS [ShiftSetting]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="StationAssignment" EntityType="Self.StationAssignment" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [StationAssignment].[ID] AS [ID], 
+    [StationAssignment].[Station_Name] AS [Station_Name], 
+    [StationAssignment].[StationNameID] AS [StationNameID]
+    FROM [dbo].[StationAssignment] AS [StationAssignment]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="STD_TorqueTable" EntityType="Self.STD_TorqueTable" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [STD_TorqueTable].[ID] AS [ID], 
+    [STD_TorqueTable].[TorqueName] AS [TorqueName], 
+    [STD_TorqueTable].[TorqueToolIPAddress] AS [TorqueToolIPAddress]
+    FROM [dbo].[STD_TorqueTable] AS [STD_TorqueTable]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="TaskListTable" EntityType="Self.TaskListTable" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [TaskListTable].[ID] AS [ID], 
+    [TaskListTable].[StationNameID] AS [StationNameID], 
+    [TaskListTable].[ImageSeq] AS [ImageSeq], 
+    [TaskListTable].[TaskName] AS [TaskName], 
+    [TaskListTable].[TaskType] AS [TaskType], 
+    [TaskListTable].[TaskCurrentValue] AS [TaskCurrentValue], 
+    [TaskListTable].[TaskStatus] AS [TaskStatus], 
+    [TaskListTable].[BomSeq] AS [BomSeq], 
+    [TaskListTable].[ModelVariant1] AS [ModelVariant1], 
+    [TaskListTable].[ModelVariant2] AS [ModelVariant2], 
+    [TaskListTable].[ModelVariant3] AS [ModelVariant3], 
+    [TaskListTable].[ModelVariant4] AS [ModelVariant4], 
+    [TaskListTable].[ModelVariant5] AS [ModelVariant5], 
+    [TaskListTable].[ModelVariant6] AS [ModelVariant6], 
+    [TaskListTable].[ModelVariant7] AS [ModelVariant7], 
+    [TaskListTable].[ModelVariant8] AS [ModelVariant8], 
+    [TaskListTable].[ModelVariant9] AS [ModelVariant9], 
+    [TaskListTable].[ModelVariant10] AS [ModelVariant10], 
+    [TaskListTable].[ModelVariant11] AS [ModelVariant11], 
+    [TaskListTable].[ModelVariant12] AS [ModelVariant12], 
+    [TaskListTable].[ModelVariant13] AS [ModelVariant13], 
+    [TaskListTable].[ModelVariant14] AS [ModelVariant14], 
+    [TaskListTable].[ModelVariant15] AS [ModelVariant15], 
+    [TaskListTable].[ModelVariant16] AS [ModelVariant16], 
+    [TaskListTable].[ModelVariant17] AS [ModelVariant17], 
+    [TaskListTable].[ModelVariant18] AS [ModelVariant18], 
+    [TaskListTable].[ModelVariant19] AS [ModelVariant19], 
+    [TaskListTable].[ModelVariant20] AS [ModelVariant20], 
+    [TaskListTable].[ModelVariant21] AS [ModelVariant21], 
+    [TaskListTable].[ModelVariant22] AS [ModelVariant22], 
+    [TaskListTable].[ModelVariant23] AS [ModelVariant23], 
+    [TaskListTable].[ModelVariant24] AS [ModelVariant24], 
+    [TaskListTable].[ModelVariant25] AS [ModelVariant25], 
+    [TaskListTable].[ModelVariant26] AS [ModelVariant26], 
+    [TaskListTable].[ModelVariant27] AS [ModelVariant27], 
+    [TaskListTable].[ModelVariant28] AS [ModelVariant28], 
+    [TaskListTable].[ModelVariant29] AS [ModelVariant29], 
+    [TaskListTable].[ModelVariant30] AS [ModelVariant30]
+    FROM [dbo].[TaskListTable] AS [TaskListTable]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Tool_IPAddress" EntityType="Self.Tool_IPAddress" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Tool_IPAddress].[ID] AS [ID], 
+    [Tool_IPAddress].[ToolName] AS [ToolName], 
+    [Tool_IPAddress].[SttaionNameID] AS [SttaionNameID], 
+    [Tool_IPAddress].[IPaddress] AS [IPaddress]
+    FROM [dbo].[Tool_IPAddress] AS [Tool_IPAddress]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="USER" EntityType="Self.USER" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [USER].[ID] AS [ID], 
+    [USER].[UserID] AS [UserID], 
+    [USER].[UserName] AS [UserName], 
+    [USER].[Password] AS [Password], 
+    [USER].[Roll] AS [Roll], 
+    [USER].[Authenticated] AS [Authenticated], 
+    [USER].[WorkingAtStationID] AS [WorkingAtStationID]
+    FROM [dbo].[USER] AS [USER]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="VarTable" EntityType="Self.VarTable" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [VarTable].[ID] AS [ID], 
+    [VarTable].[VarName] AS [VarName], 
+    [VarTable].[VarValue] AS [VarValue]
+    FROM [dbo].[VarTable] AS [VarTable]</DefiningQuery>
+          </EntitySet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -330,7 +624,6 @@
           <EntitySet Name="JITLineSeatMfgReports" EntityType="TMdbModel.JITLineSeatMfgReport" />
           <EntitySet Name="MODELs" EntityType="TMdbModel.MODEL" />
           <EntitySet Name="MODEL_DEATILS" EntityType="TMdbModel.MODEL_DEATILS" />
-          <EntitySet Name="OperatorWorkTimes" EntityType="TMdbModel.OperatorWorkTime" />
           <EntitySet Name="PLCAddressLists" EntityType="TMdbModel.PLCAddressList" />
           <EntitySet Name="ReworkTables" EntityType="TMdbModel.ReworkTable" />
           <EntitySet Name="SEAT_DATA" EntityType="TMdbModel.SEAT_DATA" />
@@ -341,6 +634,7 @@
           <EntitySet Name="Tool_IPAddress" EntityType="TMdbModel.Tool_IPAddress" />
           <EntitySet Name="USERs" EntityType="TMdbModel.USER" />
           <EntitySet Name="VarTables" EntityType="TMdbModel.VarTable" />
+          <EntitySet Name="OperatorWorkTimes" EntityType="TMdbModel.OperatorWorkTime" />
         </EntityContainer>
         <EntityType Name="Andon">
           <Key>
@@ -428,16 +722,6 @@
           <Property Name="PartName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Destination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="OperatorWorkTime">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="StationNameID" Type="Int32" Nullable="false" />
-          <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LoginTime" Type="DateTime" Precision="3" />
-          <Property Name="LogoutTime" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="PLCAddressList">
           <Key>
@@ -635,6 +919,17 @@
           <Property Name="VarName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="VarValue" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="OperatorWorkTime">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="StationNameID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="StationNameID" Type="Int32" Nullable="false" />
+          <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LoginTime" Type="DateTime" Precision="3" />
+          <Property Name="LogoutTime" Type="DateTime" Precision="3" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -731,17 +1026,6 @@
                 <ScalarProperty Name="VariantID" ColumnName="VariantID" />
                 <ScalarProperty Name="Variant" ColumnName="Variant" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="OperatorWorkTimes">
-            <EntityTypeMapping TypeName="TMdbModel.OperatorWorkTime">
-              <MappingFragment StoreEntitySet="OperatorWorkTime">
-                <ScalarProperty Name="LogoutTime" ColumnName="LogoutTime" />
-                <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
-                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
-                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -948,6 +1232,17 @@
               <MappingFragment StoreEntitySet="VarTable">
                 <ScalarProperty Name="VarValue" ColumnName="VarValue" />
                 <ScalarProperty Name="VarName" ColumnName="VarName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorWorkTimes">
+            <EntityTypeMapping TypeName="TMdbModel.OperatorWorkTime">
+              <MappingFragment StoreEntitySet="OperatorWorkTime">
+                <ScalarProperty Name="LogoutTime" ColumnName="LogoutTime" />
+                <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
+                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
+                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
