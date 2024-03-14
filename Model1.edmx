@@ -6,7 +6,7 @@
     <edmx:StorageModels>
     <Schema Namespace="TMdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.Andon' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.Andon' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Andon">
           <Key>
             <PropertyRef Name="ID" />
@@ -18,12 +18,12 @@ warning 6002: The table/view 'TMdb.dbo.Andon' does not have a primary key define
           <Property Name="Production" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.BOM' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.BOM' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BOM">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="PartName" Type="varchar" MaxLength="255" />
           <Property Name="PartNumber" Type="varchar" MaxLength="255" />
           <Property Name="Model" Type="varchar" MaxLength="255" />
@@ -34,19 +34,19 @@ warning 6002: The table/view 'TMdb.dbo.BOM' does not have a primary key defined.
           <Property Name="ScanSequence" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.DelayRecord' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.DelayRecord' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="DelayRecord">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
           <Property Name="DelayType" Type="varchar" MaxLength="50" />
           <Property Name="DelayTime" Type="datetime" />
           <Property Name="DelaySecond" Type="int" />
           <Property Name="StationNo" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.InspectionList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.InspectionList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="InspectionList">
           <Key>
             <PropertyRef Name="ID" />
@@ -57,12 +57,12 @@ warning 6002: The table/view 'TMdb.dbo.InspectionList' does not have a primary k
           <Property Name="StationNameID" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.JITLineSeatMfgReport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.JITLineSeatMfgReport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="JITLineSeatMfgReport">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
           <Property Name="Date" Type="date" />
           <Property Name="Time" Type="time" Precision="7" />
           <Property Name="Shift" Type="varchar" MaxLength="10" />
@@ -76,23 +76,23 @@ warning 6002: The table/view 'TMdb.dbo.JITLineSeatMfgReport' does not have a pri
           <Property Name="OperatorName" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.MODEL' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.MODEL' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="MODEL">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="ModelName" Type="varchar" MaxLength="150" />
           <Property Name="PartNumber" Type="varchar" MaxLength="150" />
           <Property Name="CustomerName" Type="varchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.MODEL_DEATILS' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.MODEL_DEATILS' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="MODEL_DEATILS">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="Model" Type="varchar" MaxLength="50" />
           <Property Name="Variant" Type="varchar" MaxLength="100" />
           <Property Name="VariantID" Type="int" />
@@ -107,7 +107,7 @@ warning 6002: The table/view 'TMdb.dbo.MODEL_DEATILS' does not have a primary ke
           <Property Name="VIN" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.OperatorWorkTime' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.OperatorWorkTime' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="OperatorWorkTime">
           <Key>
             <PropertyRef Name="ID" />
@@ -120,12 +120,12 @@ warning 6002: The table/view 'TMdb.dbo.OperatorWorkTime' does not have a primary
           <Property Name="LogoutTime" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.PLCAddressList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.PLCAddressList' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="PLCAddressList">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="PLCTagName" Type="varchar" MaxLength="50" />
           <Property Name="Station1" Type="varchar" MaxLength="50" />
           <Property Name="Station2" Type="varchar" MaxLength="50" />
@@ -154,12 +154,12 @@ warning 6002: The table/view 'TMdb.dbo.PLCAddressList' does not have a primary k
           <Property Name="Station25" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.ReworkTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.ReworkTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ReworkTable">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
           <Property Name="BuildLabelNumber" Type="varchar" MaxLength="100" />
           <Property Name="InspectionName" Type="varchar" MaxLength="200" />
           <Property Name="InspectionType" Type="varchar" MaxLength="50" />
@@ -171,12 +171,12 @@ warning 6002: The table/view 'TMdb.dbo.ReworkTable' does not have a primary key 
           <Property Name="ReworkDatetime" Type="datetime" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.SEAT_DATA' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.SEAT_DATA' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="SEAT_DATA">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="bigint" Nullable="false" />
           <Property Name="SequenceNo" Type="int" />
           <Property Name="FinalBarcodeData" Type="varchar" MaxLength="100" />
           <Property Name="FinalPrintDateTime" Type="datetime" />
@@ -225,7 +225,7 @@ warning 6002: The table/view 'TMdb.dbo.SEAT_DATA' does not have a primary key de
           <Property Name="SAB" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.ShiftSetting' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.ShiftSetting' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ShiftSetting">
           <Key>
             <PropertyRef Name="ID" />
@@ -236,7 +236,7 @@ warning 6002: The table/view 'TMdb.dbo.ShiftSetting' does not have a primary key
           <Property Name="EndTime" Type="time" Precision="7" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.StationAssignment' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.StationAssignment' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="StationAssignment">
           <Key>
             <PropertyRef Name="ID" />
@@ -246,7 +246,7 @@ warning 6002: The table/view 'TMdb.dbo.StationAssignment' does not have a primar
           <Property Name="StationNameID" Type="varchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.STD_TorqueTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.STD_TorqueTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="STD_TorqueTable">
           <Key>
             <PropertyRef Name="ID" />
@@ -256,7 +256,7 @@ warning 6002: The table/view 'TMdb.dbo.STD_TorqueTable' does not have a primary 
           <Property Name="TorqueToolIPAddress" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.TaskListTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.TaskListTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="TaskListTable">
           <Key>
             <PropertyRef Name="ID" />
@@ -301,7 +301,7 @@ warning 6002: The table/view 'TMdb.dbo.TaskListTable' does not have a primary ke
           <Property Name="ModelVariant30" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.Tool_IPAddress' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.Tool_IPAddress' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Tool_IPAddress">
           <Key>
             <PropertyRef Name="ID" />
@@ -312,12 +312,12 @@ warning 6002: The table/view 'TMdb.dbo.Tool_IPAddress' does not have a primary k
           <Property Name="IPaddress" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.USER' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.USER' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="USER">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="UserID" Type="varchar" MaxLength="50" />
           <Property Name="UserName" Type="varchar" MaxLength="50" />
           <Property Name="Password" Type="varchar" MaxLength="100" />
@@ -326,12 +326,12 @@ warning 6002: The table/view 'TMdb.dbo.USER' does not have a primary key defined
           <Property Name="WorkingAtStationID" Type="varchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'TMdbs.dbo.VarTable' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="VarTable">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VarName" Type="varchar" MaxLength="100" />
           <Property Name="VarValue" Type="varchar" MaxLength="500" />
         </EntityType>
@@ -624,6 +624,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <EntitySet Name="JITLineSeatMfgReports" EntityType="TMdbModel.JITLineSeatMfgReport" />
           <EntitySet Name="MODELs" EntityType="TMdbModel.MODEL" />
           <EntitySet Name="MODEL_DEATILS" EntityType="TMdbModel.MODEL_DEATILS" />
+          <EntitySet Name="OperatorWorkTimes" EntityType="TMdbModel.OperatorWorkTime" />
           <EntitySet Name="PLCAddressLists" EntityType="TMdbModel.PLCAddressList" />
           <EntitySet Name="ReworkTables" EntityType="TMdbModel.ReworkTable" />
           <EntitySet Name="SEAT_DATA" EntityType="TMdbModel.SEAT_DATA" />
@@ -634,7 +635,6 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <EntitySet Name="Tool_IPAddress" EntityType="TMdbModel.Tool_IPAddress" />
           <EntitySet Name="USERs" EntityType="TMdbModel.USER" />
           <EntitySet Name="VarTables" EntityType="TMdbModel.VarTable" />
-          <EntitySet Name="OperatorWorkTimes" EntityType="TMdbModel.OperatorWorkTime" />
         </EntityContainer>
         <EntityType Name="Andon">
           <Key>
@@ -650,7 +650,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="PartName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="PartNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -664,7 +664,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int64" Nullable="false" />
           <Property Name="DelayType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DelayTime" Type="DateTime" Precision="3" />
           <Property Name="DelaySecond" Type="Int32" />
@@ -683,7 +683,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int64" Nullable="false" />
           <Property Name="Date" Type="DateTime" Precision="0" />
           <Property Name="Time" Type="Time" Precision="7" />
           <Property Name="Shift" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
@@ -700,7 +700,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="ModelName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="PartNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="CustomerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -709,7 +709,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Variant" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="VariantID" Type="Int32" />
@@ -723,11 +723,22 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Property Name="Destination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="VIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="OperatorWorkTime">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="StationNameID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="StationNameID" Type="Int32" Nullable="false" />
+          <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LoginTime" Type="DateTime" Precision="3" />
+          <Property Name="LogoutTime" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="PLCAddressList">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="PLCTagName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Station1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Station2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -759,7 +770,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int64" Nullable="false" />
           <Property Name="BuildLabelNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="InspectionName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="InspectionType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -774,7 +785,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int64" Nullable="false" />
           <Property Name="SequenceNo" Type="Int32" />
           <Property Name="FinalBarcodeData" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="FinalPrintDateTime" Type="DateTime" Precision="3" />
@@ -903,7 +914,7 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
@@ -918,17 +929,6 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VarName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="VarValue" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="OperatorWorkTime">
-          <Key>
-            <PropertyRef Name="ID" />
-            <PropertyRef Name="StationNameID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="StationNameID" Type="Int32" Nullable="false" />
-          <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LoginTime" Type="DateTime" Precision="3" />
-          <Property Name="LogoutTime" Type="DateTime" Precision="3" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -1026,6 +1026,17 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
                 <ScalarProperty Name="VariantID" ColumnName="VariantID" />
                 <ScalarProperty Name="Variant" ColumnName="Variant" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OperatorWorkTimes">
+            <EntityTypeMapping TypeName="TMdbModel.OperatorWorkTime">
+              <MappingFragment StoreEntitySet="OperatorWorkTime">
+                <ScalarProperty Name="LogoutTime" ColumnName="LogoutTime" />
+                <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
+                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
+                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1232,17 +1243,6 @@ warning 6002: The table/view 'TMdb.dbo.VarTable' does not have a primary key def
               <MappingFragment StoreEntitySet="VarTable">
                 <ScalarProperty Name="VarValue" ColumnName="VarValue" />
                 <ScalarProperty Name="VarName" ColumnName="VarName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="OperatorWorkTimes">
-            <EntityTypeMapping TypeName="TMdbModel.OperatorWorkTime">
-              <MappingFragment StoreEntitySet="OperatorWorkTime">
-                <ScalarProperty Name="LogoutTime" ColumnName="LogoutTime" />
-                <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
-                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
-                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

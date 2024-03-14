@@ -1468,6 +1468,30 @@
                                     </div>
                                 </div>
 
+                                <%--write printer dpi here--%>
+                                <div class="card mt-2">
+                                    <div class="card-header">
+                                        <a class="btn" data-bs-toggle="collapse" href="#collapseLabelPrinter">Manage printer dpi.
+                                        </a>
+                                    </div>
+                                    <div id="collapseLabelPrinter" class="collapse" data-bs-parent="#accordionPrinter">
+                                        <div class="card-body">
+
+                                            <%--this is for show printer of built ticket ip address--%>
+                                            <div class="container-fluid">
+                                                <b>Built Ticket Printer Dpi : &ensp; &ensp;&ensp;&ensp;&ensp; -  </b>
+                                                <input value="<%=builtPrinterDpi %>" onkeyup="updateIpAddress('BuiltPrinterDpi', this.value)" type="text" /> 
+                                            </div>
+
+                                            <%--this is for show printer of built finel ticket ip address--%>
+                                            <div class="container-fluid mt-2">
+                                                <b>Finel Built Ticket Printer Dpi : &ensp;- </b>
+                                                <input value="<%=finelPrinterDpi %>" onkeyup="updateIpAddress('FinelPrinterDpi', this.value)" type="text"  /> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

@@ -147,6 +147,7 @@
     <Content Include="image\icon\eye.svg" />
     <Content Include="image\icon\more.svg" />
     <Content Include="image\icon\pencil.svg" />
+    <Content Include="image\icon\qr-code.svg" />
     <Content Include="image\icon\quote.svg" />
     <Content Include="image\icon\tools.svg" />
     <Content Include="image\icon\trash.svg" />
@@ -311,6 +312,13 @@
     </Compile>
     <Compile Include="andon\main.aspx.designer.cs">
       <DependentUpon>main.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="qrlabel\index.aspx.cs">
+      <DependentUpon>index.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="qrlabel\index.aspx.designer.cs">
+      <DependentUpon>index.aspx</DependentUpon>
     </Compile>
     <Compile Include="report\index.aspx.cs">
       <DependentUpon>index.aspx</DependentUpon>
@@ -559,6 +567,7 @@
     </Content>
     <None Include="other\TMdb.bak" />
     <None Include="packages.config" />
+    <Content Include="qrlabel\index.aspx" />
     <Content Include="report\index.aspx" />
     <Content Include="station\index.aspx" />
     <Content Include="station\print.aspx" />

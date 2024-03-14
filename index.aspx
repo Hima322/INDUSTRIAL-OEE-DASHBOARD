@@ -115,6 +115,7 @@
                                 <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/user/index.aspx'">User</button>&nbsp;
                                 <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/station/task.aspx'">Task</button>
                             <br /> 
+                                <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/qrlabel/index.aspx'">QR Label</button> &nbsp; 
                                 <button class="btn btn-outline-secondary mb-3" type="button" onclick="location.href = '/user/info.aspx'">Station User Info</button>
                             <br />
                             <button class="btn btn-danger mb-3 shadow" type="button" onclick="localStorage.removeItem('admin') || location.reload()">Logout</button>

@@ -26,6 +26,9 @@ namespace WebApplication2.monitor
         public static string printer2IpAddress = ""; 
         public static string reworkDctoolIpAddress = ""; 
 
+        public static string builtPrinterDpi = ""; 
+        public static string finelPrinterDpi = ""; 
+
         static Plc plc;
         public static string pwd = "";
         public static string seftyTitle = "";
@@ -52,9 +55,9 @@ namespace WebApplication2.monitor
                     }
                     //this code for plc ip address fetching 
                     var plcIpRes = db.VarTables.Where(i => i.VarName == "PlcIp").FirstOrDefault();
+                    if (plcIpRes != null)
                     {
-                        if (plcIpRes != null)
-                            plcIpAddress = plcIpRes.VarValue;
+                        plcIpAddress = plcIpRes.VarValue;
                     }
                     //this code for printer1 ip address fetching 
                     var printer1IpRes = db.VarTables.Where(i => i.VarName == "PrinterIp").FirstOrDefault();
@@ -67,6 +70,18 @@ namespace WebApplication2.monitor
                     if (printer2IpRes != null)
                     {
                         printer2IpAddress = printer2IpRes.VarValue;
+                    }
+                    //this code for built printer dpi fetching 
+                    var builtPrinterDpiRes = db.VarTables.Where(i => i.VarName == "BuiltPrinterDpi").FirstOrDefault();
+                    if (builtPrinterDpiRes != null)
+                    {
+                        builtPrinterDpi = builtPrinterDpiRes.VarValue;
+                    }
+                    //this code for built printer dpi fetching 
+                    var finelPrinterDpiRes = db.VarTables.Where(i => i.VarName == "FinelPrinterDpi").FirstOrDefault();
+                    if (finelPrinterDpiRes != null)
+                    {
+                        finelPrinterDpi = finelPrinterDpiRes.VarValue;
                     }
                     //this code for printer2 ip address fetching 
                     var reworkDctoolIpAddressRes = db.VarTables.Where(i => i.VarName == "ReworkDcTooIP").FirstOrDefault();

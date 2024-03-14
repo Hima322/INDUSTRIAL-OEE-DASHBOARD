@@ -40,7 +40,10 @@
             getTotalBreak()
             getTodayRejectTask()
             handleCalculateOEE()
-            getCurrentShiftRowId() 
+            getCurrentShiftRowId()
+            if (current_shift.length > 3) {
+                $("#conRunning").hide()
+            }
         }, 1000);
          
 
@@ -478,7 +481,7 @@
         <%--show current shift--%>
         <div class="shift_div">
             <span>Shift : <span id="display_current_shift"></span></span>
-            <span>Indexing Mode</span>
+            <span id="conRunning">Running</span>
             <span>OEE : <span id="oeeId">00</span>%</span>
         </div>
 

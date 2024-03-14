@@ -20,21 +20,54 @@ built ticket print
 
 finel print code 
 
-CT~~CD,~CC^~CT~ 
-^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI0^XZ 
-^XA 
-^MMT 
-^PW1181 
-^LL0295 
-^LS0 
-^FO32,0^GFA,10368,10368,00036,:Z64: eJztmL0RgzAMhcVRpMwIHoXR8GiMwgiUKbgo6MfGJLl0iBTvNcjWdzTvLMkmgiAIOkV3LsrU8XRjnvu6NYMJZZ727ZXZZKEKTDgzsJqUN+vcLwn5AeY6xs6O+gXmaoZokASY6xhVU7x+1jowJzK1mWexzvwqAhPKNCo95SMBJobxirWLEpeSBiaWkZUMu0Tj0gkuJY0XTTTWgYlgLJHMrMkT1vXrX8BEMZNHdozq3AsmmrFZS3ayh97f9ToCJpJp5CalVVfHngImgGnnXjMpefj9DgLmRGa/D0q4zb280shcqxuYSGZgeyfxpp7EPN8FcxFD+9zL730HTCyzF69x8adEMMGMqi+zlt0Hu/bJBEwQw0X1Mf1gHZg4BoKgP9cLA5DRTw==:8CB8 
-^FT321,69^A0N,42,52^FH\^FDCC24^FS 
-^FT498,76^A0N,42,55^FH\^FDDDMMYYYYT^FS 
-^FT321,128^A0N,42,72^FH\^FDB^FS 
-^FT388,128^A0N,42,72^FH\^FDE^FS 
-^FT512,128^A0N,42,72^FH\^FDC^FS 
-^FT606,128^A0N,42,40^FH\^FDSEAT ASSY^FS 
-^FT321,202^A0N,42,72^FH\^FDD^FS 
-^FT332,264^A0N,42,72^FH\^FDA^FS 
-^FT506,254^A0N,42,55^FH\^FDDDMMYYYYT^FS 
-^PQ1,0,1,Y^XZ
+CT~~CD,~CC^~CT~
+^XA
+~TA000
+~JSN
+^LT0
+^MNW
+^MTT
+^PON
+^PMN
+^LH0,0
+^JMA
+^PR6,6
+~SD15
+^JUS
+^LRN
+^CI27
+^PA0,1,1,0
+^XZ
+^XA
+^MMT
+^PW1181
+^LL295
+^LS0
+^FT316,67^A0N,40,48^FH\^CI28^FDM^FS^CI27
+^FT598,69^A0N,42,43^FH\^CI28^FDDT^FS^CI27
+^FT321,133^A0N,42,43^FH\^CI28^FDV^FS^CI27
+^FT316,251^A0N,40,41^FH\^CI28^FDCODE^FS^CI27
+^FT772,133^A0N,42,43^FH\^CI28^FDS^FS^CI27
+^FT591,128^A0N,42,43^FH\^CI28^FD4W^FS^CI27
+^FT321,193^A0N,42,43^FH\^CI28^FDF^FS^CI27
+^FT53,267^BQN,2,9
+^FH\^FDLA,CODE^FS
+^PQ1,0,1,Y
+^XZ
+
+
+This is a ZPL (Zebra Programming Language) code snippet used for printing labels on Zebra printers. Here's a breakdown of what each section does:
+
+^XA: Indicates the beginning of a label format.
+^MMT: Sets the media type.
+^PW531: Sets the label width to 531 dots.
+^LL0177: Sets the label length to 177 dots.
+^LS0: Sets the label home position.
+^FT215,39^A0N,25,24^FH\^FDE4RNS5-10000-00001^FS: Defines a text field at position (215, 39) with a font size of 25, and prints the text "E4RNS5-10000-00001".
+^FT31,182^BQN,2,7^FH\^FDLA,E4RNS5-32000-00001^FS: Defines a barcode (QR code in this case) at position (31, 182) with a size of 7 and error correction level 2, containing the data "LA,E4RNS5-32000-00001".
+^FT215,87^A0N,25,24^FH\^FDMID MT^FS: Defines another text field at position (215, 87) with a font size of 25, printing "MID MT".
+^FT407,88^A0N,25,24^FH\^FDDRIVER^FS: Defines another text field at position (407, 88) with a font size of 25, printing "DRIVER".
+^FT243,136^A0N,25,24^FH\^FDCC24^FS: Defines another text field at position (243, 136) with a font size of 25, printing "CC24".
+^FT365,135^A0N,31,21^FH\^FD12/12/2023^FS: Defines another text field at position (365, 135) with a font size of 31, printing "12/12/2023".
+^PQ1,0,1,Y^XZ: Prints one copy of the label and ends the format.
+Each command in the ZPL code is preceded by a caret (^) and followed by parameters. For instance, ^FT indicates "Field Typeset" and is followed by the position coordinates and other formatting parameters. Similarly, ^A specifies font information, and ^FD indicates field data.
