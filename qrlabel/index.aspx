@@ -16,38 +16,172 @@
 
 
     <script type="text/javascript">   
-        var currId = ""
+
+        var currId = "" 
+        var prnData = []
+
 
         $(document).ready(_ => {
-            var font = document.querySelectorAll(".finel-ticket-body font");
-            console.log(font)
+            getPrnFile()  
+            $("#control").hide()
+
+            var font = document.querySelectorAll(".tab-pane font"); 
 
             font.forEach(e => {
-                e.onclick = () => {
-                    currId = e.id
+                e.onclick = () => {  
+                    let curr = prnData.find(f => f.Label == e.id)
+
+                    $("#control").show()
+                    $("#control").html(`
+                        <h5>${e.innerText}</h5>   
+                        <br /> 
+                        Left - Right 
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'left',this.value)" type="range" step="0.1" min="1" value="${curr.Left}" />   <br/>
+                        Top - Down
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'top',this.value)" type="range" step="0.1" min="1" max="50" value="${curr.Top}" />   <br />
+                        Font Size
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'width',this.value)" type="range" step="0.1" min="1" max="7" value="${curr.Width}" />   
+                        <br /> 
+                    `)
+
                 }
             }) 
 
+
+            $("#Finel0").click(() => {
+                let curr = prnData.find(f => f.Label == "Finel0")
+                $("#control").show()
+                $("#control").html(`
+                        <h5>Barcode Image</h5>
+                        Left - Right
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'left',this.value)" type="range" step="0.1" min="1" value="${curr.Left}" />   <br/>
+                        Top - Down
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'top',this.value)" type="range" step="0.1" min="1" max="50" value="${curr.Top}" />   <br /><br />
+                         
+                        <label>
+                            Width <small>mm</small>:
+                            <input min="1" onkeyup="updatePrn(${curr.ID},'width',this.value)" class="form-control" value="${curr.Width}" type="number" step="0.1" id="fontSize" />
+                        </label>
+                        <label>
+                            Height <small>mm</small>:
+                            <input min="1" onkeyup="updatePrn(${curr.ID},'height',this.value)" class="form-control" value="${curr.Height}" type="number" step="0.1" id="fontSize" />
+                        </label>
+                    `)
+            })
+            
+
+            $("#Built0").click(() => {
+                let curr = prnData.find(f => f.Label == "Built0")
+                $("#control").show()
+                $("#control").html(`
+                        <h5>Barcode Image</h5>
+                        Left - Right
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'left',this.value)" type="range" step="0.1" min="1" value="${curr.Left}" />   <br/>
+                        Top - Down
+                        <input class="form-range" onchange="updatePrn(${curr.ID},'top',this.value)" type="range" step="0.1" min="1" max="50" value="${curr.Top}" />   <br /><br />
+                         
+                        <label>
+                            Width <small>mm</small>:
+                            <input min="1" onkeyup="updatePrn(${curr.ID},'width',this.value)" class="form-control" value="${curr.Width}" type="number" step="0.1" id="fontSize" />
+                        </label>
+                        <label>
+                            Height <small>mm</small>:
+                            <input min="1" onkeyup="updatePrn(${curr.ID},'height',this.value)" class="form-control" value="${curr.Height}" type="number" step="0.1" id="fontSize" />
+                        </label>
+                    `)
+            })
+
         })
 
-        function goTop() {
-            $(`#${currId}`).css({
-                left: ev.offsetX * 0.2 + "mm",
-                top: ev.offsetY * 0.2 + "mm"
+        function getPrnFile() {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/GET_PRN_FILE",
+                data: '',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+                        prnData = data
+
+                        let finelLabelWidth = data[0].Width
+                        let finelLabelHeight = data[0].Height
+
+                        let builtLabelWidth = data[1].Width
+                        let builtLabelHeight = data[1].Height
+                         
+                        data.forEach((e, i) => {
+                            if (e.Label == "Finel0" || e.Label == "Built0") {
+                                $(`#${e.Label}`).css({
+                                    "top": `${e.Top}mm`,
+                                    "left": `${e.Left}mm`,
+                                    "width": `${e.Width}mm`,
+                                    "height": `${e.Height}mm`
+                                })
+                            } else {
+                                $(`#${e.Label}`).css({
+                                    "top": `${e.Top}mm`,
+                                    "left": `${e.Left}mm`,
+                                    "fontSize": `${e.Width}mm`
+                                })
+                            }
+                        })
+
+                        $("#finel-ticket-body").css({ "width": `${finelLabelWidth}mm`, "height": `${finelLabelHeight}mm`})
+                        $("#built-ticket-body").css({ "width": `${builtLabelWidth}mm`, "height": `${builtLabelHeight}mm` })
+
+                        $("#FinelLabelHeight").val(finelLabelHeight)
+                        $("#FinelLabelWidth").val(finelLabelWidth)
+
+                        $("#BuiltLabelWidth").val(builtLabelWidth)
+                        $("#BuiltLabelHeight").val(builtLabelHeight)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
             })
-        }
+        } 
+
+        function updatePrn(id,key,value) {
+            $.ajax({
+                type: "POST",
+                url: "index.aspx/UPDATE_PRN_FILE",
+                data: `{id:'${id}',key:'${key}',value:'${value}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d == "Done") {
+                        getPrnFile()
+                    } else {
+                        toast(res.d)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        } 
 
 
     </script>
 
     <style> 
 
-        .finel-ticket-body, 
-        .built-ticket-body{
-            user-select: none;
+        #finel-ticket-body, 
+        #built-ticket-body{ 
             position: relative;
             border: 1px solid gray;
             border-radius: 5px;
+        }
+        font,#Finel0,#Built0{
+            position:absolute;
+            cursor:pointer;
         }
     </style>
 
@@ -65,69 +199,64 @@
                         QR Label Details </h5>
                 </div>
 
-                <div class="d-flex justify-content-around">
+                <div style="display:flex;gap:100px;">
 
                     <div class="tab-content mt-3">
                         <%--all qr ticket group--%>
                         <ul class="nav nav-pills mt-2 mb-4" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active border" id="finel-tab" data-bs-toggle="tab" data-bs-target="#finel" type="button" role="tab" aria-controls="finel" aria-selected="true">FINEL TICKET QR</button>
+                                <button class="nav-link active border" id="finel-tab" data-bs-toggle="tab" data-bs-target="#finel" type="button" role="tab" aria-controls="finel" aria-selected="true" onclick='$("#control").hide()'>FINEL TICKET QR</button>
                             </li>
 
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link ms-2 border" id="built-tab" data-bs-toggle="tab" data-bs-target="#built" type="button" role="tab" aria-controls="built" aria-selected="true">BUILT TICKET QR</button>
+                                <button class="nav-link ms-2 border" id="built-tab" data-bs-toggle="tab" data-bs-target="#built" type="button" role="tab" aria-controls="built" aria-selected="true" onclick='$("#control").hide()'>BUILT TICKET QR</button>
                             </li>
                         </ul>
 
                         <div class="mt-3 tab-pane fade show active" id="finel">
-                            <div class="finel-ticket-body" style="height: 25mm; width: 100mm;">
-
-                                <font id="f0" style="font-size: 8pt; position: absolute; top: 2.5mm; left: 3mm;" color="red">
-                                    <img src="../image/icon/qr-code.svg" style="height: 19mm;width:19mm;" />
-                                </font>
-                                <font id="f1" style="font-size: 8pt; position: absolute; top: 2.3mm; left: 25mm;" color="red"><b>PY1B</b></font>
-                                <font id="f2" style="font-size: 8pt; position: absolute; top: 2.3mm; left: 45mm;" color="blue"><b>26-10-2023 10:03</b></font>
-                                <font id="f3" style="font-size: 8pt; position: absolute; top: 7mm; left: 25mm;" color="green"><b>MID MT</b></font>
-                                <font id="f4" style="font-size: 8pt; position: absolute; top: 7mm; left: 40mm;" color="gray"><b>4W</b></font>
-                                <font id="f5" style="font-size: 8pt; position: absolute; top: 7mm; left: 50mm;" color="skyblue"><b>DRIVER SEAT</b></font>
-                                <font id="f6" style="font-size: 8pt; position: absolute; top: 12mm; left: 25mm;" color="darkyellow"><b>87050 6VC2A</b></font>
-                                <font id="f7" style="font-size: 8pt; position: absolute; top: 12mm; left: 50mm;" color="orange"><b>HOLD</b></font>
-                                <font id="f8" style="font-size: 8pt; position: absolute; top: 17mm; left: 25mm;" color="black"><b>E4RNS5-10000-00001260620231003</b> </font>
-                            </div> <br />
+                            <div id="finel-ticket-body"> 
+                                <img id="Finel0" src="../image/icon/qr-code.svg" /> 
+                                <font id="Finel1" color="red"><b>PY1B</b></font>
+                                <font id="Finel2" color="blue"><b>26-10-2023 10:03</b></font>
+                                <font id="Finel3" color="green"><b>MID MT</b></font>
+                                <font id="Finel4" color="gray"><b>4W</b></font>
+                                <font id="Finel5" color="skyblue"><b>DRIVER SEAT</b></font>
+                                <font id="Finel6" color="darkyellow"><b>87050 6VC2A</b></font>
+                                <font id="Finel7" color="orange"><b>HOLD</b></font>
+                                <font id="Finel8" color="black"><b>E4RNS5-10000-00001260620231003</b> </font>
+                            </div> <br /><br />
                             
                         <label>
-                           Label Height :
-                    <input class="form-control" type="number" step="0.1" />
+                           Label Height <small>mm</small>:
+                    <input min="1" onkeyup="updatePrn(1,'height',this.value)" id="FinelLabelHeight" class="form-control" type="number" step="0.1" />
                         </label>  
                         <label>
-                           Label Width :
-                    <input class="form-control" type="number" step="0.1" />
+                           Label Width <small>mm</small>:
+                    <input min="1" onkeyup="updatePrn(1,'width',this.value)" id="FinelLabelWidth" class="form-control" type="number" step="0.1" />
                         </label> <br />
 
 
                         </div>
 
-                        <div class="mt-3 tab-pane fade active show" id="built">
-                            <div class="built-ticket-body" style="height: 15mm; width: 50mm;">  
-                                <font id="b0" style="font-size: 8pt; position: absolute; top: 2mm; left: 2.5mm;" color="red">
-                                    <img src="../image/icon/qr-code.svg" style="height: 10mm;width:10mm;" />
-                                </font>
-                                <font id="b1" style="font-size: 8pt; position: absolute; top: 1.2mm; left: 15.5mm;" color="black"><b>E4RNS5-10000-00001</b> </font>
-                                <font id="b2" style="font-size: 8pt; position: absolute; top: 5.2mm; left: 15.5mm;" color="green"><b>MID MT</b></font>
-                                <font id="b3" style="font-size: 8pt; position: absolute; top: 5.2mm; left: 30.5mm;" color="skyblue"><b>DRIVER</b></font> 
-                                <font id="b4" style="font-size: 8pt; position: absolute; top: 9mm; left: 15.5mm;" color="red"><b>PY1B</b></font> 
-                                <font id="b5" style="font-size: 8pt; position: absolute; top: 9mm; left: 25.5mm;" color="gray"><b>23-10-2023</b></font> 
+                        <div class="mt-3 tab-pane fade" id="built">
+                            <div id="built-ticket-body">   
+                                <img id="Built0" src="../image/icon/qr-code.svg"  /> 
+                                <font id="Built1" color="black"><b>E4RNS5-10000-00001</b> </font>
+                                <font id="Built2" color="green"><b>MID MT</b></font>
+                                <font id="Built3" color="skyblue"><b>DRIVER</b></font> 
+                                <font id="Built4" color="red"><b>PY1B</b></font> 
+                                <font id="Built5" color="gray"><b>23-10-2023</b></font> 
                             
                             </div> 
-                            <br />
+                            <br /><br />
 
                             <label>
-                                Label Height :
-                                <input class="form-control" type="number" step="0.1" />
+                                Label Height <small>mm</small>:
+                                <input min="1" onkeyup="updatePrn(2,'height',this.value)" id="BuiltLabelHeight" class="form-control" type="number" step="0.1" />
                             </label>
                             <label>
-                                Label Width :
-                                <input class="form-control" type="number" step="0.1" />
+                                Label Width <small>mm</small>:
+                                <input min="1" onkeyup="updatePrn(2,'width',this.value)" id="BuiltLabelWidth" class="form-control" type="number" step="0.1" />
                             </label>
                             <br />
 
@@ -137,20 +266,8 @@
                     </div>
 
 
-                    <div id="sizeControl" class="mt-4">
-                        <h5>PY1B</h5>  
-                        <span>Alignment : </span>
-                        <br />
-                        <button class="btn btn-primary" type="button">&larr;</button> 
-                        <button class="btn btn-primary" type="button">&uarr;</button> 
-                        <button class="btn btn-primary" type="button">&rarr;</button> 
-                        <button class="btn btn-primary" type="button">&darr;</button> 
-                        <br />
-                        <br />
-                        <label>
-                            Font Size :
-                    <input class="form-control" type="number" step="0.1" />
-                        </label>
+                    <div id="control" class="mt-4" style="min-width:400px;">
+                        
                     </div>
 
                 </div>

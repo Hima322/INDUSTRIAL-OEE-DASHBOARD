@@ -19,14 +19,13 @@ namespace WebApplication2.qrlabel
 
 
         [WebMethod]
-        public static string SEARCH_USER(DateTime date, int station)
+        public static string GET_PRN_FILE()
         {
             try
             {
                 using (TMdbEntities db = new TMdbEntities())
-                {
-                    DateTime nd = date.AddDays(1);
-                    var res = db.OperatorWorkTimes.Where(i => i.StationNameID == station && i.LoginTime >= date && i.LoginTime <= nd).ToList();
+                { 
+                    var res = db.PrnFiles.ToList();
                     if (res.Count > 0)
                     {
                         return JsonSerializer.Serialize(res);
@@ -40,6 +39,50 @@ namespace WebApplication2.qrlabel
                 return "Error";
             }
             return "Error";
+        }
+        
+
+        [WebMethod]
+        public static string UPDATE_PRN_FILE(int id, string key, float value)
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.PrnFiles.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        if(key == "width")
+                        {
+                            res.Width = System.Math.Round(value, 2);
+                        } 
+                        if (key == "height")
+                        {
+                            res.Height = System.Math.Round(value, 2);
+                        } 
+                        if (key == "top")
+                        {
+                            res.Top = System.Math.Round(value, 2);
+                        }
+                        if(key == "left")
+                        {
+                            res.Left = System.Math.Round(value, 2);
+                        }
+                        if(key == "font")
+                        {
+                            res.Width = System.Math.Round(value,2);
+                            res.Height = System.Math.Round(value,2);
+                        }
+                    }
+
+                    db.SaveChanges();
+                    return "Done";
+                }
+            }
+            catch (Exception ex) 
+            {
+                return ex.Message;
+            } 
         }
 
     }

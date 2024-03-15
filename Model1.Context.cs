@@ -34,6 +34,7 @@ namespace WebApplication2
         public virtual DbSet<MODEL_DEATILS> MODEL_DEATILS { get; set; }
         public virtual DbSet<OperatorWorkTime> OperatorWorkTimes { get; set; }
         public virtual DbSet<PLCAddressList> PLCAddressLists { get; set; }
+        public virtual DbSet<PrnFile> PrnFiles { get; set; }
         public virtual DbSet<ReworkTable> ReworkTables { get; set; }
         public virtual DbSet<SEAT_DATA> SEAT_DATA { get; set; }
         public virtual DbSet<ShiftSetting> ShiftSettings { get; set; }
