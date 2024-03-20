@@ -210,13 +210,32 @@ namespace WebApplication2.andon
             {
                 using(TMdbEntities db = new TMdbEntities())
                 {
-                    string userQuery = "update USER set WorkingAtStationID = '' and Authenticated = 0 ";
-                    db.Database.ExecuteSqlCommand(userQuery);
+                    var userRes = db.USERs.ToList();
+                    if (userRes.Count > 0)
+                    {
+                        foreach (var user in userRes)
+                        {
+                            user.WorkingAtStationID = "";
+                            user.Authenticated = 0;
+                        }
+                        db.SaveChanges();
+                    }
 
-                    string wrokTimeQuery = "update OperatorWorkTime set LogoutTime = '"+DateTime.Now+"' where LogoutTime = null ";
-                    db.Database.ExecuteSqlCommand(wrokTimeQuery);
-                    
-                    db.SaveChanges();
+                    var wtRes = db.OperatorWorkTimes.Where(i => i.LogoutTime == null).ToList();
+                    if(wtRes.Count > 0)
+                    {
+                        foreach(var wt in wtRes)
+                        {
+                            wt.LogoutTime = DateTime.Now;
+                        }
+                        db.SaveChanges();
+                    }
+
+                    //string userQuery = "update USER set WorkingAtStationID = '' and Authenticated = 0 ";
+                    //db.Database.ExecuteSqlCommand(userQuery); 
+                    //string wrokTimeQuery = "update OperatorWorkTime set LogoutTime = '"+DateTime.Now+"' where LogoutTime = null ";
+                    //db.Database.ExecuteSqlCommand(wrokTimeQuery);
+                     
                 }
             } catch (Exception ex)
             {

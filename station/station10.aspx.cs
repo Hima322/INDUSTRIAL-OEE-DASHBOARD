@@ -261,7 +261,7 @@ namespace WebApplication2.station
                         //add data inside operator work time 
                         OperatorWorkTime operatorWorkTime = new OperatorWorkTime
                         {
-                            StationNameID = Convert.ToInt32(Station),
+                            StationNameID = Station,
                             OperatorName = Userid,
                             LoginTime = DateTime.Now
                         };
@@ -277,7 +277,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string UserLogout(string Userid, int Station)
+        public static string UserLogout(string Userid, string Station)
         {
             try
             {

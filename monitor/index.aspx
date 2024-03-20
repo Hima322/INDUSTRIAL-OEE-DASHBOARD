@@ -171,7 +171,7 @@
                         $("#staion_name_container").html(
                             data.map(e => `
                              <tr>
-                                 <td>${e.StationNameID == "Station-0" ? "Built Ticket" : e.StationNameID == "Station-16" ? "Rework" : e.StationNameID}</td > 
+                                 <td>${e.StationNameID == "Station-16" ? "Rework" : e.StationNameID.replace("Station-","OP")}</td > 
                                  <td><input class="form-control bolrder-less-input form-control-sm" value="${e.Station_Name}" id="input${e.ID}" onkeyup=removeBtnDisabled(${e.ID}) type="text" /></td> 
                                  <td><button type="button" class="btn btn-sm" disabled id="btn${e.ID}" onclick=updateStationName(${e.ID},$("#input${e.ID}").val()) >Edit</button></td>
                              </tr>
@@ -636,6 +636,10 @@
         }
 
         function updateIpAddress(key, value) {
+            if (key == "BuiltTicketPrintPlcTag") { 
+                if (pwd.toLowerCase() != 'pmal2360') return toast("Sorry! You are not developer so you can not edit tags.", "error")
+            }
+
             $("#loading").show()
             $.ajax({
                 type: "POST",
@@ -1431,6 +1435,25 @@
                                     </div>
                                 </div>
                                 
+                                <%--write plc other here--%>
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        <a class="btn" data-bs-toggle="collapse" href="#collapsePlcOtherTag">Manage other plc tag.
+                                        </a>
+                                    </div>
+                                    <div id="collapsePlcOtherTag" class="collapse" data-bs-parent="#accordion">
+                                        <div class="card-body">
+
+                                            <%--this is for show write plc bit tag--%>
+                                            <div class="container-fluid col-12">
+                                                <b>PLC tag for built ticket print : </b>
+                                                <input value="<%=builtTicketPrintPlcTag %>" onkeyup='$("#builtTicketPrintPlcTagUpdateBtn").attr("disabled",false)' type="text" id="built_ticket_print_plc_tag_value" />
+                                                <button type="button" disabled="disabled" id="builtTicketPrintPlcTagUpdateBtn" onclick="updateIpAddress('BuiltTicketPrintPlcTag', $('#built_ticket_print_plc_tag_value').val())" class="btn mb-1 btn-primary btn-sm">Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
 
                             </div>
                         </div>

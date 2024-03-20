@@ -29,6 +29,7 @@
         var isBuiltTicketFunctionSucces = false
         var torque_attemp = 0;  
         var dcToolIp = ""
+        var isplcConnected = false
         
          
 
@@ -36,6 +37,12 @@
             getAllPlcTagList()
             callStationInfo()
             getDcToolIp()
+            isPrinterConnected()
+
+            if (isplcConnected) {
+                printBuiltTicket()
+            }
+
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`)
             $('input').attr('autocomplete', 'off');
             $("#qr_scan_modal").hide()
@@ -106,7 +113,10 @@
         })
          
         setInterval(function () {
-            isSeatRejected() 
+            isSeatRejected()
+            if (isplcConnected) { 
+                printBuiltTicket()
+            }
             if (isValidBuildTicket) {
                 getModelAndTaskList()
                 handleTask()
@@ -119,6 +129,7 @@
             getCurrentUser()
             isPlcConnected()
             ToolStatus()
+            isPrinterConnected()
             isScannerConnected() 
             if (dcToolIp != "") {
                 isPingDctool()
@@ -237,6 +248,54 @@
                 }
             })
         }  
+        
+        //function for call station function for info
+        const printBuiltTicket = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station1.aspx/PRINT_BUILT_TICKET",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d == "Done") {
+                        $("#printerErrorShow").text("")
+                    } else {
+                        $("#printerErrorShow").text(res.d)
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
+
+        //function for check is printer connected
+        const isPrinterConnected = () => {
+            $.ajax({
+                type: "POST",
+                url: "station0.aspx/ISPRINTERCONNECTED",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d == "Success") {
+                        PrinterConnected = true;
+                        $("#printer_badge").attr("class", "badge bg-success")
+                    } else {
+                        PrinterConnected = false;
+                        $("#printer_badge").attr("class", "badge bg-danger")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
 
         const getJobCount = _ => {
             $.ajax({
@@ -261,7 +320,7 @@
             $.ajax({
                 type: "POST",
                 url: "station1.aspx/GetCurrentUser",
-                data: `{station : '${station.split("-")[1]}'}`,
+                data: `{station : '${plcStation.replace("Station", "")}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -354,7 +413,8 @@
             $.ajax({
                 type: "POST",
                 url: "station1.aspx/BuildTicketExecuteTask",
-                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                data: `{id : '${id}',val:'${value}',seat_data_id : '${seat_data_id}', model_variant : '${model_details.ModelVariant}'}`,
+                //data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -570,8 +630,10 @@
                 success: (res) => { 
                     if (res.d) { 
                         $("#plc_badge").attr("class", "badge bg-success")
+                        isplcConnected = true
                     } else {
                         $("#plc_badge").attr("class", "badge bg-danger")
+                        isplcConnected = false
                     }
                 },
                 Error: function (x, e) {
@@ -749,6 +811,7 @@
                 <div class="text-center px-3 py-1" style="height: 60px;">
                     <span class="badge bg-danger" id="database_badge">DATABASE</span>
                     <span class="badge bg-danger" id="dctool_badge">DC TOOLS</span> 
+                    <span class="badge bg-danger" id="printer_badge">PRINTER</span> 
                     <br />
                     <span class="badge bg-danger" id="plc_badge">PLC</span>
                     <span class="badge bg-danger" id="scanner_badge">SCANNER</span>
@@ -963,7 +1026,8 @@
             </div>
 
             <%--dropdown for setting--%>
-            <div style="position: fixed; bottom: 0; right: 0; margin: 30px; ">
+            <div style="position: fixed; bottom: 0; right: 0; margin: 30px; " class="d-flex gap-3 align-items-center">
+                <h3 class="text-danger mt-2" id="printerErrorShow"></h3>
                 <div class="dropdown shadow rounded">
                     <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown">
                         <img src="../image/icon/tools.svg" height="20" />

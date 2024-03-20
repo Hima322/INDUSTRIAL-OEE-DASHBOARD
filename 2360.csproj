@@ -475,6 +475,20 @@
     <Compile Include="station\station9.aspx.designer.cs">
       <DependentUpon>station9.aspx</DependentUpon>
     </Compile>
+    <Compile Include="station\stationfsb.aspx.cs">
+      <DependentUpon>stationfsb.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="station\stationfsb.aspx.designer.cs">
+      <DependentUpon>stationfsb.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="station\stationfsc.aspx.cs">
+      <DependentUpon>stationfsc.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="station\stationfsc.aspx.designer.cs">
+      <DependentUpon>stationfsc.aspx</DependentUpon>
+    </Compile>
     <Compile Include="station\task.aspx.cs">
       <DependentUpon>task.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -568,7 +582,7 @@
     <Content Include="Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
-    <None Include="other\TMdb.bak" />
+    <Content Include="other\TMdb.bak" />
     <None Include="packages.config" />
     <Content Include="qrlabel\index.aspx" />
     <Content Include="report\index.aspx" />
@@ -591,6 +605,8 @@
     <Content Include="station\station7.aspx" />
     <Content Include="station\station8.aspx" />
     <Content Include="station\station9.aspx" />
+    <Content Include="station\stationfsb.aspx" />
+    <Content Include="station\stationfsc.aspx" />
     <Content Include="station\task.aspx" />
     <Content Include="user\add.aspx" />
     <Content Include="user\edit.aspx" />

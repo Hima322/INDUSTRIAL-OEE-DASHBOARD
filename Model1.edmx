@@ -96,8 +96,8 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
-          <Property Name="StationNameID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StationNameID" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="OperatorName" Type="varchar" MaxLength="100" />
           <Property Name="LoginTime" Type="datetime" />
           <Property Name="LogoutTime" Type="datetime" />
@@ -164,7 +164,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="SequenceNo" Type="int" />
           <Property Name="FinalBarcodeData" Type="varchar" MaxLength="100" />
           <Property Name="FinalPrintDateTime" Type="datetime" />
@@ -211,6 +211,8 @@
           <Property Name="ODS" Type="varchar" MaxLength="50" />
           <Property Name="BELT_BUCKLE" Type="varchar" MaxLength="50" />
           <Property Name="SAB" Type="varchar" MaxLength="50" />
+          <Property Name="FSC" Type="varchar" MaxLength="50" />
+          <Property Name="FSB" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ShiftSetting">
           <Key>
@@ -298,8 +300,8 @@
           <Property Name="UserName" Type="varchar" MaxLength="50" />
           <Property Name="Password" Type="varchar" MaxLength="100" />
           <Property Name="Roll" Type="varchar" MaxLength="50" />
-          <Property Name="Authenticated" Type="int" />
-          <Property Name="WorkingAtStationID" Type="varchar" MaxLength="50" />
+          <Property Name="Authenticated" Type="int" Nullable="false" />
+          <Property Name="WorkingAtStationID" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="VarTable">
           <Key>
@@ -446,8 +448,8 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="StationNameID" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StationNameID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="LoginTime" Type="DateTime" Precision="3" />
           <Property Name="LogoutTime" Type="DateTime" Precision="3" />
@@ -514,7 +516,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SequenceNo" Type="Int32" />
           <Property Name="FinalBarcodeData" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="FinalPrintDateTime" Type="DateTime" Precision="3" />
@@ -561,6 +563,8 @@
           <Property Name="ODS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="BELT_BUCKLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="SAB" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FSC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FSB" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ShiftSetting">
           <Key>
@@ -648,8 +652,8 @@
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Roll" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Authenticated" Type="Int32" />
-          <Property Name="WorkingAtStationID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Authenticated" Type="Int32" Nullable="false" />
+          <Property Name="WorkingAtStationID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="VarTable">
           <Key>
@@ -834,6 +838,8 @@
           <EntitySetMapping Name="SEAT_DATA">
             <EntityTypeMapping TypeName="TMdbModel.SEAT_DATA">
               <MappingFragment StoreEntitySet="SEAT_DATA">
+                <ScalarProperty Name="FSB" ColumnName="FSB" />
+                <ScalarProperty Name="FSC" ColumnName="FSC" />
                 <ScalarProperty Name="SAB" ColumnName="SAB" />
                 <ScalarProperty Name="BELT_BUCKLE" ColumnName="BELT_BUCKLE" />
                 <ScalarProperty Name="ODS" ColumnName="ODS" />

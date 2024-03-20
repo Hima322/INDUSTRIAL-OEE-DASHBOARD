@@ -158,8 +158,7 @@
             isScannerConnected()
             isPingDctool() 
             ToolStatus() 
-            handleTorqueTask()
-
+            handleTorqueTask() 
         } 
 
         setInterval(intervalFunction, 500); 
@@ -262,7 +261,7 @@
             $.ajax({
                 type: "POST",
                 url: "station16.aspx/GetCurrentUser",
-                data: `{station : '${station.split("-")[1]}'}`,
+                data: `{station : 'rework'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -687,17 +686,7 @@
                     </div>  
 
                 </div>
-
-                <%--show error from backend--%>
-            <% if (CurrentError != "")
-                { %>
-            <%--<div id="toast" class="toast <%=CurrentError == "" ? "" : "show" %> bg-white" style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
-                <div class="d-flex p-2 bg-secondary toast-body text-white">
-                    <big class="me-auto ps-2"><%=CurrentError %></big>
-                    <button type="button" class="btn-close text-white" data-bs-dismiss="toast"></button>
-                </div>
-            </div>--%>
-            <% } %>
+                 
 
             <%--models for notification--%>
             <div id="modal_container"> 
@@ -729,8 +718,8 @@
                             if (e.key == "Enter") {
                                 $.ajax({
                                     type: "POST",
-                                    url: "inspection.aspx/UserLogin",
-                                    data: `{ Userid: '${user_login_id}',Station: '${plcStation.replace("Station", "") }'}`,
+                                    url: "station16.aspx/UserLogin",
+                                    data: `{ Userid: '${user_login_id}',Station: 'rework'}`,
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
                                     async: "true",
@@ -756,8 +745,8 @@
                         function handleLogout() {
                             $.ajax({
                                 type: "POST",
-                                url: "inspection.aspx/UserLogout",
-                                data: `{ Userid: '${user_details.UserID}',Station: '${plcStation.replace("Station", "") }'}`,
+                                url: "station16.aspx/UserLogout",
+                                data: `{ Userid: '${user_details.UserID}',Station: 'rework'}`,
                                 contentType: "application/json; charset=utf-8",
                                 dataType: "json",
                                 async: "true",

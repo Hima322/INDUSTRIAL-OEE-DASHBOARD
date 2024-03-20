@@ -11,7 +11,7 @@ namespace WebApplication2.user
 {
 
 
-    public partial class entry
+    public partial class Entry
     {
 
         /// <summary>

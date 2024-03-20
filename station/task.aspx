@@ -152,7 +152,8 @@
                 success: (res) => {
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
-                        modelDetail = data 
+                        modelDetail = data
+                        console.log(data)
                     }
                 },
                 Error: function (x, e) {

@@ -22,6 +22,7 @@ namespace WebApplication2.monitor
     public partial class index : System.Web.UI.Page
     {
         public static string plcIpAddress = "";
+        public static string builtTicketPrintPlcTag = "";
         public static string printer1IpAddress = "";
         public static string printer2IpAddress = ""; 
         public static string reworkDctoolIpAddress = ""; 
@@ -88,6 +89,12 @@ namespace WebApplication2.monitor
                     if (reworkDctoolIpAddressRes != null)
                     {
                         reworkDctoolIpAddress = reworkDctoolIpAddressRes.VarValue;
+                    }
+                    //this code for printer2 ip address fetching 
+                    var builtTicketPrintPlcTagRes = db.VarTables.Where(i => i.VarName == "BuiltTicketPrintPlcTag").FirstOrDefault();
+                    if (builtTicketPrintPlcTagRes != null)
+                    {
+                        builtTicketPrintPlcTag = builtTicketPrintPlcTagRes.VarValue;
                     }
                     //this code for printer2 ip address fetching 
                     var seftyLineRes = db.VarTables.Where(i => i.VarName == "SeftyLine").FirstOrDefault();

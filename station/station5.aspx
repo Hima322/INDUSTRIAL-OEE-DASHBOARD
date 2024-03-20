@@ -263,7 +263,7 @@
             $.ajax({
                 type: "POST",
                 url: "station5.aspx/GetCurrentUser",
-                data: `{station : '${station.split("-")[1]}'}`,
+                data: `{station : '${plcStation.replace("Station", "")}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -356,7 +356,7 @@
             $.ajax({
                 type: "POST",
                 url: "station5.aspx/BuildTicketExecuteTask",
-                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}'}`,
+                data: `{id : '${id}',val:'${value}',seat_data_id : '${seat_data_id}', model_variant : '${model_details.ModelVariant}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",

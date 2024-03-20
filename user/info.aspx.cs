@@ -19,7 +19,7 @@ namespace WebApplication2.user
 
 
         [WebMethod]
-        public static string SEARCH_USER(DateTime date, int station)
+        public static string SEARCH_USER(DateTime date, string station)
         {
             try
             {

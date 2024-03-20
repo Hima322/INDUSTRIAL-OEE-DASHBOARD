@@ -244,7 +244,7 @@
             $.ajax({
                 type: "POST",
                 url: "station15.aspx/GetCurrentUser",
-                data: `{station : '${station.split("-")[1]}'}`,
+                data: `{station : '${plcStation.replace("Station", "")}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",

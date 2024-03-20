@@ -184,7 +184,7 @@ namespace WebApplication2.station
                         //add data inside operator work time 
                         OperatorWorkTime operatorWorkTime = new OperatorWorkTime
                         {
-                            StationNameID = Convert.ToInt32(Station),
+                            StationNameID = Station,
                             OperatorName = Userid,
                             LoginTime = DateTime.Now
                         };
@@ -200,7 +200,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string UserLogout(string Userid, int Station)
+        public static string UserLogout(string Userid, string Station)
         {
             try
             {
@@ -465,9 +465,15 @@ namespace WebApplication2.station
                             } 
                             else if (result == 2)
                             {
-                                InsertJITLineSeatMfgReport(seat_data_id, station, "ODS", wr, "NG", username);
-                                RejectTask(seat_data_id, res.StationNameID);
-                                return "REJECTED";
+
+                                var seatRes = dbEntities.SEAT_DATA.Where(s => s.ID == seat_data_id).OrderByDescending(o => o.ID).FirstOrDefault();
+                                if (seatRes != null)
+                                {
+                                    ADD_REWORK_DATA(seatRes.BuildLabelBarcode, "ODS", username, seat_data_id.ToString());
+                                }
+                                //InsertJITLineSeatMfgReport(seat_data_id, station, "ODS", wr, "NG", username);
+                                //RejectTask(seat_data_id, res.StationNameID);
+                                //return "REJECTED";
                             } 
                            
                             dbEntities.SaveChanges();
@@ -526,9 +532,14 @@ namespace WebApplication2.station
 
                             } else if (result == 2)
                             {
-                                InsertJITLineSeatMfgReport(seat_data_id, station, "BELT BUCKLE", registance.ToString(), "NG", username);
-                                RejectTask(seat_data_id, res.StationNameID);
-                                return "REJECTED";
+                                var seatRes = dbEntities.SEAT_DATA.Where(s => s.ID == seat_data_id).OrderByDescending(o => o.ID).FirstOrDefault();
+                                if (seatRes != null)
+                                {
+                                    ADD_REWORK_DATA(seatRes.BuildLabelBarcode, "BELT_BUCKLE", username, seat_data_id.ToString());
+                                }
+                                //InsertJITLineSeatMfgReport(seat_data_id, station, "BELT BUCKLE", registance.ToString(), "NG", username);
+                                //RejectTask(seat_data_id, res.StationNameID);
+                                //return "REJECTED";
                             } 
                            
                             dbEntities.SaveChanges();
@@ -795,6 +806,35 @@ namespace WebApplication2.station
             }
         }
 
+        public static void ADD_REWORK_DATA(string built_ticket, string ins, string user, string seatId)
+        {
+            try
+            {
+                using(TMdbEntities db = new TMdbEntities())
+                {
+
+                    ReworkTable reworkTable = new ReworkTable
+                    {
+                        BuildLabelNumber = built_ticket,
+                        InspectionName = ins,
+                        InspectionType = ins,
+                        StationNameID = "rework",
+                        OperatorName = user,
+                        InspectionDateTime = DateTime.Now,
+                        SeatID = seatId,
+                        SeatStatus = "NG",
+                        ReworkDatetime = DateTime.Now
+                    };
+
+                    db.ReworkTables.Add(reworkTable);
+                    db.SaveChanges();
+
+                }
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
 
         public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string parameter_desc, string value, string status, string username)
         {

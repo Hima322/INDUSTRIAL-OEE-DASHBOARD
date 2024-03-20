@@ -28,7 +28,7 @@
         var task_list = []
         var bom_list = []
         var isBuiltTicketFunctionSucces = false
-
+        var isplcConnected = false
 
         $(document).ready(function () {
             callStationInfo()
@@ -117,7 +117,9 @@
         }, 1000)
 
         setInterval(function () {
-            getWeightAndRegistanceValue()
+            if(isplcConnected){
+                getWeightAndRegistanceValue() 
+            }
             if (isValidBuildTicket) {
                 getModelAndTaskList();
                 handleTask()
@@ -259,7 +261,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/GetCurrentUser",
-                data: `{station : '${station.split("-")[1]}'}`,
+                data: `{station : '${plcStation.replace("Station", "")}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -379,11 +381,11 @@
                 async: "true",
                 cache: "false",
                 success: (res) => { 
-                    if (res.d == "REJECTED") {
-                        toast("Seat Rejected.")
-                        $("#task_list_container").hide()
-                        setTimeout(_ => location.reload(), 3000)
-                    }
+                    //if (res.d == "REJECTED") {
+                    //    toast("Seat Rejected.")
+                    //    $("#task_list_container").hide()
+                    //    setTimeout(_ => location.reload(), 3000)
+                    //}
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -401,11 +403,11 @@
                 async: "true",
                 cache: "false",
                 success: (res) => { 
-                    if (res.d == "REJECTED") {
-                        toast("Seat Rejected.")
-                        $("#task_list_container").hide()
-                        setTimeout(_ => location.reload(), 3000)
-                    }
+                    //if (res.d == "REJECTED") {
+                    //    toast("Seat Rejected.")
+                    //    $("#task_list_container").hide()
+                    //    setTimeout(_ => location.reload(), 3000)
+                    //}
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -423,11 +425,11 @@
                 async: "true",
                 cache: "false",
                 success: (res) => { 
-                    if (res.d == "REJECTED") {
-                        toast("Seat Rejected.")
-                        $("#task_list_container").hide()
-                        setTimeout(_ => location.reload(), 3000)
-                    }
+                    //if (res.d == "REJECTED") {
+                    //    toast("Seat Rejected.")
+                    //    $("#task_list_container").hide()
+                    //    setTimeout(_ => location.reload(), 3000)
+                    //}
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -561,8 +563,10 @@
                 success: (res) => {
                     if (res.d) {
                         $("#plc_badge").attr("class", "badge bg-success")
+                        isplcConnected = true
                     } else {
                         $("#plc_badge").attr("class", "badge bg-danger")
+                        isplcConnected = false
                     }
                 },
                 Error: function (x, e) {

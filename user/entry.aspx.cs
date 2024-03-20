@@ -9,7 +9,7 @@ using WebApplication2.other;
 
 namespace WebApplication2.user
 {
-    public partial class entry : System.Web.UI.Page
+    public partial class Entry : System.Web.UI.Page
     { 
         protected void Page_Load(object sender, EventArgs e)
         { 
@@ -18,7 +18,7 @@ namespace WebApplication2.user
 
 
         [WebMethod]
-        public static string UserLogin(string username, int station)
+        public static string UserLogin(string username, string station)
         {
             try
             {

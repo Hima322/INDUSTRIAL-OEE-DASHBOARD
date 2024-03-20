@@ -16,8 +16,7 @@
             getCurrentAnonScreen()
             isPlcConnected()
             insertDelayInDatabase()
-            getCurrentShift()
-            //handleShiftChangeLogout()
+            getCurrentShift() 
         })
 
         setInterval(_ => {

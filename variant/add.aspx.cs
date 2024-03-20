@@ -33,6 +33,7 @@ namespace WebApplication2.variant
                             FG_PartNumber = FGPartNUMBER,
                             Features = FEATURES,
                             PartName = PART_NAME
+
                         };
 
                         mdbEntities.MODEL_DEATILS.Add(mODEL_DEATILS);

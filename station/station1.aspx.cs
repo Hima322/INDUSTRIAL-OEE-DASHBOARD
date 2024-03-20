@@ -43,6 +43,12 @@ namespace WebApplication2.station
         public static Socket DCserver;
         public static bool StartTightening = false;
 
+
+        // Printer IP Address and communication port
+        public static string builtPrinterIpAddress = "";
+        public static int port = 0;
+        public static string builtTicketPrintPlcTag = "";
+
         private void Page_Load(object sender, EventArgs e)
         {
             PAGE_LOAD_FUNCTION();
@@ -51,6 +57,8 @@ namespace WebApplication2.station
         public static void PAGE_LOAD_FUNCTION()
         {
             GET_PLCIP_ADDRESS();
+            GET_PRINTER_IPADDRESS();
+            GET_BUILT_PRINT_TICKET_PLC_TAG();
             plc = new Plc(CpuType.S71500, plcIpAddress, 0, 0);
             DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
@@ -63,13 +71,68 @@ namespace WebApplication2.station
                 {
                     //this code for plc ip address fetching 
                     var plcIpRes = db.VarTables.Where(i => i.VarName == "PlcIp").FirstOrDefault();
+                    if (plcIpRes != null)
                     {
-                        if (plcIpRes != null)
-                            plcIpAddress = plcIpRes.VarValue;
+                        plcIpAddress = plcIpRes.VarValue;
                     }
                 }
             }
             catch { }
+        }
+
+        public static void GET_BUILT_PRINT_TICKET_PLC_TAG()
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    //this code for plc ip address fetching 
+                    var plcIpRes = db.VarTables.Where(i => i.VarName == "BuiltTicketPrintPlcTag").FirstOrDefault();
+                    if (plcIpRes != null)
+                    {
+                        builtTicketPrintPlcTag = plcIpRes.VarValue;
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void GET_PRINTER_IPADDRESS()
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    //this code for printer1 ip address fetching 
+                    var printer1IpRes = db.VarTables.Where(i => i.VarName == "PrinterIp").FirstOrDefault();
+                    if (printer1IpRes != null)
+                    {
+                        builtPrinterIpAddress = printer1IpRes.VarValue.Split(':')[0];
+                        port = Convert.ToInt32(printer1IpRes.VarValue.Split(':')[1]);
+                    }
+
+                }
+
+            }
+            catch { }
+        }
+
+        [WebMethod]
+        public static string ISPRINTERCONNECTED()
+        {
+            try
+            {
+                Ping p1 = new Ping();
+                PingReply PR = p1.Send(builtPrinterIpAddress);
+
+                // check after the ping is n success
+                return PR.Status.ToString();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
         }
 
         public static bool IS_DCTOOL_CONNECTED()
@@ -244,7 +307,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string UserLogin(string Userid = "", string Station = "")
+        public static string UserLogin(string Userid, string Station)
         {
             using (TMdbEntities db = new TMdbEntities())
             {
@@ -261,7 +324,7 @@ namespace WebApplication2.station
                         //add data inside operator work time 
                         OperatorWorkTime operatorWorkTime = new OperatorWorkTime
                         {
-                            StationNameID = Convert.ToInt32(Station),
+                            StationNameID = Station,
                             OperatorName = Userid,
                             LoginTime = DateTime.Now
                         };
@@ -277,7 +340,7 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string UserLogout(string Userid, int Station)
+        public static string UserLogout(string Userid, string Station)
         {
             try
             {
@@ -307,6 +370,78 @@ namespace WebApplication2.station
             {
                 return ex.Message;
             }
+        }
+
+
+        [WebMethod]
+        public static string PRINT_BUILT_TICKET()
+        {
+            string rtn = null;
+            if (IS_PLC_CONNECTED())
+            {
+                if ((bool)plc.Read(builtTicketPrintPlcTag))
+                {
+                    try
+                    {
+                        using (TMdbEntities db = new TMdbEntities())
+                        {
+                            var seatDataRes = db.SEAT_DATA.Where(i => i.StationNo == 0).FirstOrDefault();
+                            string SelectedFGpartno = seatDataRes.FG_PartNumber.ToString();
+                            long ID = seatDataRes.ID;
+
+                            if (seatDataRes != null)
+                            {
+                                try
+                                {
+                                    if (PrintBuildTicket(seatDataRes.SequenceNo.ToString().PadLeft(5, '0'), seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType, seatDataRes.FG_PartNumber) == "Done")
+                                    {
+                                        seatDataRes.BuildLabelBarcode = seatDataRes.FG_PartNumber + "-" + seatDataRes.SequenceNo.ToString().PadLeft(5, '0');
+                                        seatDataRes.StationNo = 1;
+                                        seatDataRes.BuildNoDatetime = DateTime.Now;
+                                        db.SaveChanges();
+                                        plc.Write(builtTicketPrintPlcTag, false);
+                                        rtn = "Done";
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    rtn = ex.Message;
+                                }
+                            }
+                            else
+                            {
+                                rtn = "Unavailable seat for production";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        rtn = ex.Message;
+                    }
+                }
+            }
+            return rtn;
+        } 
+
+        public static string PrintBuildTicket(string seq, string model, string variant, string seat, string fgpart)
+        {
+            // Open connection
+            TcpClient client = new TcpClient();
+            client.Connect(builtPrinterIpAddress, port);
+
+            // ZPL command 
+            string ZPLString = "\u0010CT~~CD,~CC^~CT~\r\n^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI0^XZ\r\n^XA\r\n^MMT\r\n^PW531\r\n^LL0177\r\n^LS0\r\n^FT215,39^A0N,25,24^FH\\^FD" + fgpart + "-" + seq + "^FS\r\n^FT31,182^BQN,2,7\r\n^FH\\^FDLA," + fgpart + "-" + seq + "^FS\r\n^FT215,87^A0N,25,24^FH\\^FD" + variant + "^FS\r\n^FT407,88^A0N,25,24^FH\\^FD" + seat + "^FS\r\n^FT243,136^A0N,25,24^FH\\^FD" + model + "^FS\r\n^FT365,135^A0N,31,21^FH\\^FD" + DateTime.Now.ToShortDateString() + "^FS\r\n^PQ1,0,1,Y^XZ";
+
+            // Write ZPL String to connection
+            StreamWriter writer = new StreamWriter(client.GetStream());
+            writer.Write(ZPLString);
+            writer.Flush();
+
+            // Close Connection
+            writer.Close();
+            client.Close();
+
+            return "Done";
         }
 
         [WebMethod]

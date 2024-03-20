@@ -61,5 +61,7 @@ namespace WebApplication2
         public string ODS { get; set; }
         public string BELT_BUCKLE { get; set; }
         public string SAB { get; set; }
+        public string FSC { get; set; }
+        public string FSB { get; set; }
     }
 }

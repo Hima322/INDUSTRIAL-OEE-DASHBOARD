@@ -192,18 +192,18 @@
                 <%--code for assign station on local storage--%>
                 <div id="station_modal" style="z-index: 99;">
                     <div class="p-5 bg-light shadow rounded" style="width: 600px;">
-                        <h3 class="text-danger mb-4">Make this PC a station.</h3>
+                        <h3 class="text-danger mb-4">Select MES Operator.</h3>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;">
-                            <%int[] stArr = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,16,14,15 };
-                                foreach (var i in stArr) { %>
-                            <% if (i == 0) { %>
-                                <button class="btn btn-primary" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Built Ticket Station </button>
-                            <%  } else if (i == 16) {  %>
-                                <button class="btn btn-danger" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Rework Station </button>
+                            <%int[] stArr = { 1, 2, 3, 4, 5, 6, 7, 8, 12,13,16 };
+                                foreach (var i in stArr) { 
+                            if (i == 16) {  %>
+                                <button class="btn btn-danger btn-lg" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Rework </button>
                             <% }  else { %>
-                                <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()">MES OP<%=i %></button>
+                                <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()">MES OP<%= i == 12 ? 9 : i == 13 ? 10 : i %></button>
                             <% } %>
                             <% } %>
+                                <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-fsc') || location.reload()">MES OP FSC</button>
+                                <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-fsb') || location.reload()">MES OP FSB</button>
                         </div>
                     </div>
                 </div>  
