@@ -21,7 +21,6 @@ namespace WebApplication2
         public string Variant { get; set; }
         public string FG_PartNumber { get; set; }
         public string Side { get; set; }
-        public Nullable<int> AssyStationID { get; set; }
         public string ScanSequence { get; set; }
     }
 }

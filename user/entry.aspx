@@ -14,8 +14,18 @@
     <script type="text/javascript" src="../js/libs/toastify-js.js"></script> 
 </head> 
 
-<script type="text/javascript">   
-    //Called this method on any button click  event for Testing
+<script type="text/javascript">    
+
+    var plcStation = []
+
+    $(document).ready(_ => {
+        getAllPlcTagList()
+    })
+
+    //setInterval(_ => {
+    //    getAllPlcTagList()
+    //},1000)
+
     function UserLogin() { 
         let username = $("#username").val()
         let station = $("#station").val()
@@ -41,7 +51,49 @@
                 }
             });
 
-        } 
+    } 
+
+
+    //function for write bit task
+    const getAllPlcTagList = _ => {
+        $.ajax({
+            type: "POST",
+            url: "entry.aspx/GetAllPlcTagList",
+            data: "",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: "true",
+            cache: "false",
+            success: (res) => {
+                if (res.d != "Error") {
+                    let data = JSON.parse(res.d)
+
+                    let mes = data.find(e => e.PLCTagName == "MESStation") 
+
+                    let temp = []
+
+                    for (s in mes) {
+                        if (mes[s] == "") {
+                            temp.push(s)
+                        }
+                    } 
+                     
+                    plcStation = temp;
+                     
+                    $("#station").html(
+                        plcStation.map(e => `<option value="${e}">${e}</option> `)
+                    ); 
+                      
+
+                }
+            },
+            Error: function (x, e) {
+                console.log(e);
+            }
+        })
+    }
+
+
 </script>
      
 
@@ -65,10 +117,8 @@
                         <%--content will be fetch from ajax query--%>
                         <tr class="d-flex justify-content-start gap-2">
                             <td>Station No :
-                                <select id="station" class="form-select">
-                                    <%for(int i =1; i < 26; i++){ %>
-                                        <option value="<%=i %>">Station-<%=i %></option>
-                                    <%  } %>
+                                <select id="station" class="form-select"> 
+                                        
                                 </select></td>
                             <td>User Name :
                                 <input id="username" class="form-control" /></td>

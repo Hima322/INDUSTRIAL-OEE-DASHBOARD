@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 
 namespace WebApplication2.bom
 {
-    public partial class add : Page
+    public partial class Add : Page
     {
         public string CurrentError = "";
 
@@ -18,7 +18,7 @@ namespace WebApplication2.bom
         }
 
         [WebMethod]
-       public static string ADD_BOM(String MODEL, string VARIANT, string FG_PART_NUMBER, string PART_NUMBER, string SIDE, string ASSYSTATIONID, string PART_NAME)
+       public static string ADD_BOM(String MODEL, string VARIANT, string FG_PART_NUMBER, string PART_NUMBER, string SIDE, string PART_NAME)
         {
                 try
                 {
@@ -30,8 +30,7 @@ namespace WebApplication2.bom
                             Variant = VARIANT,
                             FG_PartNumber = FG_PART_NUMBER,
                             PartNumber = PART_NUMBER,
-                            Side = SIDE,
-                            AssyStationID = Convert.ToInt32(ASSYSTATIONID),
+                            Side = SIDE, 
                             PartName = PART_NAME
                         };
 

@@ -17,5 +17,7 @@ namespace WebApplication2
         public int ID { get; set; }
         public string TorqueName { get; set; }
         public string TorqueToolIPAddress { get; set; }
+        public string Station { get; set; }
+        public Nullable<int> Pset { get; set; }
     }
 }

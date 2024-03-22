@@ -7,6 +7,65 @@
     <title>Dashboard | Edit Bom</title>
     <link href="../css/libs/bootstrap.min.css" rel="stylesheet" /> 
     <script src="../js/libs/bootstrap.bundle.min.js"></script> 
+    <link rel="stylesheet" type="text/css" href="../css/libs/toastify.min.css" />
+    <script type="text/javascript" src="../js/libs/toastify-js.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery.min.js"></script>
+    
+    <script>
+        $(document).ready(function () {
+            $("#EDIT_BOM").click(function () {   
+                var MODEL = $("#MODEL").val()
+                var VARIANT = $("#VARIANT").val()
+                var FG_PART_NUMBER = $("#FG_PART_NUMBER").val()
+                var PART_NUMBER = $("#PART_NUMBER").val()
+                var SIDE = $("#SIDE").val()
+                var PART_NAME = $("#PART_NAME").val()
+
+                if (!PART_NUMBER) return toast("PART_NUMBER is required.")
+                else if (!SIDE) return toast("SIDE type is required.")
+                else if (!PART_NAME) return toast("PART_NAME is required.")
+                else {
+                    $(this).attr("disabled", true)
+                    $.ajax({
+                        type: "POST",
+                        url: "edit.aspx/EDIT_BOM",
+                        data: `{ id: <%=Request.Params.Get("id") %>, PART_NUMBER:'${PART_NUMBER}', SIDE:'${SIDE}',  PART_NAME : '${PART_NAME}'}`,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: "true",
+                        cache: "false",
+                        success: (res) => {
+                            if (res.d == "Done") toast("Success")
+                            setTimeout(function () {
+                                history.back() 
+                            }, 2000)
+                        },
+                        Error: function (x, e) {
+                            console.log(e);
+                        }
+                    })
+                }
+            })
+        })
+
+
+        //alert toast function for notification 
+        const toast = txt =>
+            Toastify({
+                text: txt,
+                duration: 3000,
+                gravity: "bottom",
+                position: "right",
+                style: {
+                    background: 'lightgray',
+                    color: 'black',
+                    fontSize: '20px',
+                    borderRadius: '5px'
+                }
+            }).showToast();
+
+    </script>
+
 </head>
 <body>
     <form id="form1" runat="server"> 
@@ -68,13 +127,7 @@
                             <b>Side :</b>
                         </label>
                         <asp:TextBox CssClass="form-control" ID="SIDE" runat="server"></asp:TextBox>
-                    </div>
-                    <div class="col mt-3">
-                        <label for="ASSYSTATIONID" class="form-label">
-                            <b>AssyStationId :</b>
-                        </label>
-                        <asp:TextBox CssClass="form-control" ID="ASSYSTATIONID" runat="server"></asp:TextBox>
-                    </div>
+                    </div> 
                 </div>
 
 
@@ -87,7 +140,7 @@
 
                 <button type="button" class="btn btn-danger" onclick="history.back()">Cancel</button>
                 &nbsp;
-                <asp:Button CssClass="btn btn-primary" OnClick="EDIT_BOM" Text="Update" runat="server" />
+                <button type="button" class="btn btn-primary" id="EDIT_BOM">Edit Bom</button> 
             </div>
 
         </div>

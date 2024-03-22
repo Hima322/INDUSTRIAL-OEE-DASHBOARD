@@ -26,7 +26,6 @@
           <Property Name="Variant" Type="varchar" MaxLength="255" />
           <Property Name="FG_PartNumber" Type="varchar" MaxLength="255" />
           <Property Name="Side" Type="varchar" MaxLength="255" />
-          <Property Name="AssyStationID" Type="int" />
           <Property Name="ScanSequence" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="DelayRecord">
@@ -238,6 +237,8 @@
           <Property Name="ID" Type="int" Nullable="false" />
           <Property Name="TorqueName" Type="varchar" MaxLength="100" />
           <Property Name="TorqueToolIPAddress" Type="varchar" MaxLength="50" />
+          <Property Name="Station" Type="varchar" MaxLength="50" />
+          <Property Name="Pset" Type="int" />
         </EntityType>
         <EntityType Name="TaskListTable">
           <Key>
@@ -378,7 +379,6 @@
           <Property Name="Variant" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="FG_PartNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Side" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="AssyStationID" Type="Int32" />
           <Property Name="ScanSequence" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="DelayRecord">
@@ -590,6 +590,8 @@
           <Property Name="ID" Type="Int32" Nullable="false" />
           <Property Name="TorqueName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="TorqueToolIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Station" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Pset" Type="Int32" />
         </EntityType>
         <EntityType Name="TaskListTable">
           <Key>
@@ -684,7 +686,6 @@
             <EntityTypeMapping TypeName="TMdbModel.BOM">
               <MappingFragment StoreEntitySet="BOM">
                 <ScalarProperty Name="ScanSequence" ColumnName="ScanSequence" />
-                <ScalarProperty Name="AssyStationID" ColumnName="AssyStationID" />
                 <ScalarProperty Name="Side" ColumnName="Side" />
                 <ScalarProperty Name="FG_PartNumber" ColumnName="FG_PartNumber" />
                 <ScalarProperty Name="Variant" ColumnName="Variant" />
@@ -912,6 +913,8 @@
           <EntitySetMapping Name="STD_TorqueTable">
             <EntityTypeMapping TypeName="TMdbModel.STD_TorqueTable">
               <MappingFragment StoreEntitySet="STD_TorqueTable">
+                <ScalarProperty Name="Pset" ColumnName="Pset" />
+                <ScalarProperty Name="Station" ColumnName="Station" />
                 <ScalarProperty Name="TorqueToolIPAddress" ColumnName="TorqueToolIPAddress" />
                 <ScalarProperty Name="TorqueName" ColumnName="TorqueName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />

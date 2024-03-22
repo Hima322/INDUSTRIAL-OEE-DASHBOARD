@@ -92,8 +92,7 @@
                         <tr>
                             <th>Part Name</th>
                             <th>Part No.</th>
-                            <th>Side</th>
-                            <th>AssyStationId</th>
+                            <th>Side</th> 
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -105,8 +104,7 @@
                         <tr>
                             <td title="<%=bom.PartName %>" data-bs-toggle="tooltip"><%=bom.PartName.Length > 30 ? bom.PartName.Substring(0,20) + "..." : bom.PartName %></td>
                             <td><%=bom.PartNumber %></td>
-                            <td><%=bom.Side %></td>
-                            <td><%=bom.AssyStationID %></td>
+                            <td><%=bom.Side %></td> 
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-primary btn-sm text-white" href="edit.aspx?id=<%=bom.ID %>">Edit </a>

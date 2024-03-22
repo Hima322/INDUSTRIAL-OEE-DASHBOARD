@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
@@ -45,5 +46,29 @@ namespace WebApplication2.user
             }
         }
 
+
+        [WebMethod]
+        public static string GetAllPlcTagList()
+        {
+            try
+            {
+                using (TMdbEntities mdbEntities = new TMdbEntities())
+                {
+                    var user = mdbEntities.PLCAddressLists.ToList();
+                    if (user != null)
+                    {
+                        return JsonSerializer.Serialize(user);
+                    }
+                }
+            }
+            catch
+            {
+                return "Error";
+            }
+            return "Error";
         }
+
+
+
     }
+}

@@ -193,7 +193,7 @@
                             data.map((e,i) => `
                             <div style="color:${i == 0 ? "limegreen" : "yellow"};">
                                  <big>${e.Variant}</big>
-                                <i>${e.SeatType == "DRIVER" ? "DRIVER-LH" : "CO-DRIVER-RH" }</i>
+                                <i>${e.SeatType == "DRIVER" ? "LH" : "RH" }</i>
                             </div>
                             `)
                         )

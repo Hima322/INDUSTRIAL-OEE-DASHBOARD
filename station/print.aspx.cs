@@ -28,6 +28,9 @@ namespace WebApplication2.station
         public static float bd = 0;
         public static float fd = 0;
 
+        public static string builtTicketBrightness = "15";
+        public static string finelTicketBrightness = "15"; 
+
         public static List<PrnFile> prnData;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -66,6 +69,16 @@ namespace WebApplication2.station
                     if (finelPrinterDpiRes != null)
                     {
                         fd = Convert.ToInt16(Convert.ToInt16(finelPrinterDpiRes.VarValue) / 25.4);
+                    }
+                    var builtTicketBrightRes = db.VarTables.Where(i => i.VarName == "BuiltTicketBrightness").FirstOrDefault();
+                    if (builtTicketBrightRes != null)
+                    {
+                        builtTicketBrightness = builtTicketBrightRes.VarValue;
+                    }
+                    var finelTicketBrightRes = db.VarTables.Where(i => i.VarName == "FinelTicketBrightness").FirstOrDefault();
+                    if (finelTicketBrightRes != null)
+                    {
+                        finelTicketBrightness = finelTicketBrightRes.VarValue;
                     }
                     //this code for get prn data fetching 
                     var prnRes = db.PrnFiles.ToList();
@@ -136,7 +149,8 @@ namespace WebApplication2.station
                             "^PMN" +
                             "^LH0,0" +
                             "^JMA" +
-                            "^PR6,6~SD15" +
+                            "^PR6,6" +
+                            $"~SD{builtTicketBrightness}" +
                             "^JUS^LRN" +
                             "^CI0^XZ" +
                             "^XA" +
@@ -211,7 +225,7 @@ namespace WebApplication2.station
                             "^LH0,0" +
                             "^JMA" +
                             "^PR6,6" +
-                            "~SD15" +
+                            $"~SD{finelTicketBrightness}" +
                             "^JUS" +
                             "^LRN" +
                             "^CI27" +

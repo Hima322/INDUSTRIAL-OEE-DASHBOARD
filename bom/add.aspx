@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="add.aspx.cs" Inherits="WebApplication2.bom.add" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="add.aspx.cs" Inherits="WebApplication2.bom.Add" %>
 
 <!DOCTYPE html>
 
@@ -19,20 +19,18 @@
             var VARIANT = $("#VARIANT").val()
             var FG_PART_NUMBER = $("#FG_PART_NUMBER").val()  
             var PART_NUMBER = $("#PART_NUMBER").val()
-            var SIDE = $("#SIDE").val()
-            var ASSYSTATIONID = $("#ASSYSTATIONID").val()
+            var SIDE = $("#SIDE").val() 
             var PART_NAME = $("#PART_NAME").val()
              
             if (!PART_NUMBER) return toast("PART_NUMBER is required.") 
-            else if (!SIDE) return toast("SIDE type is required.")
-            else if (!ASSYSTATIONID) return toast("ASSYSTATIONID is required.") 
+            else if (!SIDE) return toast("SIDE type is required.") 
             else if (!PART_NAME) return toast("PART_NAME is required.")
             else {
                 $(this).attr("disabled", true)
                 $.ajax({
                     type: "POST",
                     url: "add.aspx/ADD_BOM",
-                    data: `{MODEL : '${MODEL}', VARIANT : '${VARIANT}', FG_PART_NUMBER : '${FG_PART_NUMBER}', PART_NUMBER:'${PART_NUMBER}', SIDE:'${SIDE}',  ASSYSTATIONID : '${ASSYSTATIONID}', PART_NAME : '${PART_NAME}'}`,
+                    data: `{MODEL : '${MODEL}', VARIANT : '${VARIANT}', FG_PART_NUMBER : '${FG_PART_NUMBER}', PART_NUMBER:'${PART_NUMBER}', SIDE:'${SIDE}',  PART_NAME : '${PART_NAME}'}`,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: "true",
@@ -122,13 +120,7 @@
                                             <option>DRIVER</option>
                                             <option>CO-DRIVER</option>
                                         </select>
-                                    </div> 
-                                    <div class="col mt-3">
-                                        <label for="ASSYSTATIONID" class="form-label">
-                                            <b>AssyStationId :</b>
-                                        </label>  
-                                        <input class="form-control" id="ASSYSTATIONID" />
-                                    </div> 
+                                    </div>  
                                 </div>
 
                                

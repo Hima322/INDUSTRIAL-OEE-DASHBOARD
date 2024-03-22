@@ -11,7 +11,7 @@ namespace WebApplication2.bom
 {
 
 
-    public partial class add
+    public partial class Add
     {
 
         /// <summary>

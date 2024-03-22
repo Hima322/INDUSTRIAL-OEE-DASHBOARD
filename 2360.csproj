@@ -398,20 +398,6 @@
     <Compile Include="station\station13.aspx.designer.cs">
       <DependentUpon>station13.aspx</DependentUpon>
     </Compile>
-    <Compile Include="station\station14.aspx.cs">
-      <DependentUpon>station14.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station14.aspx.designer.cs">
-      <DependentUpon>station14.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="station\station15.aspx.cs">
-      <DependentUpon>station15.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station15.aspx.designer.cs">
-      <DependentUpon>station15.aspx</DependentUpon>
-    </Compile>
     <Compile Include="station\station16.aspx.cs">
       <DependentUpon>station16.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -582,7 +568,7 @@
     <Content Include="Model1.edmx.diagram">
       <DependentUpon>Model1.edmx</DependentUpon>
     </Content>
-    <Content Include="other\TMdb.bak" />
+    <Content Include="other\TMdbs.bak" />
     <None Include="packages.config" />
     <Content Include="qrlabel\index.aspx" />
     <Content Include="report\index.aspx" />
@@ -594,8 +580,6 @@
     <Content Include="station\station11.aspx" />
     <Content Include="station\station12.aspx" />
     <Content Include="station\station13.aspx" />
-    <Content Include="station\station14.aspx" />
-    <Content Include="station\station15.aspx" />
     <Content Include="station\station16.aspx" />
     <Content Include="station\station2.aspx" />
     <Content Include="station\station3.aspx" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web.Services;
 
 namespace WebApplication2.bom
 {
@@ -29,8 +30,7 @@ namespace WebApplication2.bom
                     VARIANT.Text = bom.Variant.ToString();
                     FG_PART_NUMBER.Text = bom.FG_PartNumber.ToString();
                     PART_NUMBER.Text = bom.PartNumber.ToString();
-                    SIDE.Text = bom.Side.ToString();
-                    ASSYSTATIONID.Text = bom.AssyStationID.ToString();
+                    SIDE.Text = bom.Side.ToString(); 
                     PART_NAME.Text = bom.PartName.ToString();
                 }
             }
@@ -38,40 +38,30 @@ namespace WebApplication2.bom
         }
 
 
-        protected void EDIT_BOM(object sender, EventArgs e)
+        [WebMethod]
+        public static string EDIT_BOM(int id, string PART_NUMBER, string SIDE, string PART_NAME)
         {
-            if (PART_NUMBER.Text == "" || SIDE.Text == "" || ASSYSTATIONID.Text == "" || PART_NAME.Text == "")
+            try
             {
-                CurrentError = "All feilds are required.";
-            }
-            else
-            {
-                try
-                { 
-                        using (TMdbEntities mdbEntities = new TMdbEntities())
-                        {
-                            var id = Convert.ToInt16(Request.Params.Get("id"));
-
-                            var bOM = mdbEntities.BOMs.Where(i => i.ID == id).FirstOrDefault();
-
-                        if (bOM != null)
-                        {
-                            bOM.Model = MODEL.Text;
-                            bOM.Variant = VARIANT.Text;
-                            bOM.PartNumber = PART_NUMBER.Text;
-                            bOM.Side = SIDE.Text;
-                            bOM.PartName = PART_NAME.Text;
-                            bOM.AssyStationID = Convert.ToInt16(ASSYSTATIONID.Text);
-                            mdbEntities.SaveChanges();
-                        Response.Redirect("/bom/edit.aspx?model=" + MODEL.Text + "&variant=" + VARIANT.Text + "&fg=" + FG_PART_NUMBER.Text);
-                        }
-
-                    } 
-                }
-                catch (Exception ex)
+                using (TMdbEntities mdbEntities = new TMdbEntities())
                 {
-                    CurrentError = ex.Message;
+                    var bOM = mdbEntities.BOMs.Where(i => i.ID == id).FirstOrDefault();
+
+                    if (bOM != null)
+                    { 
+                        bOM.PartNumber = PART_NUMBER;
+                        bOM.Side = SIDE;
+                        bOM.PartName = PART_NAME;
+                    }
+
+                        mdbEntities.SaveChanges();
+                    return "Done";
+
                 }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
         }
 

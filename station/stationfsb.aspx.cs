@@ -229,7 +229,7 @@ namespace WebApplication2.station
             {
                 using (TMdbEntities mdbEntities = new TMdbEntities())
                 {
-                    var res = mdbEntities.SEAT_DATA.Where(i => i.FSB == null && i.BuildNoDatetime > DateTime.Today).ToList();
+                    var res = mdbEntities.SEAT_DATA.Where(i => i.FSB == "OK" && i.BuildNoDatetime > DateTime.Today).ToList();
                     if (res.Count > 0)
                     {
                         return res.Count;
