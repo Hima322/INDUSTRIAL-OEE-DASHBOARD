@@ -19,7 +19,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PartName" Type="varchar" MaxLength="255" />
           <Property Name="PartNumber" Type="varchar" MaxLength="255" />
           <Property Name="Model" Type="varchar" MaxLength="255" />
@@ -77,7 +77,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Model" Type="varchar" MaxLength="50" />
           <Property Name="Variant" Type="varchar" MaxLength="100" />
           <Property Name="VariantID" Type="int" />
@@ -244,7 +244,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="StationNameID" Type="varchar" MaxLength="50" />
           <Property Name="ImageSeq" Type="int" />
           <Property Name="TaskName" Type="varchar" MaxLength="100" />
@@ -372,7 +372,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PartName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="PartNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
@@ -430,7 +430,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Variant" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="VariantID" Type="Int32" />
@@ -597,7 +597,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="StationNameID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ImageSeq" Type="Int32" />
           <Property Name="TaskName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />

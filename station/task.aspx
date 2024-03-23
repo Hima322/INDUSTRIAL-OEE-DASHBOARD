@@ -57,7 +57,7 @@
                               </div>
                               <div id="collapse${e}" class='collapse' data-bs-parent="#accordion">
                                 <div class="card-body table-responsive">
-                                    <table class="table table-bordered mb-0 text-center table-sm">
+                                    <table class="table table-bordered mb-0 text-center">
                                         <thead class="table-secondary">
                                             <tr>
                                                 <th class="px-2">Seq</th>
@@ -76,7 +76,7 @@
                                                 ` <tr>
                                                     <td>${j.ImageSeq}</td> 
                                                     <td>
-                                                        ${j.ImageSeq == 1 || j.ImageSeq == 9 || j.ImageSeq == 10 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.TaskName : (` 
+                                                        ${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.TaskName : (` 
                                                             <select class="form-control" onchange="updateTaskListTable(${j.ID},'TaskName',this.value)" >
                                                                 <option></option>
                                                                 <option ${j.TaskName == "SCAN" ? "selected" : "" }>SCAN</option>
@@ -84,15 +84,15 @@
                                                             </select>
                                                         `) }
                                                     </td> 
-                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 9 || j.ImageSeq == 10 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.BomSeq : `<input value="${j.BomSeq}" onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }</td> 
+                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.BomSeq : `<input value="${j.BomSeq}" onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }</td> 
 
                                                    ${
                                                     dataKey.filter((_,i) => i > 7).map(k => `
                                                         <td style="padding:5px 100px;"> 
                                                             <div class="btn-group w-100 mt-2 bg-light" role="group">
-                                                                <input ${j.ImageSeq == 1 || j.ImageSeq == 9 || j.ImageSeq == 10 ? "disabled" : ""} type="radio" class="btn-check" name="options-outlined${j.ID + k}" id="success-outlined${j.ID + k}" ${j[k] == 1 ? "checked" : ""} onchange="updateTaskListTable(${j.ID},'${k}',1)" />
+                                                                <input ${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 ? "disabled" : ""} type="radio" class="btn-check" name="options-outlined${j.ID + k}" id="success-outlined${j.ID + k}" ${j[k] == 1 ? "checked" : ""} onchange="updateTaskListTable(${j.ID},'${k}',1)" />
                                                                 <label class="btn btn-outline-success btn-sm" for="success-outlined${j.ID + k}" >YES</label>
-                                                                <input ${j.ImageSeq == 1 || j.ImageSeq == 9 || j.ImageSeq == 10 ? "disabled" : ""} type="radio" class="btn-check" name="options-outlined${j.ID + k}" id="danger-outlined${j.ID + k}" ${j[k] == 0 ? "checked" : ""} onchange="updateTaskListTable(${j.ID},'${k}',0)"/>
+                                                                <input ${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 ? "disabled" : ""} type="radio" class="btn-check" name="options-outlined${j.ID + k}" id="danger-outlined${j.ID + k}" ${j[k] == 0 ? "checked" : ""} onchange="updateTaskListTable(${j.ID},'${k}',0)"/>
                                                                 <label class="btn btn-outline-danger btn-sm" for="danger-outlined${j.ID + k}">NO</label>
                                                             </div>
                                                         </td>
