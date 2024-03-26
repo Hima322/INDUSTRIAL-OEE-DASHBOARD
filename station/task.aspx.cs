@@ -60,6 +60,53 @@ namespace WebApplication2.station
 
 
         [WebMethod]
+        public static string GET_TORQUE_TABLE()
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.STD_TorqueTable.ToList();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+            return "Error";
+        }
+        
+
+        [WebMethod]
+        public static string GET_BOM_LIST()
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var res = db.BOMs.ToList();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Error";
+            }
+            return "Error";
+        }
+        
+        [WebMethod]
         public static string GET_MODEL_DETAIL()
         {
             try

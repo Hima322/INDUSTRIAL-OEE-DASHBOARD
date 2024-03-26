@@ -14,6 +14,8 @@
     <script type="text/javascript" src="../js/libs/jquery.min.js"></script>
     <script>
         var modelDetail = []
+        var torqueTableList = []
+        var bomList = []
         var pwd = ""
         var EntryPoint = true
 
@@ -21,6 +23,8 @@
 
             getModelDetail()
             getStationList() 
+            getTorqueTable()
+            getBomList()
 
             <%--pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
@@ -77,14 +81,17 @@
                                                     <td>${j.ImageSeq}</td> 
                                                     <td>
                                                         ${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.TaskName : (` 
-                                                            <select class="form-control" onchange="updateTaskListTable(${j.ID},'TaskName',this.value)" >
+                                                            <select class="form-control" onchange="updateTaskListTable(${j.ID},'TaskName',this.value)" id="type${j.ID}" >
                                                                 <option></option>
                                                                 <option ${j.TaskName == "SCAN" ? "selected" : "" }>SCAN</option>
                                                                 <option ${j.TaskName == "TIGHT TORQUE" ? "selected" : "" }>TIGHT TORQUE</option> 
                                                             </select>
                                                         `) }
                                                     </td> 
-                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.BomSeq : `<input list="bomMenu" value="${j.BomSeq}" onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }</td> 
+                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint"
+                                                    ? j.BomSeq
+                                                    : `<input list="bomMenu" value="${j.BomSeq}" onfocus=handleShowBomSeq(${j.ID}) onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }
+                                                    </td> 
 
                                                    ${
                                                     dataKey.filter((_,i) => i > 7).map(k => `
@@ -115,6 +122,23 @@
                 }
             })
         }
+
+        const handleShowBomSeq = id => {
+            var type = $("#type" + id).val()
+            if (!type) {
+                $("#bomMenu").html('')
+                return toast("Pls select task type", "error")
+            }
+            if (type == "SCAN") {
+                $("#bomMenu").html(
+                    bomList.map(e => `<option value="${e.ScanSequence}" >${e.PartName} (${e.FG_PartNumber}) </option>`)
+                ) 
+            } else {
+                $("#bomMenu").html(
+                    torqueTableList.filter(f => f.Station == `Station-${Math.ceil(id/15)}`).map(e => `<option>${e.TorqueName}</option>`)
+                ) 
+            }
+        }
          
         //function for get update station task list function for crud
         const updateTaskListTable = (id,colName,val) => {
@@ -138,7 +162,49 @@
                 }
             })
         } 
- 
+  
+        const getTorqueTable = _ => {
+            $.ajax({
+                type: "POST",
+                url: "task.aspx/GET_TORQUE_TABLE",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+                        torqueTableList = data 
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
+         
+        const getBomList = _ => {
+            $.ajax({
+                type: "POST",
+                url: "task.aspx/GET_BOM_LIST",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        let data = JSON.parse(res.d)
+                        bomList = data 
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
+        
         //function for get station list function for crud
         const getModelDetail = _ => {
             $.ajax({
@@ -152,8 +218,7 @@
                 success: (res) => {
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
-                        modelDetail = data
-                        console.log(data)
+                        modelDetail = data 
                     }
                 },
                 Error: function (x, e) {
