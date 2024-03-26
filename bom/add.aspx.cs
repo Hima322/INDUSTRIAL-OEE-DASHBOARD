@@ -20,19 +20,29 @@ namespace WebApplication2.bom
         [WebMethod]
        public static string ADD_BOM(String MODEL, string VARIANT, string FG_PART_NUMBER, string PART_NUMBER, string SIDE, string PART_NAME)
         {
+            var bomSeq = "BOM1";
                 try
                 {
                     using (TMdbEntities mdbEntities = new TMdbEntities())
                     {
-                        BOM bOM = new BOM
-                        {
-                            Model = MODEL, 
-                            Variant = VARIANT,
-                            FG_PartNumber = FG_PART_NUMBER,
-                            PartNumber = PART_NUMBER,
-                            Side = SIDE, 
-                            PartName = PART_NAME
-                        };
+
+                    var bomCount = mdbEntities.BOMs.Where(i => i.Model == MODEL && i.Variant == VARIANT && i.FG_PartNumber == FG_PART_NUMBER).Count();
+                    if (bomCount > 0 )
+                    {
+                        bomSeq = "BOM" + (bomCount + 1).ToString();
+                    }
+
+
+                    BOM bOM = new BOM
+                    {
+                        Model = MODEL,
+                        Variant = VARIANT,
+                        FG_PartNumber = FG_PART_NUMBER,
+                        PartNumber = PART_NUMBER,
+                        Side = SIDE,
+                        ScanSequence = bomSeq,
+                        PartName = PART_NAME
+                    };
 
                         mdbEntities.BOMs.Add(bOM);
                         mdbEntities.SaveChanges();

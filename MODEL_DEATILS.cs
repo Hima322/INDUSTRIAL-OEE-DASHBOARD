@@ -17,7 +17,6 @@ namespace WebApplication2
         public int ID { get; set; }
         public string Model { get; set; }
         public string Variant { get; set; }
-        public Nullable<int> VariantID { get; set; }
         public string ModelVariant { get; set; }
         public string C5S_7F { get; set; }
         public string Seat { get; set; }
@@ -26,6 +25,5 @@ namespace WebApplication2
         public string Features { get; set; }
         public string PartName { get; set; }
         public string Destination { get; set; }
-        public string VIN { get; set; }
     }
 }

@@ -59,7 +59,7 @@
                         <%--button for search--%>
                         <input id="search_box" type="text" placeholder="Search.." class="form-control" /> &ensp;&ensp;
                         <%--button for add new bom--%>
-                        <button style="width:150px;" type="button" onclick="location.href = 'add.aspx?model=<%=Request.Params.Get("model") %>&variant=<%=Request.Params.Get("variant") %>&fg=<%=Request.Params.Get("fg") %>'" class="btn btn-secondary">Add Bom</button>
+                        <button style="width:150px;" type="button" onclick="location.replace('add.aspx?model=<%=Request.Params.Get("model") %>&variant=<%=Request.Params.Get("variant") %>&fg=<%=Request.Params.Get("fg") %>&side=<%=Request.Params.Get("side") %>')" class="btn btn-secondary">Add Bom</button>
                     </div>
                 </div>
                 
@@ -77,9 +77,10 @@
 
 
                 <div class="alert alert-secondary d-flex mt-3 flex-column container ">
-                    <span>Model : &ensp;&ensp;&ensp;&nbsp; <strong><%=Request.Params.Get("model") %></strong></span>
-                    <span>Variant : &ensp;&ensp;&ensp; <strong><%=Request.Params.Get("variant") %></strong> </span>
-                    <span>FG Part No : <strong><%=Request.Params.Get("fg") %></strong></span>
+                    <span>Model : &ensp;&ensp;&ensp;&nbsp;&ensp; <strong><%=Request.Params.Get("model") %></strong></span>
+                    <span>Variant : &ensp;&ensp;&ensp;&ensp; <strong><%=Request.Params.Get("variant") %></strong> </span>
+                    <span>FG Part No :&ensp; <strong><%=Request.Params.Get("fg") %></strong></span>
+                    <span>Seat Type : &ensp;&ensp;<strong><%=Request.Params.Get("side") %></strong></span>
                 </div>
 
 
@@ -91,8 +92,7 @@
                     <thead class="table-secondary">
                         <tr>
                             <th>Part Name</th>
-                            <th>Part No.</th>
-                            <th>Side</th> 
+                            <th>Part No.</th> 
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -103,8 +103,7 @@
                             {  %>
                         <tr>
                             <td title="<%=bom.PartName %>" data-bs-toggle="tooltip"><%=bom.PartName.Length > 30 ? bom.PartName.Substring(0,20) + "..." : bom.PartName %></td>
-                            <td><%=bom.PartNumber %></td>
-                            <td><%=bom.Side %></td> 
+                            <td><%=bom.PartNumber %></td> 
                             <td>
                                 <div class="btn-group">
                                     <a class="btn btn-primary btn-sm text-white" href="edit.aspx?id=<%=bom.ID %>">Edit </a>

@@ -116,10 +116,7 @@
                                         <label for="SIDE" class="form-label">
                                             <b>Side :</b>
                                         </label>   
-                                        <select class="form-control" id="SIDE">
-                                            <option>DRIVER</option>
-                                            <option>CO-DRIVER</option>
-                                        </select>
+                                        <input class="form-control" value="<%=Request.Params.Get("side") %>" disabled="disabled" id="SIDE" /> 
                                     </div>  
                                 </div>
 

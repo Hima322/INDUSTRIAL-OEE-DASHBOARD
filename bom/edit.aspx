@@ -124,9 +124,9 @@
                     </div>
                     <div class="col mt-3">
                         <label for="SIDE" class="form-label">
-                            <b>Side :</b>
+                            <b>Side :</b>  (readonly)
                         </label>
-                        <asp:TextBox CssClass="form-control" ID="SIDE" runat="server"></asp:TextBox>
+                        <asp:TextBox ReadOnly="true" CssClass="form-control" ID="SIDE" runat="server"></asp:TextBox>
                     </div> 
                 </div>
 

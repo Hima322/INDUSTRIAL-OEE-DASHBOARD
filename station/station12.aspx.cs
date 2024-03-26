@@ -449,9 +449,7 @@ namespace WebApplication2.station
                                     dbEntities.SaveChanges();
 
                                 }
-                            }
-
-
+                            } 
                         }
                     }
                 }
@@ -522,35 +520,12 @@ namespace WebApplication2.station
                     if (seatDataRes != null)
                     {
                         seatDataRes.StationNo = int.Parse(station.Split('-')[1]) + 1;
-                    }
-                    var res = dbEntities.TaskListTables.Where(i => i.StationNameID == station).ToList();
-                    if (res != null)
-                    {
-                        res[0].TaskStatus = "Running";
-                        res[1].TaskStatus = "Pending";
-                        res[2].TaskStatus = "Pending";
-                        res[3].TaskStatus = "Pending";
-                        res[4].TaskStatus = "Pending";
-                        res[5].TaskStatus = "Pending";
-                        res[6].TaskStatus = "Pending";
-                        res[7].TaskStatus = "Pending";
-                        res[8].TaskStatus = "Pending";
-                        res[9].TaskStatus = "Pending";
-
-                        res[0].TaskCurrentValue = "";
-                        res[1].TaskCurrentValue = "";
-                        res[2].TaskCurrentValue = "";
-                        res[3].TaskCurrentValue = "";
-                        res[4].TaskCurrentValue = "";
-                        res[5].TaskCurrentValue = "";
-                        res[6].TaskCurrentValue = "";
-                        res[7].TaskCurrentValue = "";
-                        res[8].TaskCurrentValue = "";
-                        res[9].TaskCurrentValue = "";
+                    } 
 
                         dbEntities.SaveChanges();
 
-                    }
+                    ResetTaskStatusAndValue(station);
+
                     return true;
                 }
             }
@@ -559,7 +534,18 @@ namespace WebApplication2.station
                 CurrentError = ex.Message;
             }
             return false;
-        } 
+        }
+
+        public static void ResetTaskStatusAndValue(string station)
+        {
+            using (TMdbEntities db = new TMdbEntities())
+            {
+                db.Database.ExecuteSqlCommand($"update TaskListTable set TaskCurrentValue = '', TaskStatus = 'Pending' where StationNameID = '{station}'");
+                db.SaveChanges();
+                db.Database.ExecuteSqlCommand($"update TaskListTable set TaskStatus = 'Running' where ImageSeq = 1 and StationNameID = '{station}'");
+                db.SaveChanges();
+            }
+        }
 
         public static void UpdateSeatData(int id, string key, string value)
         {

@@ -41,7 +41,7 @@ namespace WebApplication2.variant
         } 
 
         [WebMethod]
-        public static string EDIT_VARIANT(int id, string VARIANT, string C5S_7F, string CustPartNumber, string SEAT, string FGPartNUMBER, string FEATURES, string PART_NAME)
+        public static string EDIT_VARIANT(int id, string VARIANT, string C5S_7F, string CustPartNumber, string SEAT, string FGPartNUMBER, string FEATURES, string PART_NAME, string DESTINATION)
         {
             try
             {
@@ -57,6 +57,7 @@ namespace WebApplication2.variant
                         res.FG_PartNumber = FGPartNUMBER;
                         res.Features = FEATURES;
                         res.PartName = PART_NAME;
+                        res.Destination = DESTINATION;
                     } 
 
                     mdbEntities.SaveChanges();

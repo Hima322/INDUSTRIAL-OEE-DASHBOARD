@@ -68,9 +68,9 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="ModelName" Type="varchar" MaxLength="150" />
-          <Property Name="PartNumber" Type="varchar" MaxLength="150" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ModelName" Type="varchar" MaxLength="50" />
+          <Property Name="PartNumber" Type="varchar" MaxLength="50" />
           <Property Name="CustomerName" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="MODEL_DEATILS">
@@ -80,7 +80,6 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Model" Type="varchar" MaxLength="50" />
           <Property Name="Variant" Type="varchar" MaxLength="100" />
-          <Property Name="VariantID" Type="int" />
           <Property Name="ModelVariant" Type="varchar" MaxLength="50" />
           <Property Name="5S/7F" Type="varchar" MaxLength="50" />
           <Property Name="Seat" Type="varchar" MaxLength="50" />
@@ -89,7 +88,6 @@
           <Property Name="Features" Type="varchar" MaxLength="50" />
           <Property Name="PartName" Type="varchar" MaxLength="150" />
           <Property Name="Destination" Type="varchar" MaxLength="50" />
-          <Property Name="VIN" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="OperatorWorkTime">
           <Key>
@@ -421,9 +419,9 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="ModelName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="PartNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ModelName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PartNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CustomerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="MODEL_DEATILS">
@@ -433,7 +431,6 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Variant" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="VariantID" Type="Int32" />
           <Property Name="ModelVariant" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="C5S_7F" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Seat" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -442,7 +439,6 @@
           <Property Name="Features" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="PartName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="Destination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="VIN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="OperatorWorkTime">
           <Key>
@@ -748,7 +744,6 @@
           <EntitySetMapping Name="MODEL_DEATILS">
             <EntityTypeMapping TypeName="TMdbModel.MODEL_DEATILS">
               <MappingFragment StoreEntitySet="MODEL_DEATILS">
-                <ScalarProperty Name="VIN" ColumnName="VIN" />
                 <ScalarProperty Name="Destination" ColumnName="Destination" />
                 <ScalarProperty Name="PartName" ColumnName="PartName" />
                 <ScalarProperty Name="Features" ColumnName="Features" />
@@ -757,7 +752,6 @@
                 <ScalarProperty Name="Seat" ColumnName="Seat" />
                 <ScalarProperty Name="C5S_7F" ColumnName="5S/7F" />
                 <ScalarProperty Name="ModelVariant" ColumnName="ModelVariant" />
-                <ScalarProperty Name="VariantID" ColumnName="VariantID" />
                 <ScalarProperty Name="Variant" ColumnName="Variant" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
                 <ScalarProperty Name="ID" ColumnName="ID" />

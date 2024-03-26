@@ -356,33 +356,12 @@
     <Compile Include="station\print.aspx.designer.cs">
       <DependentUpon>print.aspx</DependentUpon>
     </Compile>
-    <Compile Include="station\station0.aspx.cs">
-      <DependentUpon>station0.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station0.aspx.designer.cs">
-      <DependentUpon>station0.aspx</DependentUpon>
-    </Compile>
     <Compile Include="station\station1.aspx.cs">
       <DependentUpon>station1.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="station\station1.aspx.designer.cs">
       <DependentUpon>station1.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="station\station10.aspx.cs">
-      <DependentUpon>station10.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station10.aspx.designer.cs">
-      <DependentUpon>station10.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="station\station11.aspx.cs">
-      <DependentUpon>station11.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station11.aspx.designer.cs">
-      <DependentUpon>station11.aspx</DependentUpon>
     </Compile>
     <Compile Include="station\station12.aspx.cs">
       <DependentUpon>station12.aspx</DependentUpon>
@@ -453,13 +432,6 @@
     </Compile>
     <Compile Include="station\station8.aspx.designer.cs">
       <DependentUpon>station8.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="station\station9.aspx.cs">
-      <DependentUpon>station9.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station9.aspx.designer.cs">
-      <DependentUpon>station9.aspx</DependentUpon>
     </Compile>
     <Compile Include="station\stationfsb.aspx.cs">
       <DependentUpon>stationfsb.aspx</DependentUpon>
@@ -574,10 +546,7 @@
     <Content Include="report\index.aspx" />
     <Content Include="station\index.aspx" />
     <Content Include="station\print.aspx" />
-    <Content Include="station\station0.aspx" />
     <Content Include="station\station1.aspx" />
-    <Content Include="station\station10.aspx" />
-    <Content Include="station\station11.aspx" />
     <Content Include="station\station12.aspx" />
     <Content Include="station\station13.aspx" />
     <Content Include="station\station16.aspx" />
@@ -588,7 +557,6 @@
     <Content Include="station\station6.aspx" />
     <Content Include="station\station7.aspx" />
     <Content Include="station\station8.aspx" />
-    <Content Include="station\station9.aspx" />
     <Content Include="station\stationfsb.aspx" />
     <Content Include="station\stationfsc.aspx" />
     <Content Include="station\task.aspx" />

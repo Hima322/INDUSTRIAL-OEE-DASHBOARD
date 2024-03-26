@@ -214,7 +214,7 @@
                                 <div class="btn-group">
                                     <button type="button"
                                         class="btn btn-secondary btn-sm"
-                                        onclick="location.href = 'bom/index.aspx?model=<%=variant.Model %>&variant=<%=variant.Variant %>&fg=<%=variant.FG_PartNumber %>'">
+                                        onclick="location.href = 'bom/index.aspx?model=<%=variant.Model %>&variant=<%=variant.Variant %>&fg=<%=variant.FG_PartNumber %>&side=<%=variant.Seat %>'">
                                         <img src="image/icon/eye.svg" height="15" />
                                     </button>
 

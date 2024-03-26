@@ -22,10 +22,10 @@
             getModelDetail()
             getStationList() 
 
-            pwd = prompt("Hi admin enter your password : ")
+            <%--pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
                 pwd = prompt("Please enter password to access this page : ") 
-            toast("Success.")
+            toast("Success.")--%>
 
         })
 
@@ -84,7 +84,7 @@
                                                             </select>
                                                         `) }
                                                     </td> 
-                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.BomSeq : `<input value="${j.BomSeq}" onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }</td> 
+                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.BomSeq : `<input list="bomMenu" value="${j.BomSeq}" onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }</td> 
 
                                                    ${
                                                     dataKey.filter((_,i) => i > 7).map(k => `
@@ -201,7 +201,14 @@
     <div>
         
         <div style="position:fixed;top:0;right:0;" class="spinner-border text-primary m-4" id="loading"></div>
-         
+
+        <datalist id="bomMenu">
+            <option value="Need help with a one-off project"></option>
+            <option value="looking a partnership"></option>
+            <option value="want to hire me "></option>
+            <option value="want to say hi!!"></option>
+        </datalist>
+
         <%--navbar header--%> 
         <div class="navbar navbar-light d-flex p-3">     
             <big>
@@ -211,7 +218,7 @@
         </div>
 
 
-        <div id="accordion" class="container">
+        <div id="accordion" class="container-fluid">
              
         </div>
 

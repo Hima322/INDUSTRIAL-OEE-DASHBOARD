@@ -17,22 +17,32 @@ namespace WebApplication2.variant
         }
 
         [WebMethod]
-        public static string ADD_VARIANT(string MODEL, string VARIANT, string C5S_7F, string CustPartNumber, string SEAT, string FGPartNUMBER, string FEATURES, string PART_NAME)
-        { 
+        public static string ADD_VARIANT(string MODEL, string VARIANT, string C5S_7F, string CustPartNumber, string SEAT, string FGPartNUMBER, string FEATURES, string PART_NAME, string DESTINATION)
+        {
+            string modelVariant = "";
+
                 try
                 {
                     using (TMdbEntities mdbEntities = new TMdbEntities())
                     {
-                        MODEL_DEATILS mODEL_DEATILS = new MODEL_DEATILS
-                        {
-                            Model = MODEL,
-                            Variant = VARIANT,
-                            CustPartNumber = CustPartNumber,
-                            C5S_7F = C5S_7F,
-                            Seat = SEAT,
-                            FG_PartNumber = FGPartNUMBER,
-                            Features = FEATURES,
-                            PartName = PART_NAME
+                        int modelVariantCount = mdbEntities.MODEL_DEATILS.Count();
+                    if(modelVariantCount > 0)
+                    {
+                        modelVariant = "ModelVariant" + (modelVariantCount + 1).ToString();
+                    }
+
+                    MODEL_DEATILS mODEL_DEATILS = new MODEL_DEATILS
+                    {
+                        Model = MODEL,
+                        Variant = VARIANT,
+                        CustPartNumber = CustPartNumber,
+                        C5S_7F = C5S_7F,
+                        Seat = SEAT,
+                        FG_PartNumber = FGPartNUMBER,
+                        Features = FEATURES,
+                        PartName = PART_NAME,
+                        Destination = DESTINATION,
+                        ModelVariant = modelVariant
 
                         };
 

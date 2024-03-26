@@ -21,6 +21,7 @@
             var FGPartNUMBER = $("#FGPartNUMBER").val()
             var FEATURES = $("#FEATURES").val()
             var PART_NAME = $("#PART_NAME").val()
+            var DESTINATION = $("#DESTINATION").val()
 
             if (!VARIANT) return toast("VARIANT is required.")
             else if (!C5S_7F) return toast("C5S_7F is required.")
@@ -29,12 +30,13 @@
             else if (!FGPartNUMBER) return toast("FGPartNUMBER is required.")
             else if (!FEATURES) return toast("FEATURES is required.")
             else if (!PART_NAME) return toast("PART_NAME is required.")
+            else if (!DESTINATION) return toast("DESTINATION is required.")
             else {
                 $("#submit_button").attr("disabled",true)
                 $.ajax({
                     type: "POST",
                     url: "add.aspx/ADD_VARIANT",
-                    data: `{MODEL : '<%=Request.Params.Get("model") %>', VARIANT : '${VARIANT}', C5S_7F : '${C5S_7F}' ,SEAT:'${SEAT}', CustPartNumber:'${CustPartNumber}', FGPartNUMBER : '${FGPartNUMBER}', FEATURES : '${FEATURES}', PART_NAME : '${PART_NAME}'}`,
+                    data: `{MODEL : '<%=Request.Params.Get("model") %>', VARIANT : '${VARIANT}', C5S_7F : '${C5S_7F}' ,SEAT:'${SEAT}', CustPartNumber:'${CustPartNumber}', FGPartNUMBER : '${FGPartNUMBER}', FEATURES : '${FEATURES}', PART_NAME : '${PART_NAME}', DESTINATION : '${DESTINATION}'}`,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: "true",
@@ -139,23 +141,32 @@
                     </div>
 
 
-                    <div class="col mt-3 mb-4">
+                <div class="row">
+                    <div class="col-8 mt-3 mb-4">
                         <label for="PART_NAME" class="form-label">
                             <b>Part Name :</b>
-                        </label> 
-                            <input class="form-control" id="PART_NAME" /> 
+                        </label>
+                        <input class="form-control" id="PART_NAME" />
                     </div>
 
-                    <button type="button" class="btn btn-danger" onclick="history.back()">CANCEL</button>
-                    &nbsp; 
+                    <div class="col mt-3 mb-4">
+                        <label for="DESTINATION" class="form-label">
+                            <b>Destination :</b>
+                        </label>
+                        <input class="form-control" id="DESTINATION" />
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-danger" onclick="history.back()">CANCEL</button>
+                &nbsp; 
                     <button type="button" class="btn btn-primary" onclick="handleAddVariant()" id="submit_button">SUBMIT</button>
-                
+
             </div>
 
         </div>
     </form>
 
-     <script> 
+    <script> 
 
 
          // code for check authentication
@@ -164,7 +175,7 @@
          } 
           
     
-     </script>
+    </script>
 
 </body>
 </html>
