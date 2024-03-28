@@ -153,19 +153,15 @@ namespace WebApplication2.station
             {
                 using (TMdbEntities mdbEntities = new TMdbEntities())
                 {
-                    var torqueNameRes = mdbEntities.TaskListTables.Where(i => i.StationNameID == station && i.TaskType == "Torque").FirstOrDefault();
-                    if (torqueNameRes != null)
+                    var torqueIpRes = mdbEntities.STD_TorqueTable.Where(j => j.Station == station).FirstOrDefault();
+                    if (torqueIpRes != null)
                     {
-                        var torqueIpRes = mdbEntities.STD_TorqueTable.Where(j => j.TorqueName == torqueNameRes.BomSeq).FirstOrDefault();
-                        if (torqueIpRes != null)
+                        CurrentDcToolIp = torqueIpRes.TorqueToolIPAddress;
+                        if (IS_DCTOOL_CONNECTED())
                         {
-                            CurrentDcToolIp = torqueIpRes.TorqueToolIPAddress;
-                            if (IS_DCTOOL_CONNECTED())
-                            {
-                                DisableTool();
-                            }
-                            return torqueIpRes.TorqueToolIPAddress;
+                            DisableTool();
                         }
+                        return torqueIpRes.TorqueToolIPAddress;
                     }
                 }
             }
@@ -685,14 +681,21 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string TorqueExecuteTask(int id, string torque_seq, string model_variant, string username, long seat_data_id, string station)
-        { 
+        public static string TorqueExecuteTask(int id, string torque_seq, string model_variant, string username, long seat_data_id, string station, string plcStation)
+        {
             bool isTGood = false;
             bool isAGood = false;
             bool isTAGood = false;
+            int pset = 1;
 
             try
             {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var psetRes = db.STD_TorqueTable.Where(i => i.Station == station && i.TorqueName == torque_seq).FirstOrDefault();
+                    if (psetRes != null) { pset = Convert.ToInt16(psetRes.Pset); }
+                }
+
                 // Assume a buffer size of 1024, adjust as needed
                 byte[] buffer = new byte[1024];
 

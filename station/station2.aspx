@@ -411,7 +411,7 @@
                 $.ajax({
                     type: "POST",
                     url: "station2.aspx/TorqueExecuteTask",
-                    data: `{id : '${id}',torque_seq:'${torque_seq}', model_variant: '${model_details.ModelVariant}', username :'${user_details.UserName}', seat_data_id : '${seat_data_id}', station : '${station}'}`,
+                    data: `{id : '${id}',torque_seq:'${torque_seq}', model_variant: '${model_details.ModelVariant}', username :'${user_details.UserName}', seat_data_id : '${seat_data_id}', station : '${station}', plcStation : '${plcStation}'}`,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: "true",
