@@ -18,6 +18,8 @@
         var seat_data_id = 0
         var current_task_id = 0
         var inspection_task_list = [] 
+        var inspection_task_id = new Set()
+        var complete_inspection = new Set() 
         var build_ticket = ""
         var fgpart = ""
         var plcStation = ""
@@ -29,12 +31,16 @@
         var bom_list = []
         var isBuiltTicketFunctionSucces = false
         var isplcConnected = false
+         
+
 
         $(document).ready(function () {
             callStationInfo()
             getAllPlcTagList()
+            getInspectionTaskList() 
             isPrinterConnected()  
             $("#odsBadge").hide()
+            $("#inpection_task_list_modal").hide()
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`) 
             $('input').attr('autocomplete', 'off');
 
@@ -144,14 +150,17 @@
                         beltBuckleExecuteTask(e.ID)
                     } else if (e.TaskType == "Inspection" && e.BomSeq == "SAB" && e.TaskStatus == "Running") {
                         sabExecuteTask(e.ID)
-                    } else if (e.TaskType == "Write bit" && e.TaskStatus == "Running" || e.TaskStatus == "Error") {
-                        writeBitExecuteTask(e.ID)
-                    } else if (e.TaskType == "QrPrint" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
-                        $("#qr_scan_modal").hide()
+                    } else if (e.TaskType == "Inspection" && e.BomSeq == "VISUAL" && e.TaskCurrentValue == "" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
+                        current_task_id = e.ID;
+                        $("#inpection_task_list_modal").show()
+                    }  else if (e.TaskType == "QrPrint" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) { 
+                        $("#inpection_task_list_modal").hide()
                         if (qrEntry) {
                             qrEntry = false
                             qrPrintExecuteTask(e.ID)
                         }
+                    } else if (e.TaskType == "Write bit" && e.TaskStatus == "Running" || e.TaskStatus == "Error") {
+                        writeBitExecuteTask(e.ID)
                     } else if (e.TaskType == "Read bit" && e.TaskStatus == "Running" && e.TaskCurrentValue == "") {
                         readBitExecuteTask(e.ID)
                     } else if (!task_list.some(k => k.TaskCurrentValue == "") && task_list.every(k => k.TaskStatus == "Done")) {
@@ -193,7 +202,7 @@
                 }
             })
         }
-
+         
         //function for call station function for info
         const callStationInfo = () => {
             $.ajax({
@@ -348,7 +357,45 @@
                     console.log(e);
                 }
             })
-        } 
+        }
+
+        //function for get inpection task list 
+        function getInspectionTaskList() {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/GET_INSPECTION_TASK_lIST",
+                data: `{station : '${station}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d == "Error") return toast("Something went wrong")
+                    let data = JSON.parse(res.d)
+                    inspection_task_list = data
+
+                    $('#inspection_task_list_container').html(
+                        data.map((e, i) => `
+                          <tr style="height: 46px; font-size: 20px;">
+                            <th>${i + 1}.</th>
+                            <th>${e.InspectionName}</th>
+                            <th>${e.InspectionType}</th>
+                            <th class="btn-group" role="group" aria-label="inspection-list">   
+                                <input type="radio" class="btn-check" name="options-outlined${e.ID}" id="OK${i + 1}" onclick="inspection_task_id.delete(${e.ID}) || complete_inspection.add(${e.ID})" autocomplete="off" >
+                                <label class="btn btn-outline-success btn-sm" for="OK${i + 1}" >OK</label>
+
+                                <input type="radio" class="btn-check" name="options-outlined${e.ID}" id="NG${i + 1}" autocomplete="off" onclick="inspection_task_id.add(${e.ID}) && complete_inspection.add(${e.ID})" >
+                                <label class="btn btn-outline-danger btn-sm" for="NG${i + 1}">NG</label>
+                            </th>
+                        </tr>
+                        `)
+                    );
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
 
         //function for build ticket execute task
         const buildTicketExecuteTask = (id, value) => {
@@ -466,6 +513,29 @@
                 setTimeout(_ => { qrEntry = true }, 5000)
             }
         }
+
+        //function for inspection execute task
+        const inspectionExecuteTask = () => {
+            if (complete_inspection.size != inspection_task_list.length) return toast("Incomplete Inspection")
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/InspectionExecuteTask",
+                data: `{id : '${current_task_id}',insId: '${[...inspection_task_id].join()}', model_variant: '${model_details.ModelVariant}', operator_name : '${user_details.UserName}', built_ticket : '${build_ticket}',seat_id : '${seat_data_id}' }`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d == "Done") {
+                        $("#inpection_task_list_modal").hide()
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
+
 
         //function for write bit task
         const writeBitExecuteTask = (id) => {
@@ -591,6 +661,7 @@
             position: "bottom-end",
             showConfirmButton: false,
             timer: 3000,
+            width:"400",
             background: "yellow",
             timerProgressBar: true,
             didOpen: (toast) => {
@@ -629,6 +700,18 @@
             z-index: 9;
             backdrop-filter: blur(2px);
         }   
+
+        #inpection_task_list_modal{
+            position: absolute;
+            top: 0;
+            left: 0; 
+            width: 100%;
+            height: 100vh;
+            display: flex;  
+            align-items:start;
+            z-index: 9;
+            backdrop-filter: blur(0px);
+        } 
     </style>
 </head>
 <body class="bg-light">
@@ -795,6 +878,30 @@
 
             <%--models for notification--%>
             <div id="modal_container">  
+
+                
+                <%--code for assign station on local storage--%>
+                <div id="inpection_task_list_modal">
+                    <div class="bg-light ms-auto" style="width:calc(100% - 350px);margin-top:381px;background:rgb(250, 250, 250) !important;" > 
+                         <table class="flex-grow-1 text-center w-100" >
+                             <thead>
+                                 <tr class="text-white" style="height: 46px; font-size: 20px; background: #212529;">
+                                     <th>SEQ</th> 
+                                     <th>INSPECTION NAME</th> 
+                                     <th>INSPECTION TYPE</th> 
+                                     <th>STATUS</th>
+                                 </tr>
+                             </thead>
+
+                             <tbody id="inspection_task_list_container">
+                                 <%-- code will be come via ajax --%> 
+                             </tbody>
+                         </table>
+                        
+                        <button class="btn btn-primary d-block m-auto mt-2 mb-4" type="button" onclick="inspectionExecuteTask()" >SAVE &amp; CONTINUE</button>                         
+                    
+                    </div>
+                </div>
 
                 <%--code to check user is login or not--%>
                 <div id="auth_modal">

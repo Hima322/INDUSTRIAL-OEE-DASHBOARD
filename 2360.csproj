@@ -363,13 +363,6 @@
     <Compile Include="station\station1.aspx.designer.cs">
       <DependentUpon>station1.aspx</DependentUpon>
     </Compile>
-    <Compile Include="station\station12.aspx.cs">
-      <DependentUpon>station12.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="station\station12.aspx.designer.cs">
-      <DependentUpon>station12.aspx</DependentUpon>
-    </Compile>
     <Compile Include="station\station13.aspx.cs">
       <DependentUpon>station13.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -547,7 +540,6 @@
     <Content Include="station\index.aspx" />
     <Content Include="station\print.aspx" />
     <Content Include="station\station1.aspx" />
-    <Content Include="station\station12.aspx" />
     <Content Include="station\station13.aspx" />
     <Content Include="station\station16.aspx" />
     <Content Include="station\station2.aspx" />

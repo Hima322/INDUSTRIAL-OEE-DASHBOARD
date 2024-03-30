@@ -25,8 +25,8 @@ namespace WebApplication2.station
         public static string printer2IpAddress = "";
         public static int port2 = 0; 
 
-        public static float bd = 0;
-        public static float fd = 0;
+        public static double bd = 0;
+        public static double fd = 0;
 
         public static string builtTicketBrightness = "15";
         public static string finelTicketBrightness = "15"; 
@@ -63,12 +63,12 @@ namespace WebApplication2.station
                     var builtPrinterDpiRes = db.VarTables.Where(i => i.VarName == "BuiltPrinterDpi").FirstOrDefault();
                     if (builtPrinterDpiRes != null)
                     {
-                        bd = Convert.ToInt16(Convert.ToInt16(builtPrinterDpiRes.VarValue) / 25.4); 
+                        bd = Convert.ToDouble(builtPrinterDpiRes.VarValue) / 25.4; 
                     }
                     var finelPrinterDpiRes = db.VarTables.Where(i => i.VarName == "FinelPrinterDpi").FirstOrDefault();
                     if (finelPrinterDpiRes != null)
                     {
-                        fd = Convert.ToInt16(Convert.ToInt16(finelPrinterDpiRes.VarValue) / 25.4);
+                        fd = Convert.ToDouble(finelPrinterDpiRes.VarValue) / 25.4;
                     }
                     var builtTicketBrightRes = db.VarTables.Where(i => i.VarName == "BuiltTicketBrightness").FirstOrDefault();
                     if (builtTicketBrightRes != null)
@@ -158,12 +158,12 @@ namespace WebApplication2.station
                             "^PW531" +
                             "^LL0177" +
                             "^LS0" +
-                            $"^FT{prnData[11].Left * bd},{prnData[11].Top * bd}^A0N,{prnData[11].Width * bd},{prnData[11].Height * bd}^FH\\^FD" + res.FG_PartNumber + "-" + res.SequenceNo.ToString().PadLeft(5, '0') + "^FS" +
-                            $"^FT{prnData[12].Left * bd},{prnData[12].Top * bd}^BQN,{prnData[12].Width * bd},{prnData[12].Height * bd}^FH\\^FDLA," + res.FG_PartNumber + "-" + res.SequenceNo.ToString().PadLeft(5, '0') + "^FS" +
-                            $"^FT{prnData[13].Left * bd},{prnData[13].Top * bd}^A0N,{prnData[13].Width * bd},{prnData[13].Height * bd}^FH\\^FD" + res.Variant + "^FS" +
-                            $"^FT{prnData[14].Left * bd},{prnData[14].Top * bd}^A0N,{prnData[14].Width * bd},{prnData[14].Height * bd}^FH\\^FD" + res.SeatType + "^FS" +
-                            $"^FT{prnData[15].Left * bd},{prnData[15].Top * bd}^A0N,{prnData[15].Width * bd},{prnData[15].Height * bd}^FH\\^FD" + res.Model + "^FS" +
-                            $"^FT{prnData[16].Left * bd},{prnData[16].Top * bd}^A0N,{prnData[16].Width * bd},{prnData[16].Height * bd}^FH\\^FD" + Convert.ToDateTime(res.BuildNoDatetime).ToShortDateString() + "^FS" +
+                            $"^FT{prnData[11].Left * bd},{prnData[11].Top * bd}^A0N,{prnData[11].Width},{prnData[11].Height}^FH\\^FD" + res.FG_PartNumber + "-" + res.SequenceNo.ToString().PadLeft(5, '0') + "^FS" +
+                            $"^FT{prnData[12].Left * bd},{prnData[12].Top * bd}^BQN,{prnData[12].Width},{prnData[12].Height}^FH\\^FDLA," + res.FG_PartNumber + "-" + res.SequenceNo.ToString().PadLeft(5, '0') + "^FS" +
+                            $"^FT{prnData[13].Left * bd},{prnData[13].Top * bd}^A0N,{prnData[13].Width},{prnData[13].Height}^FH\\^FD" + res.Variant + "^FS" +
+                            $"^FT{prnData[14].Left * bd},{prnData[14].Top * bd}^A0N,{prnData[14].Width},{prnData[14].Height}^FH\\^FD" + res.SeatType + "^FS" +
+                            $"^FT{prnData[15].Left * bd},{prnData[15].Top * bd}^A0N,{prnData[15].Width},{prnData[15].Height}^FH\\^FD" + res.Model + "^FS" +
+                            $"^FT{prnData[16].Left * bd},{prnData[16].Top * bd}^A0N,{prnData[16].Width},{prnData[16].Height}^FH\\^FD" + Convert.ToDateTime(res.BuildNoDatetime).ToShortDateString() + "^FS" +
                             "^PQ1,0,1,Y^XZ";
 
                         // check after the ping is n success
@@ -236,15 +236,15 @@ namespace WebApplication2.station
                             "^PW1181" +
                             "^LL295" +
                             "^LS0" +
-                            $"^FT{prnData[3].Left * fd},{prnData[3].Top * fd}^A0N,{prnData[3].Width * fd},{prnData[3].Height * fd}^FH\\^CI28^FD" + res.Model + "^FS^CI27" +
-                            $"^FT{prnData[4].Left * fd},{prnData[4].Top * fd}^A0N,{prnData[4].Width * fd},{prnData[4].Height * fd}^FH\\^CI28^FD" + Convert.ToDateTime(res.FinalPrintDateTime).ToString("dd-MM-yyyy HH:mm") + "^FS^CI27" +
-                            $"^FT{prnData[5].Left * fd},{prnData[5].Top * fd}^A0N,{prnData[5].Width * fd},{prnData[5].Height * fd}^FH\\^CI28^FD" + res.Variant + "^FS^CI27" +
-                            $"^FT{prnData[6].Left * fd},{prnData[6].Top * fd}^A0N,{prnData[6].Width * fd},{prnData[6].Height * fd}^FH\\^CI28^FD" + res.FinalBarcodeData + "^FS^CI27" +
-                            $"^FT{prnData[7].Left * fd},{prnData[7].Top * fd}^A0N,{prnData[7].Width * fd},{prnData[7].Height * fd}^FH\\^CI28^FD" + res.SeatType + "^FS^CI27" +
-                            $"^FT{prnData[8].Left * fd},{prnData[8].Top * fd}^A0N,{prnData[8].Width * fd},{prnData[8].Height * fd}^FH\\^CI28^FD" + feature + "^FS^CI27" +
-                            $"^FT{prnData[9].Left * fd},{prnData[9].Top * fd}^A0N,{prnData[9].Width * fd},{prnData[9].Height * fd}^FH\\^CI28^FD" + res.FG_PartNumber + "^FS^CI27" +
-                            $"^FT{prnData[10].Left * fd},{prnData[10].Top * fd}^A0N,{prnData[10].Width * fd},{prnData[10].Height * fd}^FH\\^CI28^FD" + " " +
-                            $"^FT{prnData[2].Left * fd},{prnData[2].Top * fd}^BQN,{prnData[2].Width * fd},{prnData[2].Height * fd}^FH\\^FDLA," + res.FinalBarcodeData + res.STAUS == "HOLD" ? "HOLD" : "" + "^FS" +
+                            $"^FT{prnData[3].Left * fd},{prnData[3].Top * fd}^A0N,{prnData[3].Width },{prnData[3].Height}^FH\\^CI28^FD" + res.Model + "^FS^CI27" +
+                            $"^FT{prnData[4].Left * fd},{prnData[4].Top * fd}^A0N,{prnData[4].Width},{prnData[4].Height}^FH\\^CI28^FD" + Convert.ToDateTime(res.FinalPrintDateTime).ToString("dd-MM-yyyy HH:mm") + "^FS^CI27" +
+                            $"^FT{prnData[5].Left * fd},{prnData[5].Top * fd}^A0N,{prnData[5].Width},{prnData[5].Height}^FH\\^CI28^FD" + res.Variant + "^FS^CI27" +
+                            $"^FT{prnData[6].Left * fd},{prnData[6].Top * fd}^A0N,{prnData[6].Width},{prnData[6].Height}^FH\\^CI28^FD" + res.FinalBarcodeData + "^FS^CI27" +
+                            $"^FT{prnData[7].Left * fd},{prnData[7].Top * fd}^A0N,{prnData[7].Width},{prnData[7].Height}^FH\\^CI28^FD" + res.SeatType + "^FS^CI27" +
+                            $"^FT{prnData[8].Left * fd},{prnData[8].Top * fd}^A0N,{prnData[8].Width},{prnData[8].Height}^FH\\^CI28^FD" + feature + "^FS^CI27" +
+                            $"^FT{prnData[9].Left * fd},{prnData[9].Top * fd}^A0N,{prnData[9].Width},{prnData[9].Height}^FH\\^CI28^FD" + res.FG_PartNumber + "^FS^CI27" +
+                            $"^FT{prnData[10].Left * fd},{prnData[10].Top * fd}^A0N,{prnData[10].Width},{prnData[10].Height}^FH\\^CI28^FD" + " " +
+                            $"^FT{prnData[2].Left * fd},{prnData[2].Top * fd}^BQN,{prnData[2].Width},{prnData[2].Height}^FH\\^FDLA," + res.FinalBarcodeData + res.STAUS == "HOLD" ? "HOLD" : "" + "^FS" +
                             "^PQ1,0,1,Y" +
                             "^XZ";
 

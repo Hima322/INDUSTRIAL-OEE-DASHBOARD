@@ -1,45 +1,42 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
 using System.Web.Services;
 
 namespace WebApplication2.bom
 {
-    public partial class edit : System.Web.UI.Page
+    public partial class Edit : System.Web.UI.Page
     {
         public string CurrentError = "";
         protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                if (Request.Params.Get("id") != null)
-                {
-                    GET_BOM(Convert.ToInt32(Request.Params.Get("id")));
-                }
-            }
+        { 
+
         }
 
-
-        private void GET_BOM(int id)
+        [WebMethod]
+        public static string GET_BOM(int id)
         {
-            using (TMdbEntities mdbEntities = new TMdbEntities())
+            try
             {
-                var bom = mdbEntities.BOMs.Where(i => i.ID == id).FirstOrDefault();
-                if (bom != null)
+                using (TMdbEntities mdbEntities = new TMdbEntities())
                 {
-                    MODEL.Text = bom.Model.ToString();
-                    VARIANT.Text = bom.Variant.ToString();
-                    FG_PART_NUMBER.Text = bom.FG_PartNumber.ToString();
-                    PART_NUMBER.Text = bom.PartNumber.ToString();
-                    SIDE.Text = bom.Side.ToString(); 
-                    PART_NAME.Text = bom.PartName.ToString();
+                    var bom = mdbEntities.BOMs.Where(i => i.ID == id).FirstOrDefault();
+                    if (bom != null)
+                    {
+                        return JsonSerializer.Serialize(bom);
+                    }
                 }
             }
-
+            catch
+            {
+                return "Error";
+            }
+            return "Error";
         }
 
 
         [WebMethod]
-        public static string EDIT_BOM(int id, string PART_NUMBER, string SIDE, string PART_NAME)
+        public static string EDIT_BOM(int id, string PART_NUMBER, bool DUPLICATE, string SIDE, string PART_NAME)
         {
             try
             {
@@ -51,6 +48,7 @@ namespace WebApplication2.bom
                     { 
                         bOM.PartNumber = PART_NUMBER;
                         bOM.Side = SIDE;
+                        bOM.IsDuplicate = DUPLICATE;
                         bOM.PartName = PART_NAME;
                     }
 

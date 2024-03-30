@@ -93,6 +93,7 @@
                         <tr>
                             <th>Part Name</th>
                             <th>Part No.</th> 
+                            <th>Duplicate</th> 
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -104,9 +105,10 @@
                         <tr>
                             <td title="<%=bom.PartName %>" data-bs-toggle="tooltip"><%=bom.PartName.Length > 30 ? bom.PartName.Substring(0,20) + "..." : bom.PartName %></td>
                             <td><%=bom.PartNumber %></td> 
+                            <td><%=bom.IsDuplicate %></td> 
                             <td>
                                 <div class="btn-group">
-                                    <a class="btn btn-primary btn-sm text-white" href="edit.aspx?id=<%=bom.ID %>">Edit </a>
+                                    <button class="btn btn-primary btn-sm text-white" type="button" onclick="location.replace('edit.aspx?id=<%=bom.ID %>')">Edit </button>
 
                                     <button
                                         onclick="handleDelete(<%=bom.ID %>)"

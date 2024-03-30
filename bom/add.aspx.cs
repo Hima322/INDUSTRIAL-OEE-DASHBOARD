@@ -18,7 +18,7 @@ namespace WebApplication2.bom
         }
 
         [WebMethod]
-       public static string ADD_BOM(String MODEL, string VARIANT, string FG_PART_NUMBER, string PART_NUMBER, string SIDE, string PART_NAME)
+       public static string ADD_BOM(String MODEL, string VARIANT, string FG_PART_NUMBER, string PART_NUMBER, bool DUPLICATE, string SIDE, string PART_NAME)
         {
             var bomSeq = "BOM1";
                 try
@@ -39,6 +39,7 @@ namespace WebApplication2.bom
                         Variant = VARIANT,
                         FG_PartNumber = FG_PART_NUMBER,
                         PartNumber = PART_NUMBER,
+                        IsDuplicate = DUPLICATE,
                         Side = SIDE,
                         ScanSequence = bomSeq,
                         PartName = PART_NAME

@@ -75,11 +75,11 @@
             let seatType = $("#seatType").val()
             let printType = $("#printType").val()
 
-            if (printType == "printer1") {
-                if (!printer1Connected) return toast("Printer not connected", "error")
-            } else {
-                if (!printer2Connected) return toast("Printer not connected", "error")
-            }
+            //if (printType == "printer1") {
+            //    if (!printer1Connected) return toast("Printer not connected", "error")
+            //} else {
+            //    if (!printer2Connected) return toast("Printer not connected", "error")
+            //}
 
             if (!seqNum) return toast("Enter sequence number.","error") 
 

@@ -233,6 +233,27 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
+        public static int GET_JOB_COUNT(int station)
+        {
+            try
+            {
+                using (TMdbEntities mdbEntities = new TMdbEntities())
+                {
+                    var res = mdbEntities.SEAT_DATA.Where(i => i.StationNo > station && i.BuildNoDatetime > DateTime.Today).ToList();
+                    if (res.Count > 0)
+                    {
+                        return res.Count;
+                    }
+                }
+            }
+            catch
+            {
+                return 0;
+            }
+            return 0;
+        }
+
+        [WebMethod]
         public static string GetCurrentUser(string station)
         {
             try
@@ -292,7 +313,30 @@ namespace WebApplication2.station
                 return ex.Message;
             }
         }
-         
+
+        [WebMethod]
+        public static string GET_INSPECTION_TASK_lIST(string station)
+        {
+            try
+            {
+                using (TMdbEntities dbEntities = new TMdbEntities())
+                {
+                    var res = dbEntities.InspectionLists.Where(i => i.StationNameID == station).ToList();
+                    if (res != null)
+                    {
+                        return JsonSerializer.Serialize(res);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
+                return "Error";
+            }
+            return "Error";
+        }
+
+
         [WebMethod]
         public static string IsQRValid(string build_ticket, int station, string plcStation)
         {
@@ -734,6 +778,74 @@ namespace WebApplication2.station
             } 
         }
 
+
+        [WebMethod]
+        public static string InspectionExecuteTask(int id, string insId, string model_variant, string operator_name, string built_ticket, string seat_id)
+        {
+            string rtn = "";
+            int[] inspectIds = { };
+            if (insId != "")
+            {
+                inspectIds = insId.Split(',').Select(Int32.Parse).ToArray();
+            }
+
+            try
+            {
+                using (TMdbEntities dbEntities = new TMdbEntities())
+                {
+                    if (inspectIds.Length > 0)
+                    {
+                        var insRes = dbEntities.InspectionLists.Where(i => inspectIds.Contains(i.ID)).ToList();
+                        if (insRes.Count > 0)
+                        {
+                            foreach (var ins in insRes)
+                            {
+                                ReworkTable reworkTable = new ReworkTable
+                                {
+                                    BuildLabelNumber = built_ticket,
+                                    InspectionName = ins.InspectionName,
+                                    InspectionType = ins.InspectionType,
+                                    StationNameID = ins.StationNameID,
+                                    OperatorName = operator_name,
+                                    InspectionDateTime = DateTime.Now,
+                                    SeatID = seat_id,
+                                    SeatStatus = "NG",
+                                    ReworkDatetime = DateTime.Now
+                                };
+                                dbEntities.ReworkTables.Add(reworkTable);
+                            }
+                            dbEntities.SaveChanges();
+
+                        }
+                    }
+
+                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        res.TaskCurrentValue = "Complete";
+                        res.TaskStatus = "Done";
+                        dbEntities.SaveChanges();
+
+                        //update next row status to running
+                        if (IsRunningTask(res.StationNameID, model_variant))
+                        {
+                            var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
+                            if (nextRow != null)
+                            {
+                                nextRow.TaskStatus = "Running";
+                            }
+                            dbEntities.SaveChanges();
+                            rtn = "Done";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                rtn = ex.Message;
+            }
+            return rtn;
+        }
 
         [WebMethod]
         public static string WriteBitExecuteTask(int id, string model_variant, string plcStation)

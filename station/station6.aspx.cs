@@ -496,6 +496,13 @@ namespace WebApplication2.station
                     if (bom_res != null)
                     {
 
+                        if ((bool)bom_res.IsDuplicate)
+                        {
+                            var res1 = dbEntities.SEAT_DATA.SqlQuery("select * from SEAT_DATA where SCAN_" + bom + " = '" + val + "'");
+                            if (res1 != null)
+                            { return "Already"; }
+                        }
+
                         var res = dbEntities.TaskListTables.Where(i => i.StationNameID == CurrentStation && (i.TaskStatus == "Running" || i.TaskStatus == "Error")).FirstOrDefault();
                         if (res != null)
                         {
@@ -740,7 +747,7 @@ namespace WebApplication2.station
                                             if (UpdateNextTask(station, model_variant))
                                             {
                                                 //insert JITLineSeatMfgReport value
-                                                InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "OK,OK", username);
+                                                InsertJITLineSeatMfgReport(seat_data_id, plcStation, torque_seq, TA, "OK,OK", username);
                                                 DisableTool();
                                                 DCserver.Close();
                                                 return "Done";

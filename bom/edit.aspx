@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="edit.aspx.cs" Inherits="WebApplication2.bom.edit" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="edit.aspx.cs" Inherits="WebApplication2.bom.Edit" %>
 
 <!DOCTYPE html>
 
@@ -13,11 +13,38 @@
     
     <script>
         $(document).ready(function () {
+
+            $.ajax({
+                type: "POST",
+                url: "edit.aspx/GET_BOM",
+                data: `{ id: <%=Request.Params.Get("id") %>}`,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        async: "true",
+                        cache: "false",
+                        success: (res) => {
+                            if (res.d != "Error") {
+                                let data = JSON.parse(res.d)
+                                $("#MODEL").val(data.Model)
+                                $("#VARIANT").val(data.Variant)
+                                $("#FG_PART_NUMBER").val(data.FG_PartNumber)
+                                $("#SIDE").val(data.Side)
+                                $("#PART_NAME").val(data.PartName)
+                                $("#PART_NUMBER").val(data.PartNumber)
+                                $("#DUPLICATE").val(data.IsDuplicate ? "True" : "False")
+                            }
+                        },
+                        Error: function (x, e) {
+                            console.log(e);
+                        }
+            })
+
             $("#EDIT_BOM").click(function () {   
                 var MODEL = $("#MODEL").val()
                 var VARIANT = $("#VARIANT").val()
                 var FG_PART_NUMBER = $("#FG_PART_NUMBER").val()
                 var PART_NUMBER = $("#PART_NUMBER").val()
+                var DUPLICATE = $("#DUPLICATE").val()
                 var SIDE = $("#SIDE").val()
                 var PART_NAME = $("#PART_NAME").val()
 
@@ -29,7 +56,7 @@
                     $.ajax({
                         type: "POST",
                         url: "edit.aspx/EDIT_BOM",
-                        data: `{ id: <%=Request.Params.Get("id") %>, PART_NUMBER:'${PART_NUMBER}', SIDE:'${SIDE}',  PART_NAME : '${PART_NAME}'}`,
+                        data: `{ id: <%=Request.Params.Get("id") %>, PART_NUMBER:'${PART_NUMBER}',DUPLICATE:'${DUPLICATE}', SIDE:'${SIDE}',  PART_NAME : '${PART_NAME}'}`,
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         async: "true",
@@ -37,8 +64,8 @@
                         success: (res) => {
                             if (res.d == "Done") toast("Success")
                             setTimeout(function () {
-                                history.back() 
-                            }, 2000)
+                                location.replace(`/bom/index.aspx?model=${MODEL}&variant=${VARIANT}&fg=${FG_PART_NUMBER}&side=${SIDE}`)
+                            }, 1000)
                         },
                         Error: function (x, e) {
                             console.log(e);
@@ -70,17 +97,7 @@
 <body>
     <form id="form1" runat="server"> 
         <div>
-
-            <% if (CurrentError != "")
-                { %>
-            <div id="toast" class="toast <%=CurrentError == "" ? "" : "show" %> bg-white" style="position: fixed; top: 20px; right: 20px;z-index:9999;">
-                <div class="d-flex p-2 bg-secondary toast-body text-white">
-                    <big class="me-auto ps-2"><%=CurrentError %></big>
-                    <button type="button" class="btn-close text-white" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
-            <% } %>
-
+             
             <!-- Modal body -->
             <div class="modal-body mt-5 w-50 mx-auto">
 
@@ -97,20 +114,20 @@
                     <div class="col mt-3">
                         <label for="MODEL" class="form-label">
                             <b>Model :</b> (readonly)
-                        </label>
-                        <asp:TextBox ReadOnly="true" CssClass="form-control" ID="MODEL" runat="server"></asp:TextBox>
+                        </label> 
+                        <input id="MODEL" class="form-control" disabled="disabled" />
                     </div>
                     <div class="col mt-3">
                         <label for="VARIANT" class="form-label">
                             <b>Variant :</b> (readonly)
                         </label>
-                        <asp:TextBox ReadOnly="true" CssClass="form-control" ID="VARIANT" runat="server"></asp:TextBox>
+                        <input id="VARIANT" class="form-control" disabled="disabled" /> 
                     </div>
                     <div class="col mt-3">
                         <label for="FG_PART_NUMBER" class="form-label">
                             <b>FG Part Number :</b> (readonly)
                         </label>
-                        <asp:TextBox ReadOnly="true" CssClass="form-control" ID="FG_PART_NUMBER" runat="server"></asp:TextBox>
+                        <input id="FG_PART_NUMBER" class="form-control" disabled="disabled" />  
                     </div>
                 </div>
 
@@ -120,13 +137,23 @@
                         <label for="PART_NUMBER" class="form-label">
                             <b>Part Number :</b>
                         </label>
-                        <asp:TextBox CssClass="form-control" ID="PART_NUMBER" runat="server"></asp:TextBox>
+                        <input class="form-control" id="PART_NUMBER" />
+                    </div>
+                    <div class="col mt-3">
+                        <label for="DUPLICATE" class="form-label">
+                            <b>Duplicate Scan :</b>
+                        </label>
+                        <input class="form-control" list="dup" id="DUPLICATE" />
+                        <datalist id="dup">
+                            <option>False</option>
+                            <option>True</option> 
+                        </datalist>
                     </div>
                     <div class="col mt-3">
                         <label for="SIDE" class="form-label">
                             <b>Side :</b>  (readonly)
                         </label>
-                        <asp:TextBox ReadOnly="true" CssClass="form-control" ID="SIDE" runat="server"></asp:TextBox>
+                        <input class="form-control" id="SIDE" disabled="disabled" /> 
                     </div> 
                 </div>
 
@@ -135,7 +162,7 @@
                     <label for="PART_NAME" class="form-label">
                         <b>Part Name :</b>
                     </label>
-                    <asp:TextBox CssClass="form-control" ID="PART_NAME" runat="server"></asp:TextBox>
+                        <input class="form-control" id="PART_NAME" /> 
                 </div>
 
                 <button type="button" class="btn btn-danger" onclick="history.back()">Cancel</button>

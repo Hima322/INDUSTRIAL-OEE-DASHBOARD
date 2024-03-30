@@ -388,6 +388,10 @@
                     if (res.d == "Done") {
                         $("#qr_scan_modal div input").val("")  
                         $("#qr_scan_modal").hide() 
+                    } else if (res.d == "Already") {
+                        toast(`Already Scanned.`)
+                        $("#qr_scan_modal div input").val("")
+                        $("#qr_scan_modal").hide()
                     } else {
                         toast(`Invalid Barcode.`)
                         $("#qr_scan_modal div input").val("")

@@ -378,7 +378,7 @@
             $.ajax({
                 type: "POST",
                 url: "station4.aspx/ScanExecuteTask",
-                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}'}`,
+                data: `{id : '${sid}',fgpart : '${sfg}',bom:'${sbom_seq}',val:'${sval}', model_variant : '${model_details.ModelVariant}',seat_data_id:'${seat_data_id}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -388,6 +388,10 @@
                     if (res.d == "Done") {
                         $("#qr_scan_modal div input").val("")  
                         $("#qr_scan_modal").hide() 
+                    } else if (res.d == "Already") {
+                        toast(`Already Scanned.`)
+                        $("#qr_scan_modal div input").val("")
+                        $("#qr_scan_modal").hide()
                     } else {
                         toast(`Invalid Barcode.`)
                         $("#qr_scan_modal div input").val("")

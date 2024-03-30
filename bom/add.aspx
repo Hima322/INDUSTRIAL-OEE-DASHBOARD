@@ -19,6 +19,7 @@
             var VARIANT = $("#VARIANT").val()
             var FG_PART_NUMBER = $("#FG_PART_NUMBER").val()  
             var PART_NUMBER = $("#PART_NUMBER").val()
+            var DUPLICATE = $("#DUPLICATE").val() 
             var SIDE = $("#SIDE").val() 
             var PART_NAME = $("#PART_NAME").val()
              
@@ -30,7 +31,7 @@
                 $.ajax({
                     type: "POST",
                     url: "add.aspx/ADD_BOM",
-                    data: `{MODEL : '${MODEL}', VARIANT : '${VARIANT}', FG_PART_NUMBER : '${FG_PART_NUMBER}', PART_NUMBER:'${PART_NUMBER}', SIDE:'${SIDE}',  PART_NAME : '${PART_NAME}'}`,
+                    data: `{MODEL : '${MODEL}', VARIANT : '${VARIANT}', FG_PART_NUMBER : '${FG_PART_NUMBER}', PART_NUMBER:'${PART_NUMBER}',DUPLICATE:'${DUPLICATE}', SIDE:'${SIDE}',  PART_NAME : '${PART_NAME}'}`,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: "true",
@@ -111,6 +112,16 @@
                                             <b>Part Number :</b>
                                         </label>  
                                         <input class="form-control" id="PART_NUMBER" />
+                                    </div> 
+                                    <div class="col mt-3">
+                                        <label for="DUPLICATE" class="form-label">
+                                            <b>Duplicate Scan :</b>
+                                        </label>   
+                                        <input class="form-control" id="DUPLICATE" value="True" list="dup" /> 
+                                        <datalist>
+                                            <option>True</option>
+                                            <option>False</option>
+                                        </datalist>
                                     </div> 
                                     <div class="col mt-3">
                                         <label for="SIDE" class="form-label">

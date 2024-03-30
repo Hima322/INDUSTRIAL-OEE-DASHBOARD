@@ -27,6 +27,7 @@
           <Property Name="FG_PartNumber" Type="varchar" MaxLength="255" />
           <Property Name="Side" Type="varchar" MaxLength="255" />
           <Property Name="ScanSequence" Type="varchar" MaxLength="50" />
+          <Property Name="IsDuplicate" Type="bit" />
         </EntityType>
         <EntityType Name="DelayRecord">
           <Key>
@@ -146,7 +147,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="BuildLabelNumber" Type="varchar" MaxLength="100" />
           <Property Name="InspectionName" Type="varchar" MaxLength="200" />
           <Property Name="InspectionType" Type="varchar" MaxLength="50" />
@@ -378,6 +379,7 @@
           <Property Name="FG_PartNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="Side" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="ScanSequence" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDuplicate" Type="Boolean" />
         </EntityType>
         <EntityType Name="DelayRecord">
           <Key>
@@ -497,7 +499,7 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="BuildLabelNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="InspectionName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="InspectionType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
@@ -681,6 +683,7 @@
           <EntitySetMapping Name="BOMs">
             <EntityTypeMapping TypeName="TMdbModel.BOM">
               <MappingFragment StoreEntitySet="BOM">
+                <ScalarProperty Name="IsDuplicate" ColumnName="IsDuplicate" />
                 <ScalarProperty Name="ScanSequence" ColumnName="ScanSequence" />
                 <ScalarProperty Name="Side" ColumnName="Side" />
                 <ScalarProperty Name="FG_PartNumber" ColumnName="FG_PartNumber" />
