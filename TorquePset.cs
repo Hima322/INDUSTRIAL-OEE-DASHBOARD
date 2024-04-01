@@ -12,10 +12,10 @@ namespace WebApplication2
     using System;
     using System.Collections.Generic;
     
-    public partial class STD_TorqueTable
+    public partial class TorquePset
     {
         public int ID { get; set; }
-        public string TorqueToolIPAddress { get; set; }
-        public string Station { get; set; }
+        public string TorqueName { get; set; }
+        public Nullable<int> Pset { get; set; }
     }
 }

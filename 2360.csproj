@@ -456,6 +456,9 @@
     <Compile Include="Tool_IPAddress.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="TorquePset.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="USER.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

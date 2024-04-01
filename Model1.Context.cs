@@ -42,6 +42,7 @@ namespace WebApplication2
         public virtual DbSet<STD_TorqueTable> STD_TorqueTable { get; set; }
         public virtual DbSet<TaskListTable> TaskListTables { get; set; }
         public virtual DbSet<Tool_IPAddress> Tool_IPAddress { get; set; }
+        public virtual DbSet<TorquePset> TorquePsets { get; set; }
         public virtual DbSet<USER> USERs { get; set; }
         public virtual DbSet<VarTable> VarTables { get; set; }
     }

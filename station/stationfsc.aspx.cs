@@ -156,7 +156,7 @@ namespace WebApplication2.station
                     var torqueNameRes = mdbEntities.TaskListTables.Where(i => i.StationNameID == station && i.TaskType == "Torque").FirstOrDefault();
                     if (torqueNameRes != null)
                     {
-                        var torqueIpRes = mdbEntities.STD_TorqueTable.Where(j => j.TorqueName == torqueNameRes.BomSeq).FirstOrDefault();
+                        var torqueIpRes = mdbEntities.STD_TorqueTable.Where(i => i.Station == station).FirstOrDefault();
                         if (torqueIpRes != null)
                         {
                             CurrentDcToolIp = torqueIpRes.TorqueToolIPAddress;
@@ -164,7 +164,14 @@ namespace WebApplication2.station
                             {
                                 DisableTool();
                             }
-                            return torqueIpRes.TorqueToolIPAddress;
+                            if (torqueIpRes.TorqueToolIPAddress == "")
+                            {
+                                return "Error";
+                            }
+                            else
+                            {
+                                return torqueIpRes.TorqueToolIPAddress;
+                            }
                         }
                     }
                 }

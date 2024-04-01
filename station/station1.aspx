@@ -37,6 +37,7 @@
             getAllPlcTagList()
             callStationInfo()
             getDcToolIp()
+            getTackTime()
             isPrinterConnected()
 
             if (isplcConnected) {
@@ -127,6 +128,7 @@
         setInterval(function () {
             callStationInfo()
             getCurrentUser()
+            getTackTime()
             isPlcConnected()
             ToolStatus()
             isPrinterConnected()
@@ -188,8 +190,11 @@
                 async: "true",
                 cache: "false",
                 success: (res) => {  
+                    console.log(res.d)
                     if (res.d != "Error") {
-                        dcToolIp = res.d
+                        if (res.d != "") {
+                            dcToolIp = res.d 
+                        }
                         $("#dctool_badge").show()
                         $("#showDctoolIndicate").show()
                     } else {
@@ -248,6 +253,27 @@
                 }
             })
         }  
+
+
+        const getTackTime = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station1.aspx/GetTackTime",
+                data: `{plcStation : '${plcStation}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        $("#LblTaktTime").text(res.d) 
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
         
         //function for call station function for info
         const printBuiltTicket = _ => {
@@ -276,7 +302,7 @@
         const isPrinterConnected = () => {
             $.ajax({
                 type: "POST",
-                url: "station0.aspx/ISPRINTERCONNECTED",
+                url: "station1.aspx/ISPRINTERCONNECTED",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -815,9 +841,9 @@
                 <div class="text-center px-3 py-1" style="height: 60px;">
                     <span class="badge bg-danger" id="database_badge">DATABASE</span>
                     <span class="badge bg-danger" id="dctool_badge">DC TOOLS</span> 
-                    <span class="badge bg-danger" id="printer_badge">PRINTER</span> 
-                    <br />
                     <span class="badge bg-danger" id="plc_badge">PLC</span>
+                    <br />
+                    <span class="badge bg-danger" id="printer_badge">PRINTER</span> 
                     <span class="badge bg-danger" id="scanner_badge">SCANNER</span>
                 </div>
             </div>

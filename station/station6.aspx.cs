@@ -161,7 +161,14 @@ namespace WebApplication2.station
                         {
                             DisableTool();
                         }
-                        return torqueIpRes.TorqueToolIPAddress;
+                        if (torqueIpRes.TorqueToolIPAddress == "")
+                        {
+                            return "Error";
+                        }
+                        else
+                        {
+                            return torqueIpRes.TorqueToolIPAddress;
+                        }
                     }
                 }
             }
@@ -270,6 +277,28 @@ namespace WebApplication2.station
                 else
                 { return "User is not Available"; }
             }
+        }
+
+        [WebMethod]
+        public static string GetTackTime(string plcStation)
+        {
+            try
+            {
+                using (TMdbEntities mdbEntities = new TMdbEntities())
+                {
+                    if (IS_PLC_CONNECTED())
+                    {
+                        var tackTag = ReadTagNameInPlc(plcStation, "TactTime");
+                        int tackVal = (UInt16)plc.Read(tackTag);
+                        return tackVal.ToString();
+                    }
+                }
+            }
+            catch
+            {
+                return "Error";
+            }
+            return "Error";
         }
 
         [WebMethod]
@@ -405,7 +434,7 @@ namespace WebApplication2.station
                         {
                             if (IS_PLC_CONNECTED())
                             {
-                                plcReadTAg = ReadTagNameInPlc(plcStation);
+                                plcReadTAg = ReadTagNameInPlc(plcStation, "ReadBit");
                                 WriteTagValueInPlc(plcStation, "ScanBit");
                                 return res.ID.ToString();
                             }
@@ -495,7 +524,6 @@ namespace WebApplication2.station
                     var bom_res = dbEntities.BOMs.Where(i => i.FG_PartNumber == fgpart && i.ScanSequence == bom && val.Contains(i.PartNumber)).FirstOrDefault();
                     if (bom_res != null)
                     {
-
                         if ((bool)bom_res.IsDuplicate)
                         {
                             var res1 = dbEntities.SEAT_DATA.SqlQuery("select * from SEAT_DATA where SCAN_" + bom + " = '" + val + "'");
@@ -700,9 +728,10 @@ namespace WebApplication2.station
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
-                    var psetRes = db.STD_TorqueTable.Where(i => i.Station == station && i.TorqueName == torque_seq).FirstOrDefault();
+                    var psetRes = db.TorquePsets.Where(i => i.TorqueName == torque_seq).FirstOrDefault();
                     if (psetRes != null) { pset = Convert.ToInt16(psetRes.Pset); }
                 }
+
 
                 // Assume a buffer size of 1024, adjust as needed
                 byte[] buffer = new byte[1024];
@@ -712,6 +741,8 @@ namespace WebApplication2.station
                 {
 
                     int bytesRead = 0;
+
+                    SelectPset(pset);
 
                     while (Subscribe())
                     {
@@ -794,6 +825,33 @@ namespace WebApplication2.station
                 return ex.Message;
             }
             return "";
+        }
+
+        public static void SelectPset(int PsetNo)
+        {
+            byte i = 0x00;
+            if (PsetNo == 1)
+            { i = 0x31; }
+            else if (PsetNo == 2)
+            { i = 0x32; }
+            else if (PsetNo == 3)
+            { i = 0x33; }
+            else if (PsetNo == 4)
+            { i = 0x34; }
+            byte[] byteFrom = new byte[1025];
+            byte[] byteData = { 0x30, 0x30, 0x32, 0x33, 0x30, 0x30, 0x31, 0x38, 0x30, 0x30, 0x31, 0x30, 0x20, 0x20, 0x20, 0x20, 0x30, 0x30, 0x20, 0x20, 0x30, 0x30, i, 0x00 };
+            try
+            {
+                if (DCserver.Connected)
+                {
+                    int sent = DCserver.Send(byteData, SocketFlags.None);
+                    int p = DCserver.Receive(byteFrom, SocketFlags.None);
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentError = "pset : " + ex.ToString();
+            }
         }
 
         public static void DisableTool()
@@ -1154,14 +1212,14 @@ namespace WebApplication2.station
 
         }
 
-        public static string ReadTagNameInPlc(string station)
+        public static string ReadTagNameInPlc(string station, string tag)
         {
             try
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
                     //code for plc write bit enable
-                    var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'ReadBit'").FirstOrDefault();
+                    var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '" + tag + "'").FirstOrDefault();
                     if (plcRes != null)
                     {
                         switch (station)

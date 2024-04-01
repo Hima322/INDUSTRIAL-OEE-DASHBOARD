@@ -194,12 +194,12 @@
                     <div class="p-5 bg-light shadow rounded" style="width: 600px;">
                         <h3 class="text-danger mb-4">Select MES Operator.</h3>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;">
-                            <%int[] stArr = { 1, 2, 3, 4, 5, 6, 7, 8, 12,13,16 };
+                            <%int[] stArr = { 1, 2, 3, 4, 5, 6, 7, 8,13,16 };
                                 foreach (var i in stArr) { 
                             if (i == 16) {  %>
                                 <button class="btn btn-danger btn-lg" style="width: 100%;" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()"> Rework </button>
                             <% }  else { %>
-                                <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()">MES OP<%= i == 12 ? 9 : i == 13 ? 10 : i %></button>
+                                <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-<%=i %>') || location.reload()">MES OP<%= i == 13 ? 9 : i %></button>
                             <% } %>
                             <% } %>
                                 <button class="btn btn-secondary btn-lg" onclick="localStorage.setItem('station','Station-fsc') || location.reload()">MES OP FSC</button>

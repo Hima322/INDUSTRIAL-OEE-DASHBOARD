@@ -325,7 +325,7 @@ namespace WebApplication2.station
                         var res = dbEntities.ReworkTables.Where(i => i.SeatID == seatRes.ID.ToString() && i.SeatStatus == "NG").ToList();
                         if (res.Count > 0)
                         {
-                            seatRes.StationNo = 12;
+                            seatRes.StationNo = 13;
                             dbEntities.SaveChanges();
 
                             return JsonSerializer.Serialize(res);
@@ -538,9 +538,16 @@ namespace WebApplication2.station
             bool isTGood = false;
             bool isAGood = false;
             bool isTAGood = false;
+            int pset = 1;
 
             try
             {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var psetRes = db.TorquePsets.Where(i => i.TorqueName == torque_seq).FirstOrDefault();
+                    if (psetRes != null) { pset = Convert.ToInt16(psetRes.Pset); }
+                }
+
                 // Assume a buffer size of 1024, adjust as needed
                 byte[] buffer = new byte[1024];
 
@@ -548,6 +555,8 @@ namespace WebApplication2.station
                 if (IS_DCTOOL_CONNECTED())
                 {
                     int bytesRead = 0;
+
+                    SelectPset(pset);
 
                     while (Subscribe())
                     {
@@ -626,106 +635,7 @@ namespace WebApplication2.station
             }
             catch (Exception ex) { Console.Write(ex.ToString()); return "false"; }
         }
-         
-        [WebMethod]
-        public static bool FinishTask(string station, long seat_data_id)
-        {
-            seatDataId = seat_data_id;
-            try
-            {
-                using (TMdbEntities dbEntities = new TMdbEntities())
-                {
-                    var seatDataRes = dbEntities.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
-                    if (seatDataRes != null)
-                    {
-                        seatDataRes.StationNo += 1;
-                    }
-                    var res = dbEntities.TaskListTables.Where(i => i.StationNameID == station).ToList();
-                    if (res != null)
-                    {
-                        res[0].TaskStatus = "Running";
-                        res[1].TaskStatus = "Pending";
-                        res[2].TaskStatus = "Pending";
-                        res[3].TaskStatus = "Pending";
-                        res[4].TaskStatus = "Pending";
-                        res[5].TaskStatus = "Pending";
-                        res[6].TaskStatus = "Pending";
-                        res[7].TaskStatus = "Pending";
-                        res[8].TaskStatus = "Pending";
-                        res[9].TaskStatus = "Pending";
-
-                        res[0].TaskCurrentValue = "";
-                        res[1].TaskCurrentValue = "";
-                        res[2].TaskCurrentValue = "";
-                        res[3].TaskCurrentValue = "";
-                        res[4].TaskCurrentValue = "";
-                        res[5].TaskCurrentValue = "";
-                        res[6].TaskCurrentValue = "";
-                        res[7].TaskCurrentValue = "";
-                        res[8].TaskCurrentValue = "";
-                        res[9].TaskCurrentValue = "";
-
-                        dbEntities.SaveChanges();
-
-                    }
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                CurrentError = ex.Message;
-            }
-            return false;
-        }
-
-        [WebMethod]
-        public static bool RejectTask(int seat_data_id, string station)
-        {
-            try
-            {
-                using (TMdbEntities db = new TMdbEntities())
-                {
-                    var res = db.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
-                    res.STAUS = "REJECT";
-
-                    var taskListRes = db.TaskListTables.Where(i => i.StationNameID == station).ToList();
-                    if (taskListRes != null)
-                    {
-                        taskListRes[0].TaskStatus = "Running";
-                        taskListRes[1].TaskStatus = "Pending";
-                        taskListRes[2].TaskStatus = "Pending";
-                        taskListRes[3].TaskStatus = "Pending";
-                        taskListRes[4].TaskStatus = "Pending";
-                        taskListRes[5].TaskStatus = "Pending";
-                        taskListRes[6].TaskStatus = "Pending";
-                        taskListRes[7].TaskStatus = "Pending";
-                        taskListRes[8].TaskStatus = "Pending";
-                        taskListRes[9].TaskStatus = "Pending";
-
-                        taskListRes[0].TaskCurrentValue = "";
-                        taskListRes[1].TaskCurrentValue = "";
-                        taskListRes[2].TaskCurrentValue = "";
-                        taskListRes[3].TaskCurrentValue = "";
-                        taskListRes[4].TaskCurrentValue = "";
-                        taskListRes[5].TaskCurrentValue = "";
-                        taskListRes[6].TaskCurrentValue = "";
-                        taskListRes[7].TaskCurrentValue = "";
-                        taskListRes[8].TaskCurrentValue = "";
-                        taskListRes[9].TaskCurrentValue = "";
-
-                        db.SaveChanges();
-
-                    }
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                CurrentError = ex.Message;
-                return false;
-            }
-        }
-
+           
         public static void UpdateSeatData(long id, string key, string value)
         {
             try

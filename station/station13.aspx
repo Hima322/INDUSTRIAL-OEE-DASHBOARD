@@ -37,7 +37,8 @@
         $(document).ready(function () {
             callStationInfo()
             getAllPlcTagList()
-            getInspectionTaskList() 
+            getInspectionTaskList()
+            getTackTime()
             isPrinterConnected()  
             $("#odsBadge").hide()
             $("#inpection_task_list_modal").hide()
@@ -114,6 +115,7 @@
         setInterval(function () {
             callStationInfo()
             getCurrentUser()
+            getTackTime()
             isScannerConnected()
             isPlcConnected()
             isPrinterConnected()  
@@ -233,6 +235,26 @@
                 cache: "false",
                 success: (res) => {
                     $("#LblJobCount").text(res.d)
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        const getTackTime = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/GetTackTime",
+                data: `{plcStation : '${plcStation}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        $("#LblTaktTime").text(res.d)
+                    }
                 },
                 Error: function (x, e) {
                     console.log(e);

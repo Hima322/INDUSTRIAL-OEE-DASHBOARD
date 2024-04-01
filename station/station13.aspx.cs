@@ -254,6 +254,28 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
+        public static string GetTackTime(string plcStation)
+        {
+            try
+            {
+                using (TMdbEntities mdbEntities = new TMdbEntities())
+                {
+                    if (IS_PLC_CONNECTED())
+                    {
+                        var tackTag = ReadTagNameInPlc(plcStation, "TactTime");
+                        int tackVal = (UInt16)plc.Read(tackTag);
+                        return tackVal.ToString();
+                    }
+                }
+            }
+            catch
+            {
+                return "Error";
+            }
+            return "Error";
+        }
+
+        [WebMethod]
         public static string GetCurrentUser(string station)
         {
             try
@@ -353,7 +375,7 @@ namespace WebApplication2.station
                         }
                         if (res.StationNo == station)
                         {
-                            plcReadTAg = ReadTagNameInPlc(plcStation);
+                            plcReadTAg = ReadTagNameInPlc(plcStation, "ReadBit");
 
                             if (IS_PLC_CONNECTED())
                             {
@@ -638,11 +660,81 @@ namespace WebApplication2.station
             return string.Empty;
         }
          
-        public static bool qrEntry = true;
+        public static bool qrEntry = true; 
+
+        [WebMethod]
+        public static string InspectionExecuteTask(int id, string insId, string model_variant, string operator_name, string built_ticket, string seat_id)
+        {
+            string rtn = "";
+            int[] inspectIds = { };
+            if (insId != "")
+            { 
+                inspectIds = insId.Split(',').Select(Int32.Parse).ToArray();
+            }
+
+            try
+            {
+                using (TMdbEntities dbEntities = new TMdbEntities())
+                {
+                    if (inspectIds.Length > 0)
+                    {
+                        var insRes = dbEntities.InspectionLists.Where(i => inspectIds.Contains(i.ID)).ToList();
+                        if (insRes.Count > 0)
+                        {
+                            foreach (var ins in insRes)
+                            {
+                                ReworkTable reworkTable = new ReworkTable
+                                {
+                                    BuildLabelNumber = built_ticket,
+                                    InspectionName = ins.InspectionName,
+                                    InspectionType = ins.InspectionType,
+                                    StationNameID = ins.StationNameID,
+                                    OperatorName = operator_name,
+                                    InspectionDateTime = DateTime.Now,
+                                    SeatID = seat_id,
+                                    SeatStatus = "NG",
+                                    ReworkDatetime = DateTime.Now
+                                };
+                                dbEntities.ReworkTables.Add(reworkTable);
+                            }
+                            dbEntities.SaveChanges();
+
+                        }
+                    }
+
+                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
+                    if (res != null)
+                    {
+                        res.TaskCurrentValue = "Complete";
+                        res.TaskStatus = "Done";
+                        dbEntities.SaveChanges();
+
+                        //update next row status to running
+                        if (IsRunningTask(res.StationNameID, model_variant))
+                        {
+                            var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
+                            if (nextRow != null)
+                            {
+                                nextRow.TaskStatus = "Running";
+                            }
+                            dbEntities.SaveChanges();
+                            rtn = "Done";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                rtn = ex.Message;
+            }
+            return rtn;
+        }
+
 
         [WebMethod]
         public static string QRCODE_PRINT(int id, string val, string model_variant, long seat_data_id, string feature)
         {
+            string finelStatus = "";
             var seq = val.Split('-')[2];
             int andonRowId = GetCurrentShiftRowId();
 
@@ -656,32 +748,33 @@ namespace WebApplication2.station
                     {
                         var seatDataRes = dbEntities.SEAT_DATA.Where(i => i.ID == seat_data_id).FirstOrDefault();
                         if (seatDataRes != null)
-                        {
-                            string status = "";
-
+                        { 
                             var rewordRes = dbEntities.ReworkTables.Where(i => i.SeatID == seat_data_id.ToString() && i.SeatStatus == "NG").ToList();
                             if (rewordRes != null)
                             {
-                                status = "HOLD";
+                                finelStatus = "HOLD";
                             }
 
 
-                            if (PrintFinelQrCode(val, seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType, seatDataRes.FG_PartNumber, feature, status) == "Done")
+                            if (PrintFinelQrCode(val, seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType, seatDataRes.FG_PartNumber, feature, finelStatus) == "Done")
                             {
                                 seatDataRes.FinalBarcodeData = val + DateTime.Now.ToString("MMddyyyyHHmm");
                                 seatDataRes.FinalPrintDateTime = DateTime.Now;
-                                seatDataRes.STAUS = status == "" ? "OK" : "HOLD";
+                                seatDataRes.STAUS = finelStatus == "" ? "OK" : "HOLD";
                                 res.TaskCurrentValue = val + DateTime.Now.ToString("MMddyyyyHHmm");
                                 res.TaskStatus = "Done";
-                                 
-                                var andonRes = dbEntities.Andons.Where(i => i.ID == andonRowId).FirstOrDefault();
-                                if (andonRes != null)
+
+                                if (finelStatus == "")
                                 {
-                                    andonRes.Production++;
+                                    var andonRes = dbEntities.Andons.Where(i => i.ID == andonRowId).FirstOrDefault();
+                                    if (andonRes != null)
+                                    {
+                                        andonRes.Production++;
+                                    }
+                                    string q = "update JITLineSeatMfgReport set SeatSerialNumber = '" + val + DateTime.Now.ToString("MMddyyyyHHmm") + "' where BuildLabelNumber = '" + val + "' ";
+                                    dbEntities.Database.ExecuteSqlCommand(q);
                                 }
 
-                                string q = "update JITLineSeatMfgReport set SeatSerialNumber = '"+ val + DateTime.Now.ToString("MMddyyyyHHmm") + "' where BuildLabelNumber = '"+ val + "' ";
-                                dbEntities.Database.ExecuteSqlCommand(q);  
                                 dbEntities.SaveChanges();
 
                                 //update next row status to running   
@@ -778,74 +871,6 @@ namespace WebApplication2.station
             } 
         }
 
-
-        [WebMethod]
-        public static string InspectionExecuteTask(int id, string insId, string model_variant, string operator_name, string built_ticket, string seat_id)
-        {
-            string rtn = "";
-            int[] inspectIds = { };
-            if (insId != "")
-            {
-                inspectIds = insId.Split(',').Select(Int32.Parse).ToArray();
-            }
-
-            try
-            {
-                using (TMdbEntities dbEntities = new TMdbEntities())
-                {
-                    if (inspectIds.Length > 0)
-                    {
-                        var insRes = dbEntities.InspectionLists.Where(i => inspectIds.Contains(i.ID)).ToList();
-                        if (insRes.Count > 0)
-                        {
-                            foreach (var ins in insRes)
-                            {
-                                ReworkTable reworkTable = new ReworkTable
-                                {
-                                    BuildLabelNumber = built_ticket,
-                                    InspectionName = ins.InspectionName,
-                                    InspectionType = ins.InspectionType,
-                                    StationNameID = ins.StationNameID,
-                                    OperatorName = operator_name,
-                                    InspectionDateTime = DateTime.Now,
-                                    SeatID = seat_id,
-                                    SeatStatus = "NG",
-                                    ReworkDatetime = DateTime.Now
-                                };
-                                dbEntities.ReworkTables.Add(reworkTable);
-                            }
-                            dbEntities.SaveChanges();
-
-                        }
-                    }
-
-                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
-                    if (res != null)
-                    {
-                        res.TaskCurrentValue = "Complete";
-                        res.TaskStatus = "Done";
-                        dbEntities.SaveChanges();
-
-                        //update next row status to running
-                        if (IsRunningTask(res.StationNameID, model_variant))
-                        {
-                            var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
-                            if (nextRow != null)
-                            {
-                                nextRow.TaskStatus = "Running";
-                            }
-                            dbEntities.SaveChanges();
-                            rtn = "Done";
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                rtn = ex.Message;
-            }
-            return rtn;
-        }
 
         [WebMethod]
         public static string WriteBitExecuteTask(int id, string model_variant, string plcStation)
@@ -1209,14 +1234,14 @@ namespace WebApplication2.station
             return "Error";
         }
 
-        public static string ReadTagNameInPlc(string station)
+        public static string ReadTagNameInPlc(string station, string tag)
         {
             try
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
                     //code for plc write bit enable
-                    var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = 'ReadBit'").FirstOrDefault();
+                    var plcRes = db.PLCAddressLists.SqlQuery("Select * from PLCAddressList where PLCTagName = '"+tag+"'").FirstOrDefault();
                     if (plcRes != null)
                     {
                         switch (station)

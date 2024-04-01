@@ -639,11 +639,11 @@
                      <%--here data will fetch by ajax--%>     
 
                     <div class="bg-light p-3 shadow rounded" style="position:fixed;bottom:30px;right:30px;z-index:999;">
-                        <button type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" class="btn">CHANGE BOM</button>   
+                        <button type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas" class="btn">CHANGE BOM</button>   
                         <button type="button" onclick="location.reload()" class="btn btn-primary">SAVE CHANGES</button> 
                     </div> 
 
-                    <div class="offcanvas offcanvas-end" id="offcanvas">
+                    <div class="offcanvas offcanvas-end p-3" style="width:500px" data-bs-backdrop="true" tabindex="-1" aria-labelledby="offcanvasExampleLabel" id="offcanvas">
                         <div class="offcanvas-body"> 
                             <%--this is for change bom part--%>
                             <big>Change Bom if Required</big> <br /> 
@@ -676,7 +676,7 @@
                                 </tbody>
                             </table><br />
 
-                            <button data-bs-dismiss="offcanvas" type="button" class="btn btn-secondary d-block m-auto">Continue & Next</button>
+                            <button data-bs-dismiss="offcanvas" type="button" class="btn btn-secondary mb-2 d-block m-auto">Continue & Next</button>
 
                         <%--progress bar for torque giving--%> 
                         <div id="startTorque"></div>

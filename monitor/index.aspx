@@ -807,7 +807,7 @@
                             data.forEach(e =>  
                             $("#dctoolshowlist").append(
                                 `<div class="container-fluid d-flex gap-2 mb-1">
-                                    <div style="width:200px;"><b>${e.TorqueName} Dctool : -</b></div>
+                                    <div style="width:200px;"><b> ${e.Station == "Station-16" ? "Rework Station " : "MES " + e.Station} Dctool : -</b></div>
                                     <input value="${e.TorqueToolIPAddress}" onkeyup='$("#dctool${e.ID}").attr("disabled",false)' type="text" id="dctool${e.ID}input" />
                                     <button type="button" disabled="disabled" id="dctool${e.ID}" onclick="updateDctoolIpAddress(${e.ID}, $('#dctool${e.ID}input').val())" class="btn btn-primary btn-sm">Update</button>
                                 </div> `
@@ -1532,14 +1532,7 @@
                                     </div>
                                     <div id="collapseDctool1" class="collapse" data-bs-parent="#accordionDctool">
                                         <div class="card-body" id="dctoolshowlist">
-
-                                            <%--this is for show printer of built ticket ip address--%>
-                                            <div class="container-fluid d-flex gap-2 mb-1 align-items-center">
-                                                <div style="width:200px;"><b>Rework Dctool : - </b></div>
-                                                <input value="<%=reworkDctoolIpAddress %>" onkeyup='$("#reworkDctoolIpAddressUpdateBtn").attr("disabled",false)' type="text" id="rework_dctool_ip_address_value" />
-                                                <button type="button" disabled="disabled" id="reworkDctoolIpAddressUpdateBtn" onclick="updateIpAddress('ReworkDcTooIP', $('#rework_dctool_ip_address_value').val())" class="btn mb-1 btn-primary btn-sm">Update</button>
-                                            </div>
-                                              
+                                             
                                         </div>
                                     </div>
                                 </div>

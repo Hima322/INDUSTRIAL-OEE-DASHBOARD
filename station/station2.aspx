@@ -36,6 +36,7 @@
             callStationInfo()
             getAllPlcTagList()
             getDcToolIp()
+            getTackTime()
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`)
             $('input').attr('autocomplete', 'off');
             $("#qr_scan_modal").hide()
@@ -122,6 +123,7 @@
         setInterval(function () {
             callStationInfo()
             getCurrentUser()
+            getTackTime()
             isPlcConnected()
             ToolStatus()
             isScannerConnected() 
@@ -215,6 +217,26 @@
                     } else { 
                         $("#dctoolimage").css({ opacity: .3 })
                         $("#startTorque").addClass("start")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        const getTackTime = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station2.aspx/GetTackTime",
+                data: `{plcStation : '${plcStation}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (res.d != "Error") {
+                        $("#LblTaktTime").text(res.d)
                     }
                 },
                 Error: function (x, e) {

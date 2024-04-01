@@ -234,10 +234,8 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="TorqueName" Type="varchar" MaxLength="100" />
           <Property Name="TorqueToolIPAddress" Type="varchar" MaxLength="50" />
           <Property Name="Station" Type="varchar" MaxLength="50" />
-          <Property Name="Pset" Type="int" />
         </EntityType>
         <EntityType Name="TaskListTable">
           <Key>
@@ -291,6 +289,14 @@
           <Property Name="SttaionNameID" Type="varchar" MaxLength="50" />
           <Property Name="IPaddress" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="TorquePset">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TorqueName" Type="varchar" MaxLength="50" />
+          <Property Name="Pset" Type="int" />
+        </EntityType>
         <EntityType Name="USER">
           <Key>
             <PropertyRef Name="ID" />
@@ -329,6 +335,7 @@
           <EntitySet Name="STD_TorqueTable" EntityType="Self.STD_TorqueTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TaskListTable" EntityType="Self.TaskListTable" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tool_IPAddress" EntityType="Self.Tool_IPAddress" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorquePset" EntityType="Self.TorquePset" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="USER" EntityType="Self.USER" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VarTable" EntityType="Self.VarTable" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -354,6 +361,7 @@
           <EntitySet Name="STD_TorqueTable" EntityType="TMdbModel.STD_TorqueTable" />
           <EntitySet Name="TaskListTables" EntityType="TMdbModel.TaskListTable" />
           <EntitySet Name="Tool_IPAddress" EntityType="TMdbModel.Tool_IPAddress" />
+          <EntitySet Name="TorquePsets" EntityType="TMdbModel.TorquePset" />
           <EntitySet Name="USERs" EntityType="TMdbModel.USER" />
           <EntitySet Name="VarTables" EntityType="TMdbModel.VarTable" />
         </EntityContainer>
@@ -586,10 +594,8 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="TorqueName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="TorqueToolIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Station" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Pset" Type="Int32" />
         </EntityType>
         <EntityType Name="TaskListTable">
           <Key>
@@ -642,6 +648,14 @@
           <Property Name="ToolName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="SttaionNameID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IPaddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TorquePset">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TorqueName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Pset" Type="Int32" />
         </EntityType>
         <EntityType Name="USER">
           <Key>
@@ -910,10 +924,8 @@
           <EntitySetMapping Name="STD_TorqueTable">
             <EntityTypeMapping TypeName="TMdbModel.STD_TorqueTable">
               <MappingFragment StoreEntitySet="STD_TorqueTable">
-                <ScalarProperty Name="Pset" ColumnName="Pset" />
                 <ScalarProperty Name="Station" ColumnName="Station" />
                 <ScalarProperty Name="TorqueToolIPAddress" ColumnName="TorqueToolIPAddress" />
-                <ScalarProperty Name="TorqueName" ColumnName="TorqueName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -968,6 +980,15 @@
                 <ScalarProperty Name="IPaddress" ColumnName="IPaddress" />
                 <ScalarProperty Name="SttaionNameID" ColumnName="SttaionNameID" />
                 <ScalarProperty Name="ToolName" ColumnName="ToolName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorquePsets">
+            <EntityTypeMapping TypeName="TMdbModel.TorquePset">
+              <MappingFragment StoreEntitySet="TorquePset">
+                <ScalarProperty Name="Pset" ColumnName="Pset" />
+                <ScalarProperty Name="TorqueName" ColumnName="TorqueName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
