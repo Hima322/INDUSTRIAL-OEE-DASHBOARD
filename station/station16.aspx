@@ -30,6 +30,7 @@
 
         $(document).ready(function () { 
             callStationInfo()
+            getDcToolIp()
             $("#inpection_task_list_container").hide()
             $("#torque_list_show_table").hide()
             $("#scanImg").hide()
@@ -162,6 +163,31 @@
         } 
 
         setInterval(intervalFunction, 500); 
+
+        //function for tool get dctool ip address function
+        const getDcToolIp = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station16.aspx/GetDcToolIp",
+                data: `{station:'${station}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (!res.d.includes("Error")) { 
+                        $("#dctool_badge").attr("class", "badge bg-success")
+                    } else {
+                        toast(res.d)
+                        $("#dctool_badge").attr("class", "badge bg-danger")
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
 
 
         //code for handle task torque 

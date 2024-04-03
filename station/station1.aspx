@@ -178,7 +178,8 @@
             })
         }
          
-        
+
+
         //function for tool get dctool ip address function
         const getDcToolIp = _ => {
             $.ajax({
@@ -189,15 +190,18 @@
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => {  
-                    console.log(res.d)
-                    if (res.d != "Error") {
-                        if (res.d != "") {
-                            dcToolIp = res.d 
+                success: (res) => {
+                    if (!res.d.includes("Error")) {
+                        if (res.d == "notorque") {
+                            $("#dctool_badge").hide()
+                            $("#showDctoolIndicate").hide()
+                        } else {
+                            dcToolIp = res.d
+                            $("#dctool_badge").show()
+                            $("#showDctoolIndicate").show()
                         }
-                        $("#dctool_badge").show()
-                        $("#showDctoolIndicate").show()
                     } else {
+                        toast(res.d)
                         $("#dctool_badge").hide()
                         $("#showDctoolIndicate").hide()
                     }

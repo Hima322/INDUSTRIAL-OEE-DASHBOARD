@@ -36,6 +36,7 @@ namespace WebApplication2.station
         public string pwd = "";
 
         public static string CurrentDcToolIp = "";
+        public static int CurrentDcToolPort = 0;
         private static bool Subscribed = false;
         private static bool IsDcToolEnable = false;
 
@@ -79,7 +80,7 @@ namespace WebApplication2.station
                 if (DCserver.Connected == false)
                 {
                     DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    DCserver.Connect(IPAddress.Parse(CurrentDcToolIp), 4545);
+                    DCserver.Connect(IPAddress.Parse(CurrentDcToolIp), CurrentDcToolPort);
 
                     byte[] byteData = { 0x30, 0x30, 0x32, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x30, 0x33, 0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0 };
                     int sent = DCserver.Send(byteData, SocketFlags.None);
@@ -156,25 +157,29 @@ namespace WebApplication2.station
                     var torqueIpRes = mdbEntities.STD_TorqueTable.Where(j => j.Station == station).FirstOrDefault();
                     if (torqueIpRes != null)
                     {
-                        CurrentDcToolIp = torqueIpRes.TorqueToolIPAddress;
-                        if (IS_DCTOOL_CONNECTED())
-                        {
-                            DisableTool();
-                        }
                         if (torqueIpRes.TorqueToolIPAddress == "")
                         {
-                            return "Error";
+                            return "notorque";
                         }
                         else
                         {
-                            return torqueIpRes.TorqueToolIPAddress;
+                            string val = torqueIpRes.TorqueToolIPAddress;
+                            CurrentDcToolIp = val.Split(':')[0];
+                            CurrentDcToolPort = int.Parse(val.Split(':')[1]);
+
+                            if (IS_DCTOOL_CONNECTED())
+                            {
+                                StartTightening = false;
+                                DisableTool();
+                            }
+                            return CurrentDcToolIp;
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                return "Error";
+                return "Error" + ex.Message;
             }
             return "Error";
         }
@@ -838,6 +843,16 @@ namespace WebApplication2.station
             { i = 0x33; }
             else if (PsetNo == 4)
             { i = 0x34; }
+            else if (PsetNo == 5)
+            { i = 0x35; }
+            else if (PsetNo == 6)
+            { i = 0x35; }
+            else if (PsetNo == 7)
+            { i = 0x37; }
+            else if (PsetNo == 8)
+            { i = 0x38; }
+            else if (PsetNo == 9)
+            { i = 0x39; }
             byte[] byteFrom = new byte[1025];
             byte[] byteData = { 0x30, 0x30, 0x32, 0x33, 0x30, 0x30, 0x31, 0x38, 0x30, 0x30, 0x31, 0x30, 0x20, 0x20, 0x20, 0x20, 0x30, 0x30, 0x20, 0x20, 0x30, 0x30, i, 0x00 };
             try

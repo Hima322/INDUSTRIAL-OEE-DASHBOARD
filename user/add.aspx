@@ -99,6 +99,7 @@
                                             <b>Roll :</b>
                                         </label>  
                                         <select id="ROLL" class="form-control"> 
+                                            <option>Admin</option>
                                             <option>Operator</option>
                                             <option>Maintenance</option>
                                         </select>

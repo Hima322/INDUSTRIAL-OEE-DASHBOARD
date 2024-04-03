@@ -32,37 +32,50 @@ namespace WebApplication2.station
         public static Socket DCserver;
         private static bool Subscribed = false;
         private static bool IsDcToolEnable = false;
-        private static string DcToolIpAddress = "";
+        private static string CurrentDcToolIp = "";
+        private static int CurrentDcToolPort = 0;
         public static bool StartTightening = false;
          
 
         private void Page_Load(object sender, EventArgs e)
         {
-            PAGE_LOAD_FUNCTION();
-        }
 
-        [WebMethod]
-        public static void PAGE_LOAD_FUNCTION()
-        { 
-            GET_DCTOOLIP_ADDRESS(); 
-            DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
          
-        public static void GET_DCTOOLIP_ADDRESS()
+        [WebMethod]
+        public static string GetDcToolIp(string station)
         {
             try
             {
-                using (TMdbEntities db = new TMdbEntities())
+                using (TMdbEntities mdbEntities = new TMdbEntities())
                 {
-                    //this code for plc ip address fetching 
-                    var plcIpRes = db.VarTables.Where(i => i.VarName == "ReworkDcTooIP").FirstOrDefault();
+                    var torqueIpRes = mdbEntities.STD_TorqueTable.Where(j => j.Station == station).FirstOrDefault();
+                    if (torqueIpRes != null)
                     {
-                        if (plcIpRes != null)
-                            DcToolIpAddress = plcIpRes.VarValue;
+                        string val = torqueIpRes.TorqueToolIPAddress;
+                        CurrentDcToolIp = val.Split(':')[0];
+                        CurrentDcToolPort = int.Parse(val.Split(':')[1]);
+
+                        if (IS_DCTOOL_CONNECTED())
+                        {
+                            DisableTool();
+                        }
+                        if (torqueIpRes.TorqueToolIPAddress == "")
+                        {
+                            return "Error";
+                        }
+                        else
+                        {
+                            return CurrentDcToolIp;
+                        }
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                return "Error" + ex.Message;
+            }
+            return "Error";
         }
          
         [WebMethod]
@@ -71,7 +84,7 @@ namespace WebApplication2.station
             try
             {
                 Ping p1 = new Ping();
-                PingReply PR = p1.Send(DcToolIpAddress);
+                PingReply PR = p1.Send(CurrentDcToolIp);
 
                 // check after the ping is n success
                 if (PR.Status.ToString() == "Success")
@@ -88,35 +101,27 @@ namespace WebApplication2.station
 
         public static bool IS_DCTOOL_CONNECTED()
         {
-            try
+            if (DCserver.Connected == false)
             {
-                if (DCserver.Connected == false)
-                {
-                    DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    DCserver.Connect(IPAddress.Parse(DcToolIpAddress), 4545);
+                DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                DCserver.Connect(IPAddress.Parse(CurrentDcToolIp), CurrentDcToolPort);
 
-                    byte[] byteData = { 0x30, 0x30, 0x32, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x30, 0x33, 0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0 };
-                    int sent = DCserver.Send(byteData, SocketFlags.None);
-                    byte[] byteFrom = new byte[1025];
-                    int iRx = DCserver.Receive(byteFrom);
-                    string ResultCheck = System.Text.Encoding.ASCII.GetString(byteFrom);
-                    string ResultCheck1 = ResultCheck.Substring(4, 4);
-                    if (ResultCheck1 == "0002")
-                    {
-                        return true;
-                    }
-                    else
-                    { return false; }
-                }
-                else
+                byte[] byteData = { 0x30, 0x30, 0x32, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x30, 0x33, 0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0 };
+                int sent = DCserver.Send(byteData, SocketFlags.None);
+                byte[] byteFrom = new byte[1025];
+                int iRx = DCserver.Receive(byteFrom);
+                string ResultCheck = System.Text.Encoding.ASCII.GetString(byteFrom);
+                string ResultCheck1 = ResultCheck.Substring(4, 4);
+                if (ResultCheck1 == "0002")
                 {
                     return true;
                 }
+                else
+                { return false; }
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
-                return false;
+                return true;
             }
         }
 
@@ -514,6 +519,16 @@ namespace WebApplication2.station
             { i = 0x33; }
             else if (PsetNo == 4)
             { i = 0x34; }
+            else if (PsetNo == 5)
+            { i = 0x35; }
+            else if (PsetNo == 6)
+            { i = 0x35; }
+            else if (PsetNo == 7)
+            { i = 0x37; }
+            else if (PsetNo == 8)
+            { i = 0x38; }
+            else if (PsetNo == 9)
+            { i = 0x39; }
             byte[] byteFrom = new byte[1025];
             byte[] byteData = { 0x30, 0x30, 0x32, 0x33, 0x30, 0x30, 0x31, 0x38, 0x30, 0x30, 0x31, 0x30, 0x20, 0x20, 0x20, 0x20, 0x30, 0x30, 0x20, 0x20, 0x30, 0x30, i, 0x00 };
             try

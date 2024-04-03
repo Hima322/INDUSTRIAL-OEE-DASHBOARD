@@ -88,7 +88,7 @@
 
                 <!--header menu-->
                 <div class="d-flex gap-2">
-                    <button class="btn btn-light" type="button"><a href="/monitor/index.aspx" target="blank" style="text-decoration: none; color: black;">Monitor &amp; Control</a></button>
+                    <a class="btn btn-light" href="/monitor/index.aspx" target="blank" style="text-decoration: none; color: black;">Monitor &amp; Control</a>
 
                     <button class="btn btn-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
                         Menu

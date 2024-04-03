@@ -26,10 +26,10 @@
             getTorqueTable()
             getBomList()
 
-            <%--pwd = prompt("Hi admin enter your password : ")
+            pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
                 pwd = prompt("Please enter password to access this page : ") 
-            toast("Success.")--%>
+            toast("Success.")
 
         })
 

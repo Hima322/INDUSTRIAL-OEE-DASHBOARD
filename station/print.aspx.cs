@@ -141,6 +141,21 @@ namespace WebApplication2.station
                     {
                         // ZPL command 
                         string ZPLString = "\u0010CT~~CD,~CC^~CT~" +
+                            "^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI0^XZ" +
+                            "^XA\r\n^MMT\r\n^PW531" +
+                            "^LL0177" +
+                            "^LS0" +
+                            "^FT215,39^A0N,25,24^FH\\^FD" + res.FG_PartNumber + "-" + res.SequenceNo.ToString().PadLeft(5, '0') + "^FS" +
+                            "^FT31,182^BQN,2,7" +
+                            "^FH\\^FDLA," + res.FG_PartNumber + "-" + res.SequenceNo.ToString().PadLeft(5, '0') + "^FS" +
+                            "^FT215,87^A0N,25,24^FH\\^FD" + res.Variant + "^FS" +
+                            "^FT407,88^A0N,25,24^FH\\^FD" + res.SeatType + "^FS" +
+                            "^FT243,136^A0N,25,24^FH\\^FD" + res.Model + "^FS" +
+                            "^FT365,135^A0N,31,21^FH\\^FD" + Convert.ToDateTime(res.BuildNoDatetime).ToShortDateString() + "^FS" +
+                            "^PQ1,0,1,Y^XZ";
+
+                        //trying to handle with databases that is prnData 
+                        string errZPLString = "\u0010CT~~CD,~CC^~CT~" +
                             "^XA~TA000~JSN" +
                             "^LT0" +
                             "^MNW" +
@@ -212,8 +227,43 @@ namespace WebApplication2.station
                             return "Unavailable QR Code.";
                         }
 
-                        // ZPL command  
                         string ZPLString = "\u0010CT~~CD,~CC^~CT~" +
+                            "^XA" +
+                            "~TA000" +
+                            "~JSN" +
+                            "^LT0" +
+                            "^MNW" +
+                            "^MTT" +
+                            "^PON" +
+                            "^PMN" +
+                            "^LH0,0" +
+                            "^JMA" +
+                            "^PR6,6" +
+                            "~SD15" +
+                            "^JUS" +
+                            "^LRN" +
+                            "^CI27" +
+                            "^PA0,1,1,0" +
+                            "^XZ" +
+                            "^XA" +
+                            "^MMT" +
+                            "^PW1181" +
+                            "^LL295" +
+                            "^LS0" +
+                            "^FT316,67^A0N,40,48^FH\\^CI28^FD" + res.Model + "^FS^CI27" +
+                            "^FT598,69^A0N,42,43^FH\\^CI28^FD" + Convert.ToDateTime(res.FinalPrintDateTime).ToString("dd-MM-yyyy HH:mm") + "^FS^CI27" +
+                            "^FT321,133^A0N,42,43^FH\\^CI28^FD" + res.Variant + "^FS^CI27" +
+                            "^FT316,251^A0N,40,41^FH\\^CI28^FD" + res.FinalBarcodeData + "^FS^CI27" +
+                            "^FT772,133^A0N,42,43^FH\\^CI28^FD" + res.SeatType + "^FS^CI27" +
+                            "^FT591,128^A0N,42,43^FH\\^CI28^FD" + feature + "^FS^CI27" +
+                            "^FT321,193^A0N,42,43^FH\\^CI28^FD" + res.FG_PartNumber + "^FS^CI27" +
+                            "^FT53,267^BQN,2,9" +
+                            "^FH\\^FDLA," + res.FG_PartNumber + "^FS^CI27" +
+                            "^PQ1,0,1,Y" +
+                            "^XZ";
+
+                        // trying to handle this label with prn datsbase  
+                        string errZPLString = "\u0010CT~~CD,~CC^~CT~" +
                             "^XA" +
                             "~TA000" +
                             "~JSN" +

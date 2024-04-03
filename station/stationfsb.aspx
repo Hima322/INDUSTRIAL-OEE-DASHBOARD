@@ -164,6 +164,38 @@
             })
         }
 
+        //function for tool get dctool ip address function
+        const getDcToolIp = _ => {
+            $.ajax({
+                type: "POST",
+                url: "stationfsb.aspx/GetDcToolIp",
+                data: `{station:'${station}'}`,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+                    if (!res.d.includes("Error")) {
+                        if (res.d == "notorque") {
+                            $("#dctool_badge").hide()
+                            $("#showDctoolIndicate").hide()
+                        } else {
+                            dcToolIp = res.d
+                            $("#dctool_badge").show()
+                            $("#showDctoolIndicate").show()
+                        }
+                    } else {
+                        toast(res.d)
+                        $("#dctool_badge").hide()
+                        $("#showDctoolIndicate").hide()
+                    }
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+
         const getJobCount = _ => {
             $.ajax({
                 type: "POST",
@@ -180,33 +212,7 @@
                     console.log(e);
                 }
             })
-        }
-        
-        //function for tool get dctool ip address function
-        const getDcToolIp = _ => {
-            $.ajax({
-                type: "POST",
-                url: "stationfsb.aspx/GetDcToolIp",
-                data: `{station:'${station}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {  
-                    if (res.d != "Error") {
-                        dcToolIp = res.d
-                        $("#dctool_badge").show()
-                        $("#showDctoolIndicate").show()
-                    } else {
-                        $("#dctool_badge").hide()
-                        $("#showDctoolIndicate").hide()
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
+        } 
 
         //function for tool status function for info
         const ToolStatus = _ => {

@@ -183,12 +183,18 @@
                 dataType: "json",
                 async: "true",
                 cache: "false",
-                success: (res) => {  
-                    if (res.d != "Error") {
-                        dcToolIp = res.d
-                        $("#dctool_badge").show()
-                        $("#showDctoolIndicate").show()
+                success: (res) => {
+                    if (!res.d.includes("Error")) {
+                        if (res.d == "notorque") {
+                            $("#dctool_badge").hide()
+                            $("#showDctoolIndicate").hide()
+                        } else {
+                            dcToolIp = res.d
+                            $("#dctool_badge").show()
+                            $("#showDctoolIndicate").show()
+                        }
                     } else {
+                        toast(res.d)
                         $("#dctool_badge").hide()
                         $("#showDctoolIndicate").hide()
                     }

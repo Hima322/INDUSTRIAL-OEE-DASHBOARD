@@ -52,11 +52,11 @@
             //this function to show year inside line graph
             $("#yearPicker").prepend(new Array(new Date().getFullYear() - 2024).fill().map((_, i) => `<option>${2024 + i}</option>`))
             getDelayRecords()
-             
-            <%--pwd = prompt("Hi admin enter your password : ")
+
+            pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
                 pwd = prompt("Please enter password to access this page : ") 
-            toast("Success.")--%>
+            toast("Success.")
         }) 
 
         setInterval(function () {
