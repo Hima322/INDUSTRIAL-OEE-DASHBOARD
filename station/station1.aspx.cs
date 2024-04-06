@@ -405,56 +405,72 @@ namespace WebApplication2.station
             }
         }
 
+        public static bool builtPrintEntry = true;
 
         [WebMethod]
         public static string PRINT_BUILT_TICKET()
         {
             string rtn = null;
-            if (IS_PLC_CONNECTED())
-            {
-                if ((bool)plc.Read(builtTicketPrintPlcTag))
-                {
-                    try
-                    {
-                        using (TMdbEntities db = new TMdbEntities())
-                        {
-                            var seatDataRes = db.SEAT_DATA.Where(i => i.StationNo == 0).FirstOrDefault();
-                            string SelectedFGpartno = seatDataRes.FG_PartNumber.ToString();
-                            long ID = seatDataRes.ID;
 
-                            if (seatDataRes != null)
+            if (builtPrintEntry)
+            {
+                builtPrintEntry = false;
+
+                if (IS_PLC_CONNECTED())
+                {
+                    if ((bool)plc.Read(builtTicketPrintPlcTag))
+                    {
+                        try
+                        {
+                            using (TMdbEntities db = new TMdbEntities())
                             {
-                                try
+                                var seatDataRes = db.SEAT_DATA.Where(i => i.StationNo == 0).FirstOrDefault();
+
+                                if (seatDataRes != null)
                                 {
-                                    if (PrintBuildTicket(seatDataRes.SequenceNo.ToString().PadLeft(5, '0'), seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType, seatDataRes.FG_PartNumber) == "Done")
+                                    string SelectedFGpartno = seatDataRes.FG_PartNumber.ToString();
+                                    long ID = seatDataRes.ID;
+
+                                    try
                                     {
-                                        seatDataRes.BuildLabelBarcode = seatDataRes.FG_PartNumber + "-" + seatDataRes.SequenceNo.ToString().PadLeft(5, '0');
-                                        seatDataRes.StationNo = 1;
-                                        seatDataRes.BuildNoDatetime = DateTime.Now;
-                                        db.SaveChanges();
-                                        plc.Write(builtTicketPrintPlcTag, false);
-                                        rtn = "Done";
+                                        if (PrintBuildTicket(seatDataRes.SequenceNo.ToString().PadLeft(5, '0'), seatDataRes.Model, seatDataRes.Variant, seatDataRes.SeatType, seatDataRes.FG_PartNumber) == "Done")
+                                        {
+                                            seatDataRes.BuildLabelBarcode = seatDataRes.FG_PartNumber + "-" + seatDataRes.SequenceNo.ToString().PadLeft(5, '0');
+                                            seatDataRes.StationNo = 1;
+                                            seatDataRes.BuildNoDatetime = DateTime.Now;
+                                            db.SaveChanges();
+
+                                            if (IS_PLC_CONNECTED()) { 
+                                                plc.Write(builtTicketPrintPlcTag, false);
+                                            }
+                                            builtPrintEntry = true;
+                                            return "Done"; 
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        rtn = ex.Message;
+                                        builtPrintEntry = true;
                                     }
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    rtn = ex.Message;
+                                    builtPrintEntry = true;
+                                    return "Unavailable seat for production"; 
                                 }
                             }
-                            else
-                            {
-                                rtn = "Unavailable seat for production";
-                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        rtn = ex.Message;
+                        catch (Exception ex)
+                        {
+                            builtPrintEntry = true;
+                            return ex.Message;
+                        }
                     }
                 }
             }
+            builtPrintEntry = true;
             return rtn;
-        } 
+        }
 
         public static string PrintBuildTicket(string seq, string model, string variant, string seat, string fgpart)
         {

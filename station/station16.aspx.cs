@@ -287,29 +287,7 @@ namespace WebApplication2.station
             }
             return "Error";
         }
-
-        [WebMethod]
-        public static string GET_INSPECTION_TASK_lIST(string station)
-        {
-            try
-            {
-                using (TMdbEntities dbEntities = new TMdbEntities())
-                {
-                    var res = dbEntities.InspectionLists.Where(i => i.StationNameID == station).ToList();
-                    if (res != null)
-                    {
-                        return JsonSerializer.Serialize(res);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message.ToString());
-                return "Error";
-            }
-            return "Error";
-        }
-
+         
         [WebMethod]
         public static string IsQRValid(string build_ticket)
         {

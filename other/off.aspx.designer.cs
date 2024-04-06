@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebApplication2.order
+namespace WebApplication2.other
 {
 
 
-    public partial class Index
+    public partial class Off
     {
 
         /// <summary>

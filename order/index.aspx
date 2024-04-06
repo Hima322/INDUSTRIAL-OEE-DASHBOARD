@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication2.order.index" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication2.order.Index" %>
 
 <%@ Import Namespace="System.Data" %>
 
@@ -40,6 +40,7 @@
                         $("#loading").hide()
 
                         model_details = JSON.parse(res.d);
+                         
 
                         $("#model_value").html(
                             [...new Set(model_details.map(m => m.Model))].map((e, i) => `<option>${e}</option>`)

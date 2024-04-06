@@ -152,7 +152,9 @@ namespace WebApplication2.andon
             try
             {
                 using (TMdbEntities entity = new TMdbEntities())
-                { 
+                {
+                    var varRes = entity.VarTables.Where(i => i.VarName == "Shift").FirstOrDefault();
+                    if(varRes != null) { varRes.VarValue = cs; entity.SaveChanges(); }
                     var res = entity.Andons.Where(i => i.ShiftName == cs).ToList();
                     return JsonSerializer.Serialize(res);
                 }

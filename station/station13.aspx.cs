@@ -13,6 +13,8 @@ using S7.Net.Interfaces;
 using System.Web.Services.Description;
 using System.IO;
 using System.Net.Sockets;
+using System.Net;
+using System.Text;
 
 namespace WebApplication2.station
 {
@@ -33,6 +35,9 @@ namespace WebApplication2.station
         public static string plcReadTAg = ""; 
         public static string plcIpAddress = "";
 
+        public static string GoepelIpAddress = "";
+        public static int GoepelPort = 0;
+
         public static string printerIpAddress = "";
         public static int port = 0;
 
@@ -44,6 +49,7 @@ namespace WebApplication2.station
         public static void PAGE_LOAD_FUNCTION()
         {
             GET_PLCIP_ADDRESS();
+            GET_GOEPEL_ADDRESS();
             plc = new Plc(CpuType.S71500, plcIpAddress, 0, 0);
         }
 
@@ -66,7 +72,27 @@ namespace WebApplication2.station
             catch { }
         }
 
-
+        public static void GET_GOEPEL_ADDRESS()
+        {
+            try
+            {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    //this code for plc ip address fetching 
+                    var goepelIpRes = db.VarTables.Where(i => i.VarName == "GoepelIpAddress").FirstOrDefault();
+                    {
+                        if (goepelIpRes != null)
+                        {
+                            var val = goepelIpRes.VarValue;
+                            GoepelIpAddress = val.Split(':')[0];
+                            GoepelPort = int.Parse(val.Split(':')[1]);
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+        
         public static void GET_PLCIP_ADDRESS()
         {
             try
@@ -337,13 +363,13 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
-        public static string GET_INSPECTION_TASK_lIST(string station)
+        public static string GET_INSPECTION_TASK_lIST()
         {
             try
             {
                 using (TMdbEntities dbEntities = new TMdbEntities())
                 {
-                    var res = dbEntities.InspectionLists.Where(i => i.StationNameID == station).ToList();
+                    var res = dbEntities.InspectionLists.ToList();
                     if (res != null)
                     {
                         return JsonSerializer.Serialize(res);
@@ -377,10 +403,11 @@ namespace WebApplication2.station
                         {
                             plcReadTAg = ReadTagNameInPlc(plcStation, "ReadBit");
 
-                            if (IS_PLC_CONNECTED())
-                            {
                                 //this is scan bit tag in plc 
                                 WriteTagValueInPlc(plcStation, "ScanBit");
+
+                            if (IS_PLC_CONNECTED())
+                            {
 
                                 //this is for ods and all 
                                 if (res.Model == "PY1B" && res.SeatType == "DRIVER")
@@ -496,7 +523,7 @@ namespace WebApplication2.station
         } 
 
         [WebMethod]
-        public static string ODSExecuteTask(int id, string model_variant, long seat_data_id, string station, string username)
+        public static string GOEPEL_EXECUTE_TASK(int id, string code,string built_ticket, string model_variant, long seat_data_id, string station,string plcStation, string username)
         {
             try
             {
@@ -507,149 +534,133 @@ namespace WebApplication2.station
                     if (res != null)
                     {
                         if (IS_PLC_CONNECTED())
-                        {  
-                            decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34"))/10m;
-                            decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24"))/10m;
+                        {
+                            decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
 
-                            string wr = weight.ToString("00.00") + "," + registance.ToString("00.00");
-                            res.TaskCurrentValue = wr;
+                            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(GoepelIpAddress), GoepelPort);
+                            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                            int result = (UInt16)plc.Read("DB98.DBW30"); 
+                            socket.Connect(iPEndPoint);
+
+                            string input = code;
+                            byte[] buffer = new byte[1024];
+
+                            socket.Send(Encoding.ASCII.GetBytes(input));
+
+                            socket.Receive(buffer);
+
+                            string resData = Encoding.ASCII.GetString(buffer);
+
+                            bool SentLoadDwn = false;
+                            bool SentLoadUp = false;
+                            while (true)
+                            {
+
+                                if (resData == "Load Down")
+                                {
+                                    if (IS_PLC_CONNECTED())
+                                    {
+                                        if (!SentLoadDwn)
+                                        {
+                                            plc.Write("for down write tag in plc", true);
+                                            SentLoadDwn = true;
+                                        }
+                                        input = "Loaded";
+                                    }
+                                    if (weight > 30m)
+                                    {
+                                        socket.Send(Encoding.ASCII.GetBytes(input));
+                                        socket.Receive(buffer);
+                                        resData = Encoding.ASCII.GetString(buffer);
+                                    }
+                                }
+
+                                if (resData == "Load Up")
+                                {
+                                    if (IS_PLC_CONNECTED())
+                                    {
+                                        if (!SentLoadUp)
+                                        {
+                                            plc.Write("for up write tag in plc", true);
+                                            input = "Unloaded";
+                                            SentLoadUp = true;
+                                        }
+                                    }
+                                    if (weight <= 0.2m)
+                                    {
+                                        socket.Send(Encoding.ASCII.GetBytes(input));
+                                        socket.Receive(buffer);
+                                        resData = Encoding.ASCII.GetString(buffer);
+                                    }
+                                }
+
+                                if (resData != "Load Up" && resData != "Load Down")
+                                {
+                                    string sabVal = resData.Split(';')[0].Substring(3, 8);
+                                    string sabStatus = resData.Split(';')[0].Substring(11, 1);
+                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "SAB", sabVal, sabStatus, username);
+                                    if (sabStatus == "F")
+                                    {
+                                        ADD_REWORK_DATA(built_ticket, "SAB", username, seat_data_id.ToString());
+                                    }
+
+                                    string bbrVal = resData.Split(';')[2].Substring(3, 8);
+                                    string bbrStatus = resData.Split(';')[2].Substring(11, 1);
+                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
+                                    if (sabStatus == "F")
+                                    {
+                                        ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
+                                    }
+
+                                    string bbiVal = resData.Split(';')[1].Substring(3, 8);
+                                    string bbiStatus = resData.Split(';')[1].Substring(11, 1);
+                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
+                                    if (sabStatus == "F")
+                                    {
+                                        ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
+                                    }
+
+                                    string oduVAl = resData.Split(';')[4].Substring(3, 8);
+                                    string oduStatus = resData.Split(';')[4].Substring(11, 1);
+                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
+                                    if (sabStatus == "F")
+                                    {
+                                        ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
+                                    }
+
+                                    string odlVal = resData.Split(';')[3].Substring(3, 8);
+                                    string odlStatus = resData.Split(';')[3].Substring(11, 1);
+                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
+                                    if (sabStatus == "F")
+                                    {
+                                        ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
+                                    }
+
+                                    string overlStatus = resData.Split(';')[5].Substring(3, 1);
+
+                                    break;
+
+                                }
+                            }
+
+
+
+                            res.TaskCurrentValue = "current value";
+                            int result = (UInt16)plc.Read("DB98.DBW30");
                             if (result == 1)
                             {
-                                UpdateSeatData(seat_data_id, "ODS", wr);
-                                InsertJITLineSeatMfgReport(seat_data_id, station, "ODS", wr, "OK", username);
 
                                 res.TaskStatus = "Done";
 
-                                //update next row status to running
-                                if(IsRunningTask(res.StationNameID, model_variant)){
-                                    var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
-                                    if (nextRow != null) { nextRow.TaskStatus = "Running"; } 
-                                }
-
-                            } 
-                            else if (result == 2)
-                            {
-
-                                var seatRes = dbEntities.SEAT_DATA.Where(s => s.ID == seat_data_id).OrderByDescending(o => o.ID).FirstOrDefault();
-                                if (seatRes != null)
-                                {
-                                    ADD_REWORK_DATA(seatRes.BuildLabelBarcode, "ODS", username, seat_data_id.ToString());
-                                }
-                                //InsertJITLineSeatMfgReport(seat_data_id, station, "ODS", wr, "NG", username);
-                                //RejectTask(seat_data_id, res.StationNameID);
-                                //return "REJECTED";
-                            } 
-                           
-                            dbEntities.SaveChanges();
-
-
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                CurrentError = ex.Message;
-            }
-            return string.Empty;
-        }
-        
-
-        [WebMethod]
-        public static string BeltBuckleExecuteTask(int id, string model_variant, long seat_data_id, string seat, string station, string username)
-        {
-            try
-            {
-                using (TMdbEntities dbEntities = new TMdbEntities())
-                {
-
-                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
-                    if (res != null)
-                    {
-                        if (IS_PLC_CONNECTED())
-                        { 
-                            decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10m;
-
-                            res.TaskCurrentValue = registance.ToString();
-
-                            int result = (UInt16)plc.Read("DB98.DBW32");
-                            if (result == 1)
-                            {
-
-                                InsertJITLineSeatMfgReport(seat_data_id, station, "BELT BUCKLE", registance.ToString(), "OK", username);
-                                UpdateSeatData(seat_data_id, "BELT_BUCKLE", registance.ToString());
-
-                                if (seat == "DRIVER")
-                                {
-                                    UpdateSeatData(seat_data_id, "ODS", "NA"); 
-                                }
-
-
-
-                                res.TaskStatus = "Done";
                                 //update next row status to running
                                 if (IsRunningTask(res.StationNameID, model_variant))
                                 {
                                     var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
                                     if (nextRow != null) { nextRow.TaskStatus = "Running"; }
                                 }
-
-                            } else if (result == 2)
-                            {
-                                var seatRes = dbEntities.SEAT_DATA.Where(s => s.ID == seat_data_id).OrderByDescending(o => o.ID).FirstOrDefault();
-                                if (seatRes != null)
-                                {
-                                    ADD_REWORK_DATA(seatRes.BuildLabelBarcode, "BELT_BUCKLE", username, seat_data_id.ToString());
-                                }
-                                //InsertJITLineSeatMfgReport(seat_data_id, station, "BELT BUCKLE", registance.ToString(), "NG", username);
-                                //RejectTask(seat_data_id, res.StationNameID);
-                                //return "REJECTED";
-                            } 
-                           
+                            }
                             dbEntities.SaveChanges();
-
-
                         }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                CurrentError = ex.Message;
-            }
-            return string.Empty;
-        }
-        
-        [WebMethod]
-        public static string SABExecuteTask(int id, string model_variant, long seat_data_id, string station, string username)
-        {
-            try
-            {
-                using (TMdbEntities dbEntities = new TMdbEntities())
-                {
-
-                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
-                    if (res != null)
-                    {
-
-                        InsertJITLineSeatMfgReport(seat_data_id, station, "SAB", "value", "OK", username); 
-                        UpdateSeatData(seat_data_id, "SAB", "value");
-
-                        res.TaskCurrentValue = "OK";
-                        res.TaskStatus = "Done";
-                        dbEntities.SaveChanges();
-
-                        //update next row status to running
-                        if (IsRunningTask(res.StationNameID, model_variant))
-                        {
-                            var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
-                            if (nextRow != null) { nextRow.TaskStatus = "Running"; }
-                            dbEntities.SaveChanges();
-                        } 
-
-
                     }
                 }
             }
@@ -663,7 +674,7 @@ namespace WebApplication2.station
         public static bool qrEntry = true; 
 
         [WebMethod]
-        public static string InspectionExecuteTask(int id, string insId, string model_variant, string operator_name, string built_ticket, string seat_id)
+        public static string InspectionExecuteTask(int id, string insId, string model_variant, string operator_name, string built_ticket, string seat_id, string plcStation)
         {
             string rtn = "";
             int[] inspectIds = { };
@@ -688,7 +699,7 @@ namespace WebApplication2.station
                                     BuildLabelNumber = built_ticket,
                                     InspectionName = ins.InspectionName,
                                     InspectionType = ins.InspectionType,
-                                    StationNameID = ins.StationNameID,
+                                    StationNameID = plcStation,
                                     OperatorName = operator_name,
                                     InspectionDateTime = DateTime.Now,
                                     SeatID = seat_id,
@@ -917,11 +928,10 @@ namespace WebApplication2.station
             {
                 using (TMdbEntities dbEntities = new TMdbEntities())
                 {
-                    if (IS_PLC_CONNECTED())
-                    {
-
                         var taskRes = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
-                        if (taskRes != null)
+                    if (taskRes != null)
+                    {
+                        if (IS_PLC_CONNECTED())
                         {
                             if ((bool)plc.Read(plcReadTAg))
                             {
@@ -932,7 +942,6 @@ namespace WebApplication2.station
                                 dbEntities.SaveChanges();
                             }
                         }
-
                     }
                     return "Done";
                 }

@@ -25,5 +25,6 @@ namespace WebApplication2
         public string Features { get; set; }
         public string PartName { get; set; }
         public string Destination { get; set; }
+        public Nullable<int> VariantID { get; set; }
     }
 }

@@ -566,7 +566,7 @@
     </script>
     <style>
         input {
-            opacity: 0;
+            opacity: 1;
         }
 
         #task_list_container tr {

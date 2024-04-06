@@ -146,12 +146,8 @@
                     }
                 } else {
                      
-                    if (e.TaskType == "Inspection" && e.BomSeq == "ODS" && e.TaskStatus == "Running") {
-                        odsExecuteTask(e.ID)
-                    } else if (e.TaskType == "Inspection" && e.BomSeq == "BELT BUCKLE" && e.TaskStatus == "Running") {
-                        beltBuckleExecuteTask(e.ID)
-                    } else if (e.TaskType == "Inspection" && e.BomSeq == "SAB" && e.TaskStatus == "Running") {
-                        sabExecuteTask(e.ID)
+                    if (e.TaskType == "Goepel" && e.TaskStatus == "Running") {
+                        goepelExecuteTask(e.ID, e.BomSeq)
                     } else if (e.TaskType == "Inspection" && e.BomSeq == "VISUAL" && e.TaskCurrentValue == "" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
                         current_task_id = e.ID;
                         $("#inpection_task_list_modal").show()
@@ -386,7 +382,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/GET_INSPECTION_TASK_lIST",
-                data: `{station : '${station}'}`,
+                data: `{}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -398,10 +394,9 @@
 
                     $('#inspection_task_list_container').html(
                         data.map((e, i) => `
-                          <tr style="height: 46px; font-size: 20px;">
+                          <tr style="height: 46px; font-size: 20px; padding:0 30px; display:flex;align-items:center;justify-content:space-between;align-items:center;">
                             <th>${i + 1}.</th>
-                            <th>${e.InspectionName}</th>
-                            <th>${e.InspectionType}</th>
+                            <th>${e.InspectionName}</th> 
                             <th class="btn-group" role="group" aria-label="inspection-list">   
                                 <input type="radio" class="btn-check" name="options-outlined${e.ID}" id="OK${i + 1}" onclick="inspection_task_id.delete(${e.ID}) || complete_inspection.add(${e.ID})" autocomplete="off" >
                                 <label class="btn btn-outline-success btn-sm" for="OK${i + 1}" >OK</label>
@@ -440,11 +435,11 @@
             })
         } 
          
-        const odsExecuteTask = (id) => {
+        const goepelExecuteTask = (id,code) => {
             $.ajax({
                 type: "POST",
-                url: "station13.aspx/ODSExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', station:'${station}', username:'${user_details.UserName}'}`,
+                url: "station13.aspx/GOEPEL_EXECUTE_TASK",
+                data: `{id : '${id}', code : '${code}', built_ticket: '${build_ticket}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', station:'${station}', plcStation: '${plcStation}', username:'${user_details.UserName}'}`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -461,51 +456,7 @@
                 }
             })
         }
-         
-        const beltBuckleExecuteTask = (id) => {
-            $.ajax({
-                type: "POST",
-                url: "station13.aspx/BeltBuckleExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', seat :'${model_details.Seat}', station:'${station}', username:'${user_details.UserName}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => { 
-                    //if (res.d == "REJECTED") {
-                    //    toast("Seat Rejected.")
-                    //    $("#task_list_container").hide()
-                    //    setTimeout(_ => location.reload(), 3000)
-                    //}
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-         
-        const sabExecuteTask = (id) => {
-            $.ajax({
-                type: "POST",
-                url: "station13.aspx/SABExecuteTask",
-                data: `{id : '${id}', model_variant: '${model_details.ModelVariant}', seat_data_id :'${seat_data_id}', station:'${station}', username:'${user_details.UserName}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => { 
-                    //if (res.d == "REJECTED") {
-                    //    toast("Seat Rejected.")
-                    //    $("#task_list_container").hide()
-                    //    setTimeout(_ => location.reload(), 3000)
-                    //}
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-
+          
         var qrEntry = false
         //function for build ticket execute task
         const qrPrintExecuteTask = id => {
@@ -542,7 +493,7 @@
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/InspectionExecuteTask",
-                data: `{id : '${current_task_id}',insId: '${[...inspection_task_id].join()}', model_variant: '${model_details.ModelVariant}', operator_name : '${user_details.UserName}', built_ticket : '${build_ticket}',seat_id : '${seat_data_id}' }`,
+                data: `{id : '${current_task_id}',insId: '${[...inspection_task_id].join()}', model_variant: '${model_details.ModelVariant}', operator_name : '${user_details.UserName}', built_ticket : '${build_ticket}',seat_id : '${seat_data_id}',plcStation:'${plcStation}' }`,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: "true",
@@ -702,7 +653,7 @@
     </script>
     <style>
         input {
-            opacity: 0;
+            opacity: 1;
         }
 
         #task_list_container tr {
@@ -904,23 +855,27 @@
                 
                 <%--code for assign station on local storage--%>
                 <div id="inpection_task_list_modal">
-                    <div class="bg-light ms-auto" style="width:calc(100% - 350px);margin-top:381px;background:rgb(250, 250, 250) !important;" > 
+                    <div class="bg-light ms-auto" style="width:100%;margin-top:335px;background:rgb(250, 250, 250) !important;" > 
                          <table class="flex-grow-1 text-center w-100" >
-                             <thead>
-                                 <tr class="text-white" style="height: 46px; font-size: 20px; background: #212529;">
+                             <thead style="display:grid; grid-template-columns:1fr 1fr;">
+                                 <tr class="text-white" style="height: 46px;padding:0 30px; font-size: 20px; background: #212529;width:100%;display:flex;justify-content:space-between;align-items:center;">
                                      <th>SEQ</th> 
-                                     <th>INSPECTION NAME</th> 
-                                     <th>INSPECTION TYPE</th> 
+                                     <th>INSPECTION NAME</th>  
+                                     <th>STATUS</th>
+                                 </tr>
+                                 <tr class="text-white" style="height: 46px;padding:0 30px; font-size: 20px; background: #212529;width:100%;display:flex;justify-content:space-between;align-items:center;">
+                                     <th>SEQ</th> 
+                                     <th>INSPECTION NAME</th>  
                                      <th>STATUS</th>
                                  </tr>
                              </thead>
 
-                             <tbody id="inspection_task_list_container">
+                             <tbody style="display:grid; grid-template-columns:1fr 1fr;grid-column-gap:20px;" id="inspection_task_list_container">
                                  <%-- code will be come via ajax --%> 
                              </tbody>
                          </table>
                         
-                        <button class="btn btn-primary d-block m-auto mt-2 mb-4" type="button" onclick="inspectionExecuteTask()" >SAVE &amp; CONTINUE</button>                         
+                        <button class="btn btn-primary d-block m-auto mt-3 mb-4" type="button" onclick="inspectionExecuteTask()" >SAVE &amp; CONTINUE</button>                         
                     
                     </div>
                 </div>

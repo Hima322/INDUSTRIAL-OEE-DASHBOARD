@@ -16,7 +16,7 @@ namespace WebApplication2
     {
         public int ID { get; set; }
         public string InspectionName { get; set; }
+        public Nullable<bool> Reworkable { get; set; }
         public string InspectionType { get; set; }
-        public string StationNameID { get; set; }
     }
 }

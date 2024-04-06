@@ -135,6 +135,7 @@
     <Content Include="bom\add.aspx" />
     <Content Include="bom\edit.aspx" />
     <Content Include="bom\index.aspx" />
+    <Content Include="bom\print.aspx" />
     <Content Include="css\libs\animate.css" />
     <Content Include="css\libs\bootstrap.min.css" />
     <Content Include="css\libs\font-awesome.css" />
@@ -240,6 +241,13 @@
     <Compile Include="bom\index.aspx.designer.cs">
       <DependentUpon>index.aspx</DependentUpon>
     </Compile>
+    <Compile Include="bom\print.aspx.cs">
+      <DependentUpon>print.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="bom\print.aspx.designer.cs">
+      <DependentUpon>print.aspx</DependentUpon>
+    </Compile>
     <Compile Include="DelayRecord.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -302,6 +310,13 @@
       <DependentUpon>index.aspx</DependentUpon>
     </Compile>
     <Compile Include="other\Cryption.cs" />
+    <Compile Include="other\off.aspx.cs">
+      <DependentUpon>off.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="other\off.aspx.designer.cs">
+      <DependentUpon>off.aspx</DependentUpon>
+    </Compile>
     <Compile Include="PLCAddressList.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -528,6 +543,7 @@
     </Content>
     <Content Include="monitor\index.aspx" />
     <Content Include="order\index.aspx" />
+    <Content Include="other\off.aspx" />
     <Content Include="other\temp.prn" />
     <EntityDeploy Include="Model1.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
