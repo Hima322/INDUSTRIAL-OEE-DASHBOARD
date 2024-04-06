@@ -186,7 +186,7 @@ namespace WebApplication2.station
                         {
                             // Open connection
                             TcpClient client = new TcpClient();
-                            client.Connect(printer2IpAddress, port2);
+                            client.Connect(printer1IpAddress, port1);
 
                             // Write ZPL String to connection
                             StreamWriter writer = new StreamWriter(client.GetStream());

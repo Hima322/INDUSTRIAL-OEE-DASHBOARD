@@ -496,8 +496,8 @@ namespace WebApplication2.station
             {
                 if (IS_PLC_CONNECTED())
                 {
-                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10;
-                    decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10;
+                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
+                    decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10m;
 
                     string wr = weight.ToString("00.00") + "," + registance.ToString("00.00");
                     return wr;
@@ -522,135 +522,146 @@ namespace WebApplication2.station
             catch { return false; }
         } 
 
+        public static bool goepelEntry = true;
+
         [WebMethod]
-        public static string GOEPEL_EXECUTE_TASK(int id, string code,string built_ticket, string model_variant, long seat_data_id, string station,string plcStation, string username)
+        public static string GOEPEL_EXECUTE_TASK(int id, string code, string built_ticket, string model_variant, long seat_data_id, string station, string plcStation, string username)
         {
-            try
+            if (goepelEntry)
             {
-                using (TMdbEntities dbEntities = new TMdbEntities())
+                goepelEntry = false;
+
+
+                try
                 {
-
-                    var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
-                    if (res != null)
+                    using (TMdbEntities dbEntities = new TMdbEntities())
                     {
-                        if (IS_PLC_CONNECTED())
+
+                        var res = dbEntities.TaskListTables.Where(i => i.ID == id).FirstOrDefault();
+                        if (res != null)
                         {
-                            decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
-
-                            IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(GoepelIpAddress), GoepelPort);
-                            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-                            socket.Connect(iPEndPoint);
-
-                            string input = code;
-                            byte[] buffer = new byte[1024];
-
-                            socket.Send(Encoding.ASCII.GetBytes(input));
-
-                            socket.Receive(buffer);
-
-                            string resData = Encoding.ASCII.GetString(buffer);
-
-                            bool SentLoadDwn = false;
-                            bool SentLoadUp = false;
-                            while (true)
+                            if (IS_PLC_CONNECTED())
                             {
+                                decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
 
-                                if (resData == "Load Down")
+                                IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(GoepelIpAddress), GoepelPort);
+                                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                                socket.Connect(iPEndPoint);
+
+                                string input = code;
+                                byte[] buffer = new byte[1024];
+                                string resData = "";
+
+                                socket.Send(Encoding.ASCII.GetBytes(input));
+
+                                socket.Receive(buffer);
+
+                                resData = Encoding.ASCII.GetString(buffer);
+
+
+                                bool SentLoadDwn = false;
+                                bool SentLoadUp = false;
+
+                                while (true)
                                 {
-                                    if (IS_PLC_CONNECTED())
+
+                                    if (resData.Contains("Load Dn"))
                                     {
-                                        if (!SentLoadDwn)
+                                        if (IS_PLC_CONNECTED())
                                         {
-                                            plc.Write("for down write tag in plc", true);
-                                            SentLoadDwn = true;
+                                            if (!SentLoadDwn)
+                                            {
+                                                if (!(bool)plc.Read("DB12.DBX4.4"))
+                                                {
+                                                    plc.Write("DB12.DBX4.4", true);
+                                                    SentLoadDwn = true;
+                                                }
+                                            }
+                                            input = "Loaded";
                                         }
-                                        input = "Loaded";
-                                    }
-                                    if (weight > 30m)
-                                    {
-                                        socket.Send(Encoding.ASCII.GetBytes(input));
-                                        socket.Receive(buffer);
-                                        resData = Encoding.ASCII.GetString(buffer);
-                                    }
-                                }
-
-                                if (resData == "Load Up")
-                                {
-                                    if (IS_PLC_CONNECTED())
-                                    {
-                                        if (!SentLoadUp)
+                                        if (weight > 30)
                                         {
-                                            plc.Write("for up write tag in plc", true);
-                                            input = "Unloaded";
-                                            SentLoadUp = true;
+                                            socket.Send(Encoding.ASCII.GetBytes(input));
+                                            if (IS_PLC_CONNECTED()) { plc.Write("DB12.DBX4.4", false); }
+                                            socket.Receive(buffer);
+                                            resData = Encoding.ASCII.GetString(buffer);
                                         }
                                     }
-                                    if (weight <= 0.2m)
+
+                                    if (resData.Contains("Load Up"))
                                     {
-                                        socket.Send(Encoding.ASCII.GetBytes(input));
-                                        socket.Receive(buffer);
-                                        resData = Encoding.ASCII.GetString(buffer);
+                                        if (IS_PLC_CONNECTED())
+                                        {
+                                            if (!SentLoadUp)
+                                            {
+                                                plc.Write("DB12.DBX4.5", true);
+                                                input = "Unloaded";
+                                                SentLoadUp = true;
+                                            }
+                                        }
+                                        if ((bool)plc.Read("DB12.DBX4.6"))
+                                        {
+                                            socket.Send(Encoding.ASCII.GetBytes(input));
+                                            if (IS_PLC_CONNECTED()) { plc.Write("DB12.DBX4.5", false); }
+                                            socket.Receive(buffer);
+                                            resData = Encoding.ASCII.GetString(buffer);
+                                        }
+                                    }
+
+                                    if (!resData.Contains("Load Up") && !resData.Contains("Load Dn"))
+                                    {
+                                        string sabVal = resData.Split(';')[0].Substring(3, 8);
+                                        string sabStatus = resData.Split(';')[0].Substring(11, 1);
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "SAB", sabVal, sabStatus, username);
+                                        if (sabStatus == "F")
+                                        {
+                                            ADD_REWORK_DATA(built_ticket, "SAB", username, seat_data_id.ToString());
+                                        }
+
+                                        string bbrVal = resData.Split(';')[2].Substring(3, 8);
+                                        string bbrStatus = resData.Split(';')[2].Substring(11, 1);
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
+                                        if (sabStatus == "F")
+                                        {
+                                            ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
+                                        }
+
+                                        string bbiVal = resData.Split(';')[1].Substring(3, 8);
+                                        string bbiStatus = resData.Split(';')[1].Substring(11, 1);
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
+                                        if (sabStatus == "F")
+                                        {
+                                            ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
+                                        }
+
+                                        string oduVAl = resData.Split(';')[4].Substring(3, 8);
+                                        string oduStatus = resData.Split(';')[4].Substring(11, 1);
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
+                                        if (sabStatus == "F")
+                                        {
+                                            ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
+                                        }
+
+                                        string odlVal = resData.Split(';')[3].Substring(3, 8);
+                                        string odlStatus = resData.Split(';')[3].Substring(11, 1);
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
+                                        if (sabStatus == "F")
+                                        {
+                                            ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
+                                        }
+
+                                        string overlStatus = resData.Split(';')[5].Substring(3, 1);
+
+                                        break;
+
                                     }
                                 }
 
-                                if (resData != "Load Up" && resData != "Load Down")
-                                {
-                                    string sabVal = resData.Split(';')[0].Substring(3, 8);
-                                    string sabStatus = resData.Split(';')[0].Substring(11, 1);
-                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "SAB", sabVal, sabStatus, username);
-                                    if (sabStatus == "F")
-                                    {
-                                        ADD_REWORK_DATA(built_ticket, "SAB", username, seat_data_id.ToString());
-                                    }
-
-                                    string bbrVal = resData.Split(';')[2].Substring(3, 8);
-                                    string bbrStatus = resData.Split(';')[2].Substring(11, 1);
-                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
-                                    if (sabStatus == "F")
-                                    {
-                                        ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
-                                    }
-
-                                    string bbiVal = resData.Split(';')[1].Substring(3, 8);
-                                    string bbiStatus = resData.Split(';')[1].Substring(11, 1);
-                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
-                                    if (sabStatus == "F")
-                                    {
-                                        ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
-                                    }
-
-                                    string oduVAl = resData.Split(';')[4].Substring(3, 8);
-                                    string oduStatus = resData.Split(';')[4].Substring(11, 1);
-                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
-                                    if (sabStatus == "F")
-                                    {
-                                        ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
-                                    }
-
-                                    string odlVal = resData.Split(';')[3].Substring(3, 8);
-                                    string odlStatus = resData.Split(';')[3].Substring(11, 1);
-                                    InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
-                                    if (sabStatus == "F")
-                                    {
-                                        ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
-                                    }
-
-                                    string overlStatus = resData.Split(';')[5].Substring(3, 1);
-
-                                    break;
-
-                                }
-                            }
-
-
-
-                            res.TaskCurrentValue = "current value";
-                            int result = (UInt16)plc.Read("DB98.DBW30");
-                            if (result == 1)
-                            {
+                                res.TaskCurrentValue = resData;
 
                                 res.TaskStatus = "Done";
+
 
                                 //update next row status to running
                                 if (IsRunningTask(res.StationNameID, model_variant))
@@ -658,16 +669,23 @@ namespace WebApplication2.station
                                     var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
                                     if (nextRow != null) { nextRow.TaskStatus = "Running"; }
                                 }
+
+                                dbEntities.SaveChanges();
+
+                                goepelEntry = true;
+
+                                return "Done";
                             }
-                            dbEntities.SaveChanges();
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    CurrentError = ex.Message;
+                    goepelEntry = true;
+                }
             }
-            catch (Exception ex)
-            {
-                CurrentError = ex.Message;
-            }
+            goepelEntry = true;
             return string.Empty;
         }
          

@@ -39,8 +39,7 @@
             getAllPlcTagList()
             getInspectionTaskList()
             getTackTime()
-            isPrinterConnected()  
-            $("#odsBadge").hide()
+            isPrinterConnected()   
             $("#inpection_task_list_modal").hide()
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`) 
             $('input').attr('autocomplete', 'off');
@@ -118,10 +117,7 @@
             getTackTime()
             isScannerConnected()
             isPlcConnected()
-            isPrinterConnected()  
-            if (model_details.Seat == "DRIVER") {
-                $("#odsBadge").show()
-            }
+            isPrinterConnected()   
         }, 1000)
 
         setInterval(function () {
@@ -955,7 +951,7 @@
 
                 
              <div style="position: fixed; bottom: 0; right: 0; margin-right: 105px;margin-bottom:13px;" class="d-flex gap-2"> 
-                    <h3><span id="odsBadge" class="badge bg-danger mb-2">ODS : NOT APPLICABLE</span></h3>  
+                    <h3><font id="goepelResult" class="badge bg-danger mb-2"></font></h3>  
                     <h3><span id="weightBadge" class="badge bg-secondary mb-2">00.00 kg</span></h3>  
                     <h3><span id="registanceBadge" class="mb-2 badge bg-primary">00.00 &#8486;</span></h3>  
                 </div>
