@@ -50,6 +50,7 @@ namespace WebApplication2.station
         {
             GET_PLCIP_ADDRESS();
             GET_GOEPEL_ADDRESS();
+            GET_PRINTERIP_ADDRESS();
             plc = new Plc(CpuType.S71500, plcIpAddress, 0, 0);
         }
 
@@ -388,6 +389,7 @@ namespace WebApplication2.station
         [WebMethod]
         public static string IsQRValid(string build_ticket, int station, string plcStation)
         {
+            goepelEntry = true;
             try
             {
                 using (TMdbEntities dbEntities = new TMdbEntities())
@@ -496,17 +498,14 @@ namespace WebApplication2.station
             {
                 if (IS_PLC_CONNECTED())
                 {
-                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
-                    decimal registance = (decimal)((UInt16)plc.Read("DB98.DBW24")) / 10m;
-
-                    string wr = weight.ToString("00.00") + "," + registance.ToString("00.00");
-                    return wr;
+                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;  
+                    return weight.ToString();
                 }
                 return "Error";
             }
             catch { return "Error"; }
         }
-        
+
         public static bool IsRunningTask(string station, string ModelVar)
         {
             try
@@ -520,13 +519,15 @@ namespace WebApplication2.station
                 }
             }
             catch { return false; }
-        } 
+        }
 
         public static bool goepelEntry = true;
 
         [WebMethod]
         public static string GOEPEL_EXECUTE_TASK(int id, string code, string built_ticket, string model_variant, long seat_data_id, string station, string plcStation, string username)
         {
+            string rtn = "";
+
             if (goepelEntry)
             {
                 goepelEntry = false;
@@ -552,6 +553,7 @@ namespace WebApplication2.station
                                 string input = code;
                                 byte[] buffer = new byte[1024];
                                 string resData = "";
+                                string overlStatus = "";
 
                                 socket.Send(Encoding.ASCII.GetBytes(input));
 
@@ -611,82 +613,100 @@ namespace WebApplication2.station
 
                                     if (!resData.Contains("Load Up") && !resData.Contains("Load Dn"))
                                     {
-                                        string sabVal = resData.Split(';')[0].Substring(3, 8);
-                                        string sabStatus = resData.Split(';')[0].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "SAB", sabVal, sabStatus, username);
-                                        if (sabStatus == "F")
+                                        //if airbag present then this test will happen
+                                        if (code.Contains("A"))
                                         {
-                                            ADD_REWORK_DATA(built_ticket, "SAB", username, seat_data_id.ToString());
-                                        }
-
-                                        string bbrVal = resData.Split(';')[2].Substring(3, 8);
-                                        string bbrStatus = resData.Split(';')[2].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
-                                        if (sabStatus == "F")
-                                        {
-                                            ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
+                                            string sabVal = resData.Split(';')[0].Substring(3, 8);
+                                            string sabStatus = resData.Split(';')[0].Substring(11, 1);
+                                            InsertJITLineSeatMfgReport(seat_data_id, plcStation, "SAB", sabVal, sabStatus, username);
+                                            if (sabStatus == "F")
+                                            {
+                                                ADD_REWORK_DATA(built_ticket, "SAB", username, seat_data_id.ToString());
+                                            }
                                         }
 
                                         string bbiVal = resData.Split(';')[1].Substring(3, 8);
                                         string bbiStatus = resData.Split(';')[1].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE", sabVal, sabStatus, username);
-                                        if (sabStatus == "F")
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE INSERT", bbiVal, bbiStatus, username);
+                                        if (bbiStatus == "F")
                                         {
-                                            ADD_REWORK_DATA(built_ticket, "BELT BUCKLE", username, seat_data_id.ToString());
+                                            ADD_REWORK_DATA(built_ticket, "BELT BUCKLE INSERT", username, seat_data_id.ToString());
                                         }
 
-                                        string oduVAl = resData.Split(';')[4].Substring(3, 8);
-                                        string oduStatus = resData.Split(';')[4].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
-                                        if (sabStatus == "F")
+                                        string bbrVal = resData.Split(';')[2].Substring(3, 8);
+                                        string bbrStatus = resData.Split(';')[2].Substring(11, 1);
+                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE REMOVE", bbrVal, bbrStatus, username);
+                                        if (bbrStatus == "F")
                                         {
-                                            ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
+                                            ADD_REWORK_DATA(built_ticket, "BELT BUCKLE REMOVE", username, seat_data_id.ToString());
                                         }
 
-                                        string odlVal = resData.Split(';')[3].Substring(3, 8);
-                                        string odlStatus = resData.Split(';')[3].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS", sabVal, sabStatus, username);
-                                        if (sabStatus == "F")
+                                        //this is run when ods present
+                                        if (code.Contains("O"))
                                         {
-                                            ADD_REWORK_DATA(built_ticket, "ODS", username, seat_data_id.ToString());
+                                            string odlVal = resData.Split(';')[3].Substring(3, 8);
+                                            string odlStatus = resData.Split(';')[3].Substring(11, 1);
+                                            InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS LOAD", odlVal, odlStatus, username);
+                                            if (odlStatus == "F")
+                                            {
+                                                ADD_REWORK_DATA(built_ticket, "ODS LOAD", username, seat_data_id.ToString());
+                                            }
+
+                                            string oduVAl = resData.Split(';')[4].Substring(3, 8);
+                                            string oduStatus = resData.Split(';')[4].Substring(11, 1);
+                                            InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS UNLOAD", oduVAl, oduStatus, username);
+                                            if (oduStatus == "F")
+                                            {
+                                                ADD_REWORK_DATA(built_ticket, "ODS UNLOAD", username, seat_data_id.ToString());
+                                            }
                                         }
 
-                                        string overlStatus = resData.Split(';')[5].Substring(3, 1);
+                                        overlStatus = resData.Split(';')[5].Substring(3, 1);
 
                                         break;
 
                                     }
                                 }
 
-                                res.TaskCurrentValue = resData;
+                                if(overlStatus == "F")
+                                {
+                                    res.TaskCurrentValue = "FAIL";
+                                    res.TaskStatus = "Error";
+                                    dbEntities.SaveChanges();
+                                    goepelEntry = true;
+                                    return resData.Substring(0, 70);
+                                }
 
+                                res.TaskCurrentValue = "PASS";
                                 res.TaskStatus = "Done";
+                                dbEntities.SaveChanges();
 
 
                                 //update next row status to running
+
                                 if (IsRunningTask(res.StationNameID, model_variant))
                                 {
                                     var nextRow = dbEntities.TaskListTables.SqlQuery("Select * from TaskListTable where StationNameID = '" + res.StationNameID + "' and " + model_variant + " = '1' and TaskStatus = 'Pending' ").FirstOrDefault();
-                                    if (nextRow != null) { nextRow.TaskStatus = "Running"; }
+                                    if (nextRow != null)
+                                    {
+                                        nextRow.TaskStatus = "Running";
+                                    } 
+
+                                    dbEntities.SaveChanges();
+                                    rtn = resData.Substring(0, 70); 
                                 }
-
-                                dbEntities.SaveChanges();
-
-                                goepelEntry = true;
-
-                                return "Done";
                             }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    CurrentError = ex.Message;
+                    rtn = "Error" + ex.Message;
                     goepelEntry = true;
                 }
             }
-            goepelEntry = true;
-            return string.Empty;
+            rtn = "Error" + string.Empty; 
+            return rtn;
         }
          
         public static bool qrEntry = true; 
@@ -779,7 +799,7 @@ namespace WebApplication2.station
                         if (seatDataRes != null)
                         { 
                             var rewordRes = dbEntities.ReworkTables.Where(i => i.SeatID == seat_data_id.ToString() && i.SeatStatus == "NG").ToList();
-                            if (rewordRes != null)
+                            if (rewordRes.Count > 0)
                             {
                                 finelStatus = "HOLD";
                             }

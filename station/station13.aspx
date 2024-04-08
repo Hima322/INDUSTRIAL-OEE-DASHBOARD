@@ -39,7 +39,7 @@
             getAllPlcTagList()
             getInspectionTaskList()
             getTackTime()
-            isPrinterConnected()   
+            isPrinterConnected()    
             $("#inpection_task_list_modal").hide()
             $("#partImage").attr("src", `../image/task/${station}/1.jpg`) 
             $('input').attr('autocomplete', 'off');
@@ -142,7 +142,7 @@
                     }
                 } else {
                      
-                    if (e.TaskType == "Goepel" && e.TaskStatus == "Running") {
+                    if (e.TaskType == "Goepel" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
                         goepelExecuteTask(e.ID, e.BomSeq)
                     } else if (e.TaskType == "Inspection" && e.BomSeq == "VISUAL" && e.TaskCurrentValue == "" && (e.TaskStatus == "Running" || e.TaskStatus == "Error")) {
                         current_task_id = e.ID;
@@ -266,11 +266,9 @@
                 cache: "false",
                 success: (res) => { 
                     if (res.d != "Error") {
-                        let w = res.d.split(",")[0]
-                        let r = res.d.split(",")[1]
+                        let w = res.d
 
-                        $("#weightBadge").html(w + " kg")
-                        $("#registanceBadge").html(r + " &#8486;")
+                        $("#weightBadge").html(w + " kg") 
                     }   
                 },
                 Error: function (x, e) {
@@ -394,7 +392,7 @@
                             <th>${i + 1}.</th>
                             <th>${e.InspectionName}</th> 
                             <th class="btn-group" role="group" aria-label="inspection-list">   
-                                <input type="radio" class="btn-check" name="options-outlined${e.ID}" id="OK${i + 1}" onclick="inspection_task_id.delete(${e.ID}) || complete_inspection.add(${e.ID})" autocomplete="off" >
+                                <input type="radio" class="btn-check" name="options-outlined${e.ID}" id="OK${i + 1}" checked="true" onclick="inspection_task_id.delete(${e.ID}) || complete_inspection.add(${e.ID})" autocomplete="off" >
                                 <label class="btn btn-outline-success btn-sm" for="OK${i + 1}" >OK</label>
 
                                 <input type="radio" class="btn-check" name="options-outlined${e.ID}" id="NG${i + 1}" autocomplete="off" onclick="inspection_task_id.add(${e.ID}) && complete_inspection.add(${e.ID})" >
@@ -441,11 +439,9 @@
                 async: "true",
                 cache: "false",
                 success: (res) => { 
-                    //if (res.d == "REJECTED") {
-                    //    toast("Seat Rejected.")
-                    //    $("#task_list_container").hide()
-                    //    setTimeout(_ => location.reload(), 3000)
-                    //}
+                    if (!res.d.includes("Error")) {
+                        $("#goepelResult").text(res.d)
+                    }
                 },
                 Error: function (x, e) {
                     console.log(e);
@@ -485,7 +481,7 @@
 
         //function for inspection execute task
         const inspectionExecuteTask = () => {
-            if (complete_inspection.size != inspection_task_list.length) return toast("Incomplete Inspection")
+            //if (complete_inspection.size != inspection_task_list.length) return toast("Incomplete Inspection")
             $.ajax({
                 type: "POST",
                 url: "station13.aspx/InspectionExecuteTask",
@@ -789,13 +785,7 @@
                             <th class="table-secondary">
                                 <h5 id="LblJobCount"></h5>
                             </th>
-                        </tr>
-                        <%--<tr>
-                            <th class="table-dark">VIN NO</th>
-                            <th class="table-secondary">
-                                <h5 id="LblVinNumber"></h5>
-                            </th>
-                        </tr>--%>
+                        </tr> 
                         <tr>
                             <th class="table-dark">SEQ NO</th>
                             <th class="table-secondary">
@@ -952,8 +942,7 @@
                 
              <div style="position: fixed; bottom: 0; right: 0; margin-right: 105px;margin-bottom:13px;" class="d-flex gap-2"> 
                     <h3><font id="goepelResult" class="badge bg-danger mb-2"></font></h3>  
-                    <h3><span id="weightBadge" class="badge bg-secondary mb-2">00.00 kg</span></h3>  
-                    <h3><span id="registanceBadge" class="mb-2 badge bg-primary">00.00 &#8486;</span></h3>  
+                    <h3><span id="weightBadge" class="badge bg-secondary mb-2">00.00 kg</span></h3>   
                 </div>
 
             <%--dropdown for setting--%>

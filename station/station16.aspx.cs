@@ -58,6 +58,7 @@ namespace WebApplication2.station
 
                         if (IS_DCTOOL_CONNECTED())
                         {
+                            StartTightening = false;
                             DisableTool();
                         }
                         if (torqueIpRes.TorqueToolIPAddress == "")
@@ -101,28 +102,31 @@ namespace WebApplication2.station
 
         public static bool IS_DCTOOL_CONNECTED()
         {
-            if (DCserver.Connected == false)
+            try
             {
-                DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                DCserver.Connect(IPAddress.Parse(CurrentDcToolIp), CurrentDcToolPort);
+                if (DCserver.Connected == false)
+                {
+                    DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    DCserver.Connect(IPAddress.Parse(CurrentDcToolIp), CurrentDcToolPort);
 
-                byte[] byteData = { 0x30, 0x30, 0x32, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x30, 0x33, 0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0 };
-                int sent = DCserver.Send(byteData, SocketFlags.None);
-                byte[] byteFrom = new byte[1025];
-                int iRx = DCserver.Receive(byteFrom);
-                string ResultCheck = System.Text.Encoding.ASCII.GetString(byteFrom);
-                string ResultCheck1 = ResultCheck.Substring(4, 4);
-                if (ResultCheck1 == "0002")
+                    byte[] byteData = { 0x30, 0x30, 0x32, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x30, 0x33, 0x30, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0 };
+                    int sent = DCserver.Send(byteData, SocketFlags.None);
+                    byte[] byteFrom = new byte[1025];
+                    int iRx = DCserver.Receive(byteFrom);
+                    string ResultCheck = System.Text.Encoding.ASCII.GetString(byteFrom);
+                    string ResultCheck1 = ResultCheck.Substring(4, 4);
+                    if (ResultCheck1 == "0002")
+                    {
+                        return true;
+                    }
+                    else
+                    { return false; }
+                }
+                else
                 {
                     return true;
                 }
-                else
-                { return false; }
-            }
-            else
-            {
-                return true;
-            }
+            } catch { return false; }
         }
 
         [WebMethod]
@@ -500,7 +504,7 @@ namespace WebApplication2.station
             else if (PsetNo == 5)
             { i = 0x35; }
             else if (PsetNo == 6)
-            { i = 0x35; }
+            { i = 0x36; }
             else if (PsetNo == 7)
             { i = 0x37; }
             else if (PsetNo == 8)

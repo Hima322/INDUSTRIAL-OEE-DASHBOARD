@@ -52,17 +52,17 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Date" Type="date" />
           <Property Name="Time" Type="time" Precision="7" />
-          <Property Name="Shift" Type="varchar" MaxLength="10" />
-          <Property Name="SeatSerialNumber" Type="varchar" MaxLength="100" />
+          <Property Name="Shift" Type="varchar" MaxLength="50" />
+          <Property Name="SeatSerialNumber" Type="varchar" MaxLength="50" />
           <Property Name="BuildLabelNumber" Type="varchar" MaxLength="50" />
           <Property Name="StationNo" Type="varchar" MaxLength="50" />
-          <Property Name="StationDescription" Type="varchar" MaxLength="100" />
+          <Property Name="StationDescription" Type="varchar" MaxLength="50" />
           <Property Name="ParameterDescription" Type="varchar" MaxLength="50" />
-          <Property Name="DataValues" Type="varchar" MaxLength="100" />
-          <Property Name="OverallStatus" Type="varchar" MaxLength="10" />
+          <Property Name="DataValues" Type="varchar" MaxLength="50" />
+          <Property Name="OverallStatus" Type="varchar" MaxLength="50" />
           <Property Name="OperatorName" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="MODEL">
@@ -413,17 +413,17 @@
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Date" Type="DateTime" Precision="0" />
           <Property Name="Time" Type="Time" Precision="7" />
-          <Property Name="Shift" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="SeatSerialNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Shift" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SeatSerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="BuildLabelNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="StationNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="StationDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="StationDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ParameterDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DataValues" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="OverallStatus" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="DataValues" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="OverallStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="OperatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="MODEL">

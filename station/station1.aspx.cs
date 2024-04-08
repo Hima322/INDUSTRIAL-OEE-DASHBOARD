@@ -1000,7 +1000,7 @@ namespace WebApplication2.station
             else if (PsetNo == 5)
             { i = 0x35; }
             else if (PsetNo == 6)
-            { i = 0x35; }
+            { i = 0x36; }
             else if (PsetNo == 7)
             { i = 0x37; }
             else if (PsetNo == 8)

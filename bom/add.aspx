@@ -40,7 +40,7 @@
                         if (res.d == "Done") toast("Success")
                         setTimeout(function () {
                             location.replace(`/bom/index.aspx?model=${MODEL}&variant=${VARIANT}&fg=${FG_PART_NUMBER}`)
-                        }, 3000)
+                        }, 500)
                     },
                     Error: function (x, e) {
                         console.log(e);
