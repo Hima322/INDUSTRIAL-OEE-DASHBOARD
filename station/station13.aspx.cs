@@ -43,15 +43,27 @@ namespace WebApplication2.station
 
         private void Page_Load(object sender, EventArgs e)
         {
-            PAGE_LOAD_FUNCTION();
+
         }
 
+        [WebMethod]
         public static void PAGE_LOAD_FUNCTION()
         {
             GET_PLCIP_ADDRESS();
             GET_GOEPEL_ADDRESS();
             GET_PRINTERIP_ADDRESS();
             plc = new Plc(CpuType.S71500, plcIpAddress, 0, 0);
+            try
+            {
+                if (IS_PLC_CONNECTED())
+                {
+                    plc.Write("DB12.DBX4.4", false);
+                    plc.Write("DB12.DBX4.5", false);
+                } 
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         public static void GET_PRINTERIP_ADDRESS()
@@ -410,23 +422,22 @@ namespace WebApplication2.station
 
                             if (IS_PLC_CONNECTED())
                             {
-
                                 //this is for ods and all 
                                 if (res.Model == "PY1B" && res.SeatType == "DRIVER")
                                 {
-                                    plc.Write("DB5.DBW1218", Convert.ToUInt16(11));
+                                    plc.Write("DB5.DBW762", Convert.ToUInt16(11));
                                 }
                                 else if (res.Model == "PY1B" && res.SeatType == "CO-DRIVER")
                                 {
-                                    plc.Write("DB5.DBW1218", Convert.ToUInt16(12));
+                                    plc.Write("DB5.DBW762", Convert.ToUInt16(12));
                                 }
                                 else if (res.Model == "BBA" && res.SeatType == "DRIVER")
                                 {
-                                    plc.Write("DB5.DBW1218", Convert.ToUInt16(21));
+                                    plc.Write("DB5.DBW762", Convert.ToUInt16(21));
                                 }
                                 else if (res.Model == "BBA" && res.SeatType == "CO-DRIVER")
                                 {
-                                    plc.Write("DB5.DBW1218", Convert.ToUInt16(22));
+                                    plc.Write("DB5.DBW762", Convert.ToUInt16(22));
                                 }
                             } else { return "plcDiconnected"; }
 
@@ -491,6 +502,25 @@ namespace WebApplication2.station
             return string.Empty;
         }
 
+        public static decimal weight = 0;
+
+        [WebMethod]
+        public static string GET_UP_DOWN_VALUE()
+        {
+            try
+            {
+                if (IS_PLC_CONNECTED())
+                {
+                    bool up = (bool)plc.Read("DB12.DBX4.4");
+                    bool dn = (bool)plc.Read("DB12.DBX4.5"); 
+
+                    return "DB12.DBX4.4 : " + up.ToString() + " DB12.DBX4.5 : " + dn.ToString();
+                }
+                return "Error";
+            }
+            catch { return "Error"; }
+        }
+        
         [WebMethod]
         public static string GET_WEIGHT_AND_REGISTANCE_VALUE()
         {
@@ -498,7 +528,7 @@ namespace WebApplication2.station
             {
                 if (IS_PLC_CONNECTED())
                 {
-                    decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;  
+                    weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;  
                     return weight.ToString();
                 }
                 return "Error";
@@ -543,7 +573,7 @@ namespace WebApplication2.station
                         {
                             if (IS_PLC_CONNECTED())
                             {
-                                decimal weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
+                                weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;
 
                                 IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Parse(GoepelIpAddress), GoepelPort);
                                 Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -574,18 +604,16 @@ namespace WebApplication2.station
                                         {
                                             if (!SentLoadDwn)
                                             {
-                                                if (!(bool)plc.Read("DB12.DBX4.4"))
-                                                {
-                                                    plc.Write("DB12.DBX4.4", true);
-                                                    SentLoadDwn = true;
-                                                }
+                                                plc.Write("DB12.DBX4.4", true);
+                                                SentLoadDwn = true;
                                             }
                                             input = "Loaded";
                                         }
                                         if (weight > 30)
                                         {
                                             socket.Send(Encoding.ASCII.GetBytes(input));
-                                            if (IS_PLC_CONNECTED()) { plc.Write("DB12.DBX4.4", false); }
+                                            if (IS_PLC_CONNECTED())
+                                            { plc.Write("DB12.DBX4.4", false); }
                                             socket.Receive(buffer);
                                             resData = Encoding.ASCII.GetString(buffer);
                                         }
@@ -602,7 +630,7 @@ namespace WebApplication2.station
                                                 SentLoadUp = true;
                                             }
                                         }
-                                        if ((bool)plc.Read("DB12.DBX4.6"))
+                                        if (weight < 5)
                                         {
                                             socket.Send(Encoding.ASCII.GetBytes(input));
                                             if (IS_PLC_CONNECTED()) { plc.Write("DB12.DBX4.5", false); }
@@ -668,7 +696,7 @@ namespace WebApplication2.station
                                     }
                                 }
 
-                                if(overlStatus == "F")
+                                if (overlStatus == "F")
                                 {
                                     res.TaskCurrentValue = "FAIL";
                                     res.TaskStatus = "Error";
@@ -681,7 +709,6 @@ namespace WebApplication2.station
                                 res.TaskStatus = "Done";
                                 dbEntities.SaveChanges();
 
-
                                 //update next row status to running
 
                                 if (IsRunningTask(res.StationNameID, model_variant))
@@ -690,10 +717,10 @@ namespace WebApplication2.station
                                     if (nextRow != null)
                                     {
                                         nextRow.TaskStatus = "Running";
-                                    } 
+                                    }
 
                                     dbEntities.SaveChanges();
-                                    rtn = resData.Substring(0, 70); 
+                                    return resData.Substring(0, 70);
                                 }
                             }
                         }

@@ -68,28 +68,15 @@ namespace WebApplication2.bom
 
 
         [WebMethod]
-        public static string BOM_PRINT(int id)
-        {
-            string name = "";
-            string val = "";
-
+        public static string BOM_PRINT(string key, string val, string key1, string val1)
+        { 
             try
             {
-                using(TMdbEntities db = new TMdbEntities())
-                {
-                    var res = db.BOMs.Where(i => i.ID == id).FirstOrDefault();
-                    if(res != null)
-                    {
-                        name = res.PartName;
-                        val = res.PartNumber;
-                    }
-                }
-
-                // ZPL command 
-                string ZPLString = "\u0010CT~~CD,~CC^~CT~\r\n^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD10^JUS^LRN^CI0^XZ\r\n^XA\r\n^MMT\r\n^PW799\r\n^LL0200\r\n^LS0\r\n^FT52,179^BQN,2,6\r\n^FH\\^FDLA,"+val+"^FS\r\n^FT212,73^A0N,32,40^FH\\^FD"+name+"^FS\r\n^FT218,139^A0N,38,38^FH\\^FD"+val+"^FS\r\n^PQ1,0,1,Y^XZ\r\n";
-
-
-                // check after the ping is n success
+                // ZPL command  
+                string ZPLString = "\u0010CT~~CD,~CC^~CT~\r\n^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD10^JUS^LRN^CI0^XZ\r\n^XA\r\n^MMT\r\n^PW799\r\n^LL0200\r\n^LS0\r\n^FT49,154^BQN,2,5\r\n^FH\\^FDLA,"+val+"^FS\r\n^FT205,47^A0N,21,19^FH\\^FD"+key+"^FS\r\n^FT345,159^BQN,2,5\r\n^FH\\^FDLA,"+val1+"^FS\r\n^FT66,168^A0N,21,19^FH\\^FD"+val+"^FS\r\n^FT423,173^A0N,21,19^FH\\^FD"+val1+"^FS\r\n^FT497,68^A0N,21,19^FH\\^FD"+key1+"^FS\r\n^PQ1,0,1,Y^XZ\r\n";
+                    
+                    
+                    // check after the ping is n success
                 while (IS_PRINTER_CONNECTED() == "Success")
                 {
                     // Open connection

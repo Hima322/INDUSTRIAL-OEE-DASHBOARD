@@ -643,7 +643,7 @@
                             <th>Scan Build Ticket</th>
                             <th>Scan</th>
                             <th style="animation-iteration-count: 2; animation-delay: 2s;" class="animate__animated " id="temp_build_ticket_data">
-                                <img src="/image/scaning.gif" height="30" />
+                                <img id="scaning_img_gif" src="/image/scaning.gif" height="30" />
                             </th>
                             <th><i class="spinner-grow spinner-grow-sm "></i></th>
                         </tr>
@@ -653,7 +653,13 @@
                                 <script>
                                     //this is call to input focus continue
                                     $("#build_ticket").focus()
-                                    setInterval(function () { $("#build_ticket").focus() }, 500)
+                                    setInterval(function () {
+                                        if (!$("#build_ticket").is(":focus")) {
+                                            $("#scaning_img_gif").hide()
+                                        } else {
+                                            $("#scaning_img_gif").show()
+                                        }
+                                    }, 500) 
                                 </script>
                             </td>
                         </tr>

@@ -62,7 +62,7 @@
             current_model = m;
 
             $("#variant_value").html(
-                model_details.filter(e => e.Model == m && e.Seat == "DRIVER").map(e => `<option value='${e.Variant},${e.VariantID},${e.ModelVariant}'>${e.Variant},${e.PartName}</option>`)
+                model_details.filter(e => e.Model == m && e.Seat == "DRIVER").map(e => `<option value='${e.Variant},${e.VariantID},${e.ModelVariant}'>${e.Variant}, (${e.FG_PartNumber})</option>`)
             )
 
             filterSeat(`${model_details.filter(e => e.Model == m)[0].Variant},${model_details.filter(e => e.Model == m)[0].VariantID}`)
@@ -293,7 +293,7 @@
                                 <b>Model :</b>
                                 <select class="form-select" id="model_value" onchange="filterVariant(this.value)"></select>
                             </div>
-                            <div class="col-sm-5">
+                            <div class="col-sm-3">
                                 <b>Variant : </b><i> part name</i>
                                 <select class="form-select" id="variant_value" onchange="filterSeat(this.value)"></select>
                             </div> 

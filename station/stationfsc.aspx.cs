@@ -45,10 +45,11 @@ namespace WebApplication2.station
         public static bool StartTightening = false;
 
         private void Page_Load(object sender, EventArgs e)
-        {
-            PAGE_LOAD_FUNCTION();
+        { 
+
         }
 
+        [WebMethod]
         public static void PAGE_LOAD_FUNCTION()
         {
             GET_PLCIP_ADDRESS();

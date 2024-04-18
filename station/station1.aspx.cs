@@ -52,9 +52,10 @@ namespace WebApplication2.station
 
         private void Page_Load(object sender, EventArgs e)
         {
-            PAGE_LOAD_FUNCTION();
+
         }
 
+        [WebMethod]
         public static void PAGE_LOAD_FUNCTION()
         {
             GET_PLCIP_ADDRESS();
@@ -416,11 +417,11 @@ namespace WebApplication2.station
             {
                 builtPrintEntry = false;
 
-                if (IS_PLC_CONNECTED())
+                try
                 {
-                    if ((bool)plc.Read(builtTicketPrintPlcTag))
+                    if (IS_PLC_CONNECTED())
                     {
-                        try
+                        if ((bool)plc.Read(builtTicketPrintPlcTag))
                         {
                             using (TMdbEntities db = new TMdbEntities())
                             {
@@ -440,11 +441,12 @@ namespace WebApplication2.station
                                             seatDataRes.BuildNoDatetime = DateTime.Now;
                                             db.SaveChanges();
 
-                                            if (IS_PLC_CONNECTED()) { 
+                                            if (IS_PLC_CONNECTED())
+                                            {
                                                 plc.Write(builtTicketPrintPlcTag, false);
                                             }
                                             builtPrintEntry = true;
-                                            return "Done"; 
+                                            return "Done";
                                         }
                                     }
                                     catch (Exception ex)
@@ -456,16 +458,16 @@ namespace WebApplication2.station
                                 else
                                 {
                                     builtPrintEntry = true;
-                                    return "Unavailable seat for production"; 
+                                    return "Unavailable seat for production";
                                 }
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            builtPrintEntry = true;
-                            return ex.Message;
-                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    builtPrintEntry = true;
+                    return ex.Message;
                 }
             }
             builtPrintEntry = true;
@@ -937,7 +939,7 @@ namespace WebApplication2.station
                                             if (UpdateNextTask(station, model_variant))
                                             {
                                                 //insert JITLineSeatMfgReport value
-                                                InsertJITLineSeatMfgReport(seat_data_id, plcStation, torque_seq, TA, "OK,OK", username);
+                                                InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, torque_seq, TA, "OK,OK", username);
                                                 DisableTool();
                                                 DCserver.Close();
                                                 return "Done";
@@ -955,15 +957,15 @@ namespace WebApplication2.station
                                     //insert JITLineSeatMfgReport value
                                     if (isTGood && !isAGood)
                                     {
-                                        InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "OK,NG", username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, torque_seq, TA, "OK,NG", username);
                                     }
                                     else if (!isTGood && isAGood)
                                     {
-                                        InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "NG,OK", username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, torque_seq, TA, "NG,OK", username);
                                     }
                                     else
                                     {
-                                        InsertJITLineSeatMfgReport(seat_data_id, station, torque_seq, TA, "NG,NG", username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, torque_seq, TA, "NG,NG", username);
                                     }
                                     DisableTool();
                                     DCserver.Close();
@@ -1283,7 +1285,7 @@ namespace WebApplication2.station
             }
         }
 
-        public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string parameter_desc, string value, string status, string username)
+        public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string plcStation, string parameter_desc, string value, string status, string username)
         {
             try
             {
@@ -1306,7 +1308,7 @@ namespace WebApplication2.station
                             Time = DateTime.Now.TimeOfDay,
                             Shift = seat_data_res.Shift,
                             BuildLabelNumber = seat_data_res.BuildLabelBarcode,
-                            StationNo = seat_data_res.StationNo + "0",
+                            StationNo = plcStation + "0",
                             StationDescription = station_desc,
                             ParameterDescription = parameter_desc,
                             DataValues = value,

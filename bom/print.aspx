@@ -45,14 +45,17 @@
           
         //on button click event 
         const handlePrint = _ => {
-            let id = $("#id").val() 
+            let key = $("#key").val() 
+            let val = $("#val").val() 
+            let key1 = $("#key1").val() 
+            let val1 = $("#val1").val() 
 
             $("#printing").css({ "display": "block" })
              
                 $.ajax({
                     type: "POST",
                     url: "print.aspx/BOM_PRINT",
-                    data: `{id : '${id}'}`,
+                    data: `{key : '${key}',val : '${val}',key1 : '${key1}',val1 : '${val1}'}`,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     async: "true",
@@ -110,10 +113,23 @@
 
 
         <div class="mx-5 mt-2 d-flex align-items-center mb-5">  
-            <h5>Enter Bom ID : </h5>  &ensp;
-            <input id="id" type="number" class="form-control" placeholder="eg. 1" style="width:100px;" /> &ensp; 
+            <h5>Enter Key1 : </h5>  &ensp;
+            <input id="key" class="form-control" placeholder="eg. 1st content" style="width:300px;" /> &ensp; 
 
-            <button onclick="handlePrint()" type="button" class="btn btn-primary">Print</button>   
+            <h5>Enter Val1 : </h5>  &ensp;
+            <input id="val" class="form-control" placeholder="eg. 1st content val" style="width:300px;" />  
+               
+        </div>  
+        
+
+        <div class="mx-5 mt-2 d-flex align-items-center mb-5">   
+            <h5>Enter Key2 : </h5>  &ensp;
+            <input id="key1" class="form-control" placeholder="eg. 2nd content" style="width:300px;" /> &ensp; 
+
+            <h5>Enter Val2 : </h5>  &ensp;
+            <input id="val1" class="form-control" placeholder="eg. 2nd content val" style="width:300px;" /> <br /><br />
+
+           &ensp;&ensp; <button onclick="handlePrint()" type="button" class="btn btn-primary">Print</button>   
         </div> <br /><br />
 
         <img src="/image/printing.gif" width="200" style="display:none;margin:auto;" id="printing" />

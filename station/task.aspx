@@ -21,10 +21,10 @@
 
         $(document).ready(function () {
 
+            getBomList()
             getModelDetail()
             getStationList() 
             getTorqueTable()
-            getBomList()
 
             pwd = prompt("Hi admin enter your password : ")
             while (pwd != <%=pwd%>)
@@ -80,7 +80,7 @@
                                                 ` <tr>
                                                     <td>${j.ImageSeq}</td> 
                                                     <td>
-                                                        ${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" ? j.TaskName : (` 
+                                                        ${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" || j.TaskType == "Goepel" ? j.TaskName : (` 
                                                             <select class="form-control" onchange="updateTaskListTable(${j.ID},'TaskName',this.value)" id="type${j.ID}" >
                                                                 <option></option>
                                                                 <option ${j.TaskName == "SCAN" ? "selected" : "" }>SCAN</option>
@@ -88,9 +88,9 @@
                                                             </select>
                                                         `) }
                                                     </td> 
-                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint"
+                                                    <td>${j.ImageSeq == 1 || j.ImageSeq == 14 || j.ImageSeq == 15 || j.TaskType == "Inspection" || j.TaskType == "QrPrint" || j.TaskType == "Goepel"
                                                     ? j.BomSeq
-                                                    : `<input list="bomMenu" value="${j.BomSeq}" onfocus=handleShowBomSeq(${j.ID}) onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }
+                                                    : `<input list="bomMenu" style="min-width:300px;" value="${j.TaskType == "Scan" ? bomList.filter(fil => fil.ScanSequence == j.BomSeq)[0]?.PartName : j.BomSeq}" onfocus=handleShowBomSeq(${j.ID}) onkeyup="updateTaskListTable(${j.ID},'BomSeq',this.value.toUpperCase().trim())" />` }
                                                     </td> 
 
                                                    ${
@@ -135,7 +135,7 @@
                 ) 
             } else {
                 $("#bomMenu").html(
-                    torqueTableList.filter(f => f.Station == `Station-${Math.ceil(id/15)}`).map(e => `<option>${e.TorqueName}</option>`)
+                    torqueTableList.map(e => `<option>${e.TorqueName}</option>`)
                 ) 
             }
         }
@@ -166,7 +166,7 @@
         const getTorqueTable = _ => {
             $.ajax({
                 type: "POST",
-                url: "task.aspx/GET_TORQUE_TABLE",
+                url: "task.aspx/GET_TORQUE_PSET",
                 data: ``,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -196,7 +196,7 @@
                 success: (res) => {
                     if (res.d != "Error") {
                         let data = JSON.parse(res.d)
-                        bomList = data 
+                        bomList = data  
                     }
                 },
                 Error: function (x, e) {
@@ -253,7 +253,7 @@
             text-align:center;
             outline:none;
         }
-        table tr td:nth-child(2),table tr th:nth-child(2){ 
+        table tr td:nth-child(3),table tr th:nth-child(3){ 
             position:sticky; 
             left:-17px;
             top:0;
@@ -290,7 +290,7 @@
 
          
         <br />
-    </div>
+    </div> 
     </form>
 </body>
 </html>

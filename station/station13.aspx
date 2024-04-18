@@ -35,6 +35,7 @@
 
 
         $(document).ready(function () {
+            pageLoadFunction()
             callStationInfo()
             getAllPlcTagList()
             getInspectionTaskList()
@@ -123,6 +124,7 @@
         setInterval(function () {
             if(isplcConnected){
                 getWeightAndRegistanceValue() 
+                //getUpDownValue()
             }
             if (isValidBuildTicket) {
                 getModelAndTaskList();
@@ -196,6 +198,26 @@
                 }
             })
         }
+
+         
+        const pageLoadFunction = _ => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/PAGE_LOAD_FUNCTION",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
+
          
         //function for call station function for info
         const callStationInfo = () => {
@@ -269,6 +291,28 @@
                         let w = res.d
 
                         $("#weightBadge").html(w + " kg") 
+                    }   
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }
+        
+
+        //function for get weight and registance
+        const getUpDownValue = () => {
+            $.ajax({
+                type: "POST",
+                url: "station13.aspx/GET_UP_DOWN_VALUE",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => { 
+                    if (res.d != "Error") {
+                        toast(res.d)
                     }   
                 },
                 Error: function (x, e) {
@@ -645,7 +689,7 @@
     </script>
     <style>
         input {
-            opacity: 1;
+            opacity: 0;
         }
 
         #task_list_container tr {
@@ -817,7 +861,7 @@
                             <th>Scan Build Ticket</th>
                             <th>Scan</th>
                             <th style="animation-iteration-count: 2; animation-delay: 2s;" class="animate__animated " id="temp_build_ticket_data">
-                                <img src="/image/scaning.gif" height="30" />
+                                <img id="scaning_img_gif" src="/image/scaning.gif" height="30" />
                             </th>
                             <th><i class="spinner-grow spinner-grow-sm "></i></th>
                         </tr>
@@ -826,7 +870,14 @@
                                 <asp:TextBox ID="build_ticket" runat="server" AutoPostBack="true" CssClass="form-control m-auto my-4" Onchange="return" Width="300"></asp:TextBox>
                                 <script>
                                     //this is call to input focus continue
-                                    setInterval(function () { $("#build_ticket").focus() }, 500)
+                                    $("#build_ticket").focus()
+                                    setInterval(function () {
+                                        if (!$("#build_ticket").is(":focus")) {
+                                            $("#scaning_img_gif").hide()
+                                        } else {
+                                            $("#scaning_img_gif").show()
+                                        }
+                                    }, 500) 
                                 </script>
                             </td>
                         </tr>

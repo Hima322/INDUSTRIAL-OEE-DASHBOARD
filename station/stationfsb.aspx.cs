@@ -46,9 +46,10 @@ namespace WebApplication2.station
 
         private void Page_Load(object sender, EventArgs e)
         {
-            PAGE_LOAD_FUNCTION();
+
         }
 
+        [WebMethod]
         public static void PAGE_LOAD_FUNCTION()
         {
             GET_PLCIP_ADDRESS();
@@ -663,9 +664,16 @@ namespace WebApplication2.station
             bool isTGood = false;
             bool isAGood = false;
             bool isTAGood = false;
+            int pset = 1;
 
             try
             {
+                using (TMdbEntities db = new TMdbEntities())
+                {
+                    var psetRes = db.TorquePsets.Where(i => i.TorqueName == torque_seq).FirstOrDefault();
+                    if (psetRes != null) { pset = Convert.ToInt16(psetRes.Pset); }
+                }
+
                 // Assume a buffer size of 1024, adjust as needed
                 byte[] buffer = new byte[1024];
 
@@ -674,6 +682,8 @@ namespace WebApplication2.station
                 {
 
                     int bytesRead = 0;
+
+                    SelectPset(pset);
 
                     while (Subscribe())
                     {
@@ -757,6 +767,45 @@ namespace WebApplication2.station
             }
             return "";
         }
+
+
+        public static void SelectPset(int PsetNo)
+        {
+            byte i = 0x00;
+            if (PsetNo == 1)
+            { i = 0x31; }
+            else if (PsetNo == 2)
+            { i = 0x32; }
+            else if (PsetNo == 3)
+            { i = 0x33; }
+            else if (PsetNo == 4)
+            { i = 0x34; }
+            else if (PsetNo == 5)
+            { i = 0x35; }
+            else if (PsetNo == 6)
+            { i = 0x36; }
+            else if (PsetNo == 7)
+            { i = 0x37; }
+            else if (PsetNo == 8)
+            { i = 0x38; }
+            else if (PsetNo == 9)
+            { i = 0x39; }
+            byte[] byteFrom = new byte[1025];
+            byte[] byteData = { 0x30, 0x30, 0x32, 0x33, 0x30, 0x30, 0x31, 0x38, 0x30, 0x30, 0x31, 0x30, 0x20, 0x20, 0x20, 0x20, 0x30, 0x30, 0x20, 0x20, 0x30, 0x30, i, 0x00 };
+            try
+            {
+                if (DCserver.Connected)
+                {
+                    int sent = DCserver.Send(byteData, SocketFlags.None);
+                    int p = DCserver.Receive(byteFrom, SocketFlags.None);
+                }
+            }
+            catch (Exception ex)
+            {
+                CurrentError = "pset : " + ex.ToString();
+            }
+        }
+
 
         public static void DisableTool()
         {

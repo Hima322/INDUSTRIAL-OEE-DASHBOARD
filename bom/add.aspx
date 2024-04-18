@@ -111,7 +111,7 @@
                                         <label for="PART_NUMBER" class="form-label">
                                             <b>Part Number :</b>
                                         </label>  
-                                        <input class="form-control" id="PART_NUMBER" />
+                                        <input value="E4RNS5-32001" class="form-control" id="PART_NUMBER" />
                                     </div> 
                                     <div class="col mt-3">
                                         <label for="DUPLICATE" class="form-label">
@@ -136,7 +136,7 @@
                                         <label for="PART_NAME" class="form-label">
                                             <b>Part Name :</b>
                                         </label>  
-                                        <input class="form-control" id="PART_NAME" />
+                                        <input value="PYTRO TECHNIC SEAT BELT" class="form-control" id="PART_NAME" />
                                     </div> 
 
                                <button type="button" class="btn btn-danger" onclick="history.back()">Cancel</button> &nbsp; 

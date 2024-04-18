@@ -60,13 +60,13 @@ namespace WebApplication2.station
 
 
         [WebMethod]
-        public static string GET_TORQUE_TABLE()
+        public static string GET_TORQUE_PSET()
         {
             try
             {
                 using (TMdbEntities db = new TMdbEntities())
                 {
-                    var res = db.STD_TorqueTable.ToList();
+                    var res = db.TorquePsets.ToList();
                     if (res != null)
                     {
                         return JsonSerializer.Serialize(res);
