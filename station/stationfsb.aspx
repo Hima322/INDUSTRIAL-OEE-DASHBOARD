@@ -126,6 +126,7 @@
             isScannerConnected() 
             if (dcToolIp != "") {
                 isPingDctool()
+                isConveyorAutoMode()
             } 
         }, 1000)
 
@@ -164,6 +165,24 @@
                 } 
             })
         }
+
+        const isConveyorAutoMode = _ => {
+            $.ajax({
+                type: "POST",
+                url: "stationfsb.aspx/IS_CONVEYOR_AUTO_MODE",
+                data: ``,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: "true",
+                cache: "false",
+                success: (res) => {
+
+                },
+                Error: function (x, e) {
+                    console.log(e);
+                }
+            })
+        }  
 
         //function for tool get dctool ip address function
         const getDcToolIp = _ => {

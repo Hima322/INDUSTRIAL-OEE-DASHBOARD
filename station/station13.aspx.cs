@@ -414,9 +414,7 @@ namespace WebApplication2.station
                             return "Rejected";
                         }
                         if (res.StationNo == station)
-                        {
-                            plcReadTAg = ReadTagNameInPlc(plcStation, "ReadBit");
-
+                        { 
                                 //this is scan bit tag in plc 
                                 WriteTagValueInPlc(plcStation, "ScanBit");
 
@@ -528,7 +526,7 @@ namespace WebApplication2.station
             {
                 if (IS_PLC_CONNECTED())
                 {
-                    weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;  
+                    weight = (decimal)((UInt16)plc.Read("DB98.DBW34")) / 10m;   
                     return weight.ToString();
                 }
                 return "Error";
@@ -646,7 +644,7 @@ namespace WebApplication2.station
                                         {
                                             string sabVal = resData.Split(';')[0].Substring(3, 8);
                                             string sabStatus = resData.Split(';')[0].Substring(11, 1);
-                                            InsertJITLineSeatMfgReport(seat_data_id, plcStation, "SAB", sabVal, sabStatus, username);
+                                            InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, "SAB", sabVal, sabStatus, username);
                                             if (sabStatus == "F")
                                             {
                                                 ADD_REWORK_DATA(built_ticket, "SAB", username, seat_data_id.ToString());
@@ -655,7 +653,7 @@ namespace WebApplication2.station
 
                                         string bbiVal = resData.Split(';')[1].Substring(3, 8);
                                         string bbiStatus = resData.Split(';')[1].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE INSERT", bbiVal, bbiStatus, username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, "BELT_BUCKLE INSERT", bbiVal, bbiStatus, username);
                                         if (bbiStatus == "F")
                                         {
                                             ADD_REWORK_DATA(built_ticket, "BELT BUCKLE INSERT", username, seat_data_id.ToString());
@@ -663,7 +661,7 @@ namespace WebApplication2.station
 
                                         string bbrVal = resData.Split(';')[2].Substring(3, 8);
                                         string bbrStatus = resData.Split(';')[2].Substring(11, 1);
-                                        InsertJITLineSeatMfgReport(seat_data_id, plcStation, "BELT_BUCKLE REMOVE", bbrVal, bbrStatus, username);
+                                        InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, "BELT_BUCKLE REMOVE", bbrVal, bbrStatus, username);
                                         if (bbrStatus == "F")
                                         {
                                             ADD_REWORK_DATA(built_ticket, "BELT BUCKLE REMOVE", username, seat_data_id.ToString());
@@ -674,7 +672,7 @@ namespace WebApplication2.station
                                         {
                                             string odlVal = resData.Split(';')[3].Substring(3, 8);
                                             string odlStatus = resData.Split(';')[3].Substring(11, 1);
-                                            InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS LOAD", odlVal, odlStatus, username);
+                                            InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, "ODS LOAD", odlVal, odlStatus, username);
                                             if (odlStatus == "F")
                                             {
                                                 ADD_REWORK_DATA(built_ticket, "ODS LOAD", username, seat_data_id.ToString());
@@ -682,7 +680,7 @@ namespace WebApplication2.station
 
                                             string oduVAl = resData.Split(';')[4].Substring(3, 8);
                                             string oduStatus = resData.Split(';')[4].Substring(11, 1);
-                                            InsertJITLineSeatMfgReport(seat_data_id, plcStation, "ODS UNLOAD", oduVAl, oduStatus, username);
+                                            InsertJITLineSeatMfgReport(seat_data_id, station, plcStation, "ODS UNLOAD", oduVAl, oduStatus, username);
                                             if (oduStatus == "F")
                                             {
                                                 ADD_REWORK_DATA(built_ticket, "ODS UNLOAD", username, seat_data_id.ToString());
@@ -998,7 +996,9 @@ namespace WebApplication2.station
                     {
                         if (IS_PLC_CONNECTED())
                         {
-                            if ((bool)plc.Read(plcReadTAg))
+                            var readTag = ReadTagNameInPlc(plcStation, "ReadBit");
+
+                            if ((bool)plc.Read(readTag))
                             {
                                 WriteTagValueInPlc(plcStation, "WriteBit", false);
                                 WriteTagValueInPlc(plcStation, "ScanBit", false);
@@ -1047,7 +1047,7 @@ namespace WebApplication2.station
             }
         }
 
-        public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string parameter_desc, string value, string status, string username)
+        public static void InsertJITLineSeatMfgReport(long seat_data_id, string station, string plcStation, string parameter_desc, string value, string status, string username)
         {
             try
             {
@@ -1070,7 +1070,7 @@ namespace WebApplication2.station
                             Time = DateTime.Now.TimeOfDay,
                             Shift = seat_data_res.Shift,
                             BuildLabelNumber = seat_data_res.BuildLabelBarcode,
-                            StationNo = seat_data_res.StationNo + "0",
+                            StationNo = plcStation + "0",
                             StationDescription = station_desc,
                             ParameterDescription = parameter_desc,
                             DataValues = value,

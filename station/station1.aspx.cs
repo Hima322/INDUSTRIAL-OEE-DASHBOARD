@@ -65,6 +65,28 @@ namespace WebApplication2.station
             DCserver = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
+        [WebMethod]
+        public static void IS_CONVEYOR_AUTO_MODE()
+        {
+            try
+            {
+                if (IS_DCTOOL_CONNECTED())
+                {
+                    if (IS_PLC_CONNECTED())
+                    {
+                        if ((bool)plc.Read("DB12.DBX4.7"))
+                        {
+                            if (!IsDcToolEnable)
+                            {
+                                EnableTool();
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+        
         public static void GET_PLCIP_ADDRESS()
         {
             try

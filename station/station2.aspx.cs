@@ -222,7 +222,29 @@ namespace WebApplication2.station
             }
             return station_name;
         }
-        
+
+        [WebMethod]
+        public static void IS_CONVEYOR_AUTO_MODE()
+        {
+            try
+            {
+                if (IS_DCTOOL_CONNECTED())
+                {
+                    if (IS_PLC_CONNECTED())
+                    {
+                        if ((bool)plc.Read("DB12.DBX4.7"))
+                        {
+                            if (!IsDcToolEnable)
+                            {
+                                EnableTool();
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
         [WebMethod]
         public static int GET_JOB_COUNT(int station)
         {

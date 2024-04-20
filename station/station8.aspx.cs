@@ -423,6 +423,28 @@ namespace WebApplication2.station
         }
 
         [WebMethod]
+        public static void IS_CONVEYOR_AUTO_MODE()
+        {
+            try
+            {
+                if (IS_DCTOOL_CONNECTED())
+                {
+                    if (IS_PLC_CONNECTED())
+                    {
+                        if ((bool)plc.Read("DB12.DBX4.7"))
+                        {
+                            if (!IsDcToolEnable)
+                            {
+                                EnableTool();
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        [WebMethod]
         public static string IsQRValid(string build_ticket, int station, string plcStation)
         {
             try
