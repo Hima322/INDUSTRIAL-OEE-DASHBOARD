@@ -543,7 +543,7 @@ namespace WebApplication2.station
                     var bom_res = dbEntities.BOMs.Where(i => i.FG_PartNumber == fgpart && i.ScanSequence == bom && val.Contains(i.PartNumber)).FirstOrDefault();
                     if (bom_res != null)
                     {
-                        if ((bool)bom_res.IsDuplicate)
+                        if ((bool)bom_res.IsDuplicate == false)
                         {
                             var res1 = dbEntities.SEAT_DATA.SqlQuery("select * from SEAT_DATA where SCAN_" + bom + " = '" + val + "'");
                             if (res1 != null)

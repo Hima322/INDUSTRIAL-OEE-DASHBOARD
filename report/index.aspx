@@ -533,10 +533,10 @@
             </div>
              
 
-            <div class="container-fluid px-4 mt-4 ">
+            <div class="container-fluid px-4 mt-4 table-responsive">
                 <%--code for show reported data--%>
 
-                <table id="table" class="table text-center table-sm table-bordered table-striped table-responsive" style="width: 100%">
+                <table id="table" class="table text-center table-sm table-bordered table-striped " style="width: 100%">
                     <thead class="table-secondary" >
                         <tr>
                             <th>Date</th>
@@ -556,9 +556,29 @@
                 </table>
 
 
+
+            <div id="singleReportContainer" class="table-responsive container">
+                <h5>Torque Details</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Shift</th> 
+                            <th>StationNo.</th>
+                            <th>Station Description</th>
+                            <th>Parameter Description</th>
+                            <th>Data Values</th>
+                            <th>Overall Status</th>
+                            <th>Operator Name</th>
+                        </tr>
+                    </thead>
+                    <tbody> </tbody> 
+                </table>
+            </div>
+
+                
             </div>
             <br /><br />
-
         </div>
     </form>
 </body>

@@ -27,6 +27,7 @@
             getTorqueTable()
 
             pwd = prompt("Hi admin enter your password : ")
+            if (!pwd) return location.replace("/index.aspx")
             while (pwd != <%=pwd%>)
                 pwd = prompt("Please enter password to access this page : ") 
             toast("Success.")
