@@ -13,10 +13,10 @@ namespace WebApplication2
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class TMdbEntities : DbContext
+    public partial class Entities1 : DbContext
     {
-        public TMdbEntities()
-            : base("name=TMdbEntities")
+        public Entities1()
+            : base("name=Entities1")
         {
         }
     
@@ -25,25 +25,17 @@ namespace WebApplication2
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Andon> Andons { get; set; }
-        public virtual DbSet<BOM> BOMs { get; set; }
-        public virtual DbSet<DelayRecord> DelayRecords { get; set; }
-        public virtual DbSet<InspectionList> InspectionLists { get; set; }
-        public virtual DbSet<JITLineSeatMfgReport> JITLineSeatMfgReports { get; set; }
-        public virtual DbSet<MODEL> MODELs { get; set; }
-        public virtual DbSet<MODEL_DEATILS> MODEL_DEATILS { get; set; }
+        public virtual DbSet<BarcodeList> BarcodeLists { get; set; }
+        public virtual DbSet<Line2_Data> Line2_Data { get; set; }
+        public virtual DbSet<Line3_Data> Line3_Data { get; set; }
         public virtual DbSet<OperatorWorkTime> OperatorWorkTimes { get; set; }
-        public virtual DbSet<PLCAddressList> PLCAddressLists { get; set; }
-        public virtual DbSet<PrnFile> PrnFiles { get; set; }
-        public virtual DbSet<ReworkTable> ReworkTables { get; set; }
-        public virtual DbSet<SEAT_DATA> SEAT_DATA { get; set; }
-        public virtual DbSet<ShiftSetting> ShiftSettings { get; set; }
-        public virtual DbSet<StationAssignment> StationAssignments { get; set; }
-        public virtual DbSet<STD_TorqueTable> STD_TorqueTable { get; set; }
-        public virtual DbSet<TaskListTable> TaskListTables { get; set; }
-        public virtual DbSet<Tool_IPAddress> Tool_IPAddress { get; set; }
-        public virtual DbSet<TorquePset> TorquePsets { get; set; }
-        public virtual DbSet<USER> USERs { get; set; }
-        public virtual DbSet<VarTable> VarTables { get; set; }
+        public virtual DbSet<ServerVariable> ServerVariables { get; set; }
+        public virtual DbSet<ShiftInfo> ShiftInfoes { get; set; }
+        public virtual DbSet<SideBraketLineData> SideBraketLineDatas { get; set; }
+        public virtual DbSet<StationInfo> StationInfoes { get; set; }
+        public virtual DbSet<TaskInfo> TaskInfoes { get; set; }
+        public virtual DbSet<TILTCOM_LineData> TILTCOM_LineData { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<YFG_PowerLineData> YFG_PowerLineData { get; set; }
     }
 }

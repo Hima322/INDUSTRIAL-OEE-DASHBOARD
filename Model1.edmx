@@ -4,1016 +4,626 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="TMdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Andon">
+    <Schema Namespace="Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BarcodeList">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="HourName" Type="varchar" MaxLength="50" />
-          <Property Name="Target" Type="int" />
-          <Property Name="ShiftName" Type="varchar" MaxLength="50" />
-          <Property Name="Production" Type="int" />
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Model" Type="nvarchar(max)" />
+          <Property Name="PartName" Type="nvarchar(max)" />
+          <Property Name="Handside" Type="nvarchar(max)" />
+          <Property Name="PartNumber" Type="nvarchar(max)" />
+          <Property Name="PartCode" Type="nvarchar(max)" />
+          <Property Name="ModelCode" Type="nvarchar(max)" />
+          <Property Name="DerivationCode" Type="nvarchar(max)" />
+          <Property Name="LineNumber" Type="nvarchar(max)" />
+          <Property Name="CountryNumber" Type="nvarchar(max)" />
         </EntityType>
-        <EntityType Name="BOM">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PartName" Type="varchar" MaxLength="255" />
-          <Property Name="PartNumber" Type="varchar" MaxLength="255" />
-          <Property Name="Model" Type="varchar" MaxLength="255" />
-          <Property Name="Variant" Type="varchar" MaxLength="255" />
-          <Property Name="FG_PartNumber" Type="varchar" MaxLength="255" />
-          <Property Name="Side" Type="varchar" MaxLength="255" />
-          <Property Name="ScanSequence" Type="varchar" MaxLength="255" />
-          <Property Name="IsDuplicate" Type="bit" />
-        </EntityType>
-        <EntityType Name="DelayRecord">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="bigint" Nullable="false" />
-          <Property Name="DelayType" Type="varchar" MaxLength="50" />
-          <Property Name="DelayTime" Type="datetime" />
-          <Property Name="DelaySecond" Type="int" />
-          <Property Name="StationNo" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="InspectionList">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="InspectionName" Type="varchar" MaxLength="200" />
-          <Property Name="Reworkable" Type="bit" />
-          <Property Name="InspectionType" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="JITLineSeatMfgReport">
+        <EntityType Name="Line2_Data">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Date" Type="date" />
-          <Property Name="Time" Type="time" Precision="7" />
-          <Property Name="Shift" Type="varchar" MaxLength="50" />
-          <Property Name="SeatSerialNumber" Type="varchar" MaxLength="50" />
-          <Property Name="BuildLabelNumber" Type="varchar" MaxLength="50" />
-          <Property Name="StationNo" Type="varchar" MaxLength="50" />
-          <Property Name="StationDescription" Type="varchar" MaxLength="50" />
-          <Property Name="ParameterDescription" Type="varchar" MaxLength="50" />
-          <Property Name="DataValues" Type="varchar" MaxLength="50" />
-          <Property Name="OverallStatus" Type="varchar" MaxLength="50" />
-          <Property Name="OperatorName" Type="varchar" MaxLength="50" />
+          <Property Name="SEQNo" Type="bigint" />
+          <Property Name="MODEL" Type="nvarchar(max)" />
+          <Property Name="VARIENT" Type="nvarchar(max)" />
+          <Property Name="FINALBARCODE" Type="nvarchar(max)" />
+          <Property Name="SCAN_DATA" Type="nvarchar(max)" />
+          <Property Name="DATE_TIME" Type="datetime" />
+          <Property Name="STATUS" Type="nvarchar(max)" />
         </EntityType>
-        <EntityType Name="MODEL">
+        <EntityType Name="Line3_Data">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SequenceNo" Type="bigint" />
+          <Property Name="Model" Type="nvarchar(max)" />
+          <Property Name="Variant" Type="nvarchar(max)" />
+          <Property Name="Shift" Type="nvarchar(max)" />
+          <Property Name="FinalQRCode" Type="nvarchar(max)" />
+          <Property Name="FinalQR_DateTime" Type="datetime" />
+          <Property Name="Status" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="OperatorWorkTimes">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ModelName" Type="varchar" MaxLength="50" />
-          <Property Name="PartNumber" Type="varchar" MaxLength="50" />
-          <Property Name="CustomerName" Type="varchar" MaxLength="100" />
-        </EntityType>
-        <EntityType Name="MODEL_DEATILS">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Model" Type="varchar" MaxLength="50" />
-          <Property Name="Variant" Type="varchar" MaxLength="100" />
-          <Property Name="ModelVariant" Type="varchar" MaxLength="50" />
-          <Property Name="5S/7F" Type="varchar" MaxLength="50" />
-          <Property Name="Seat" Type="varchar" MaxLength="50" />
-          <Property Name="CustPartNumber" Type="varchar" MaxLength="50" />
-          <Property Name="FG_PartNumber" Type="varchar" MaxLength="100" />
-          <Property Name="Features" Type="varchar" MaxLength="50" />
-          <Property Name="PartName" Type="varchar" MaxLength="150" />
-          <Property Name="Destination" Type="varchar" MaxLength="50" />
-          <Property Name="VariantID" Type="int" />
-        </EntityType>
-        <EntityType Name="OperatorWorkTime">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="StationNameID" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="OperatorName" Type="varchar" MaxLength="100" />
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Station" Type="nvarchar" MaxLength="50" />
+          <Property Name="UserName" Type="nvarchar(max)" />
           <Property Name="LoginTime" Type="datetime" />
-          <Property Name="LogoutTime" Type="datetime" />
         </EntityType>
-        <EntityType Name="PLCAddressList">
+        <EntityType Name="ServerVariables">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+          <Property Name="Value" Type="nvarchar(max)" />
+          <Property Name="Line" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ShiftInfo">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="PLCTagName" Type="varchar" MaxLength="50" />
-          <Property Name="Station1" Type="varchar" MaxLength="50" />
-          <Property Name="Station2" Type="varchar" MaxLength="50" />
-          <Property Name="Station3" Type="varchar" MaxLength="50" />
-          <Property Name="Station4" Type="varchar" MaxLength="50" />
-          <Property Name="Station5" Type="varchar" MaxLength="50" />
-          <Property Name="Station6" Type="varchar" MaxLength="50" />
-          <Property Name="Station7" Type="varchar" MaxLength="50" />
-          <Property Name="Station8" Type="varchar" MaxLength="50" />
-          <Property Name="Station9" Type="varchar" MaxLength="50" />
-          <Property Name="Station10" Type="varchar" MaxLength="50" />
-          <Property Name="Station11" Type="varchar" MaxLength="50" />
-          <Property Name="Station12" Type="varchar" MaxLength="50" />
-          <Property Name="Station13" Type="varchar" MaxLength="50" />
-          <Property Name="Station14" Type="varchar" MaxLength="50" />
-          <Property Name="Station15" Type="varchar" MaxLength="50" />
-          <Property Name="Station16" Type="varchar" MaxLength="50" />
-          <Property Name="Station17" Type="varchar" MaxLength="50" />
-          <Property Name="Station18" Type="varchar" MaxLength="50" />
-          <Property Name="Station19" Type="varchar" MaxLength="50" />
-          <Property Name="Station20" Type="varchar" MaxLength="50" />
-          <Property Name="Station21" Type="varchar" MaxLength="50" />
-          <Property Name="Station22" Type="varchar" MaxLength="50" />
-          <Property Name="Station23" Type="varchar" MaxLength="50" />
-          <Property Name="Station24" Type="varchar" MaxLength="50" />
-          <Property Name="Station25" Type="varchar" MaxLength="50" />
+          <Property Name="ShiftName" Type="nchar" MaxLength="10" />
+          <Property Name="Value" Type="nchar" MaxLength="10" />
         </EntityType>
-        <EntityType Name="PrnFile">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Label" Type="varchar" MaxLength="50" />
-          <Property Name="Width" Type="float" />
-          <Property Name="Height" Type="float" />
-          <Property Name="Top" Type="float" />
-          <Property Name="Left" Type="float" />
-        </EntityType>
-        <EntityType Name="ReworkTable">
+        <EntityType Name="SideBraketLineData">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="BuildLabelNumber" Type="varchar" MaxLength="100" />
-          <Property Name="InspectionName" Type="varchar" MaxLength="200" />
-          <Property Name="InspectionType" Type="varchar" MaxLength="50" />
-          <Property Name="StationNameID" Type="varchar" MaxLength="50" />
-          <Property Name="OperatorName" Type="varchar" MaxLength="100" />
-          <Property Name="InspectionDateTime" Type="datetime" />
-          <Property Name="SeatID" Type="varchar" MaxLength="50" />
-          <Property Name="SeatStatus" Type="varchar" MaxLength="50" />
-          <Property Name="ReworkDatetime" Type="datetime" />
+          <Property Name="SequenceNo" Type="bigint" />
+          <Property Name="Model" Type="nvarchar(max)" />
+          <Property Name="Varient" Type="nvarchar(max)" />
+          <Property Name="PartNumber" Type="nvarchar(max)" />
+          <Property Name="Station" Type="int" />
+          <Property Name="FinalQRCode" Type="nvarchar(max)" />
+          <Property Name="FinalQRDateTime" Type="datetime" />
+          <Property Name="InnerCell_ScanData" Type="nvarchar(max)" />
+          <Property Name="InnerCell_Status" Type="nvarchar(max)" />
+          <Property Name="InnerCell_DateTime" Type="datetime" />
+          <Property Name="OuterCellScanData" Type="nvarchar(max)" />
+          <Property Name="OuterCell_Status" Type="nvarchar(max)" />
+          <Property Name="OuterCell_DateTime1" Type="datetime" />
+          <Property Name="Bush_Assy_scanData" Type="nvarchar(max)" />
+          <Property Name="Bush_Assy_Status" Type="nvarchar(max)" />
+          <Property Name="Bush_Assy_DateTime" Type="datetime" />
         </EntityType>
-        <EntityType Name="SEAT_DATA">
+        <EntityType Name="StationInfo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="StationDesc" Type="nvarchar(max)" />
+          <Property Name="StationName" Type="nvarchar(max)" />
+          <Property Name="PLC" Type="nvarchar(max)" />
+          <Property Name="Printer" Type="nvarchar(max)" />
+          <Property Name="CycleRunningBitAddrs" Type="nvarchar(max)" />
+          <Property Name="PartOK_BitAdrdrs" Type="nvarchar(max)" />
+          <Property Name="PartNG_BitAdrdrs" Type="nvarchar(max)" />
+          <Property Name="CycleTimeBitAddrs" Type="nvarchar(max)" />
+          <Property Name="CycleCompleteBitAddrs" Type="nvarchar(max)" />
+          <Property Name="ScanBitAddrs" Type="nvarchar(max)" />
+          <Property Name="TorqueDataReg" Type="nvarchar(max)" />
+          <Property Name="ResetBitAddrs" Type="nvarchar(max)" />
+          <Property Name="TorqueStatusBitAdrrs" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="TaskInfo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="TaskName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CurrentStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="StationName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="TILTCOM_LineData">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SequenceNo" Type="int" />
-          <Property Name="FinalBarcodeData" Type="varchar" MaxLength="100" />
-          <Property Name="FinalPrintDateTime" Type="datetime" />
-          <Property Name="Shift" Type="varchar" MaxLength="5" />
-          <Property Name="BuildLabelBarcode" Type="varchar" MaxLength="100" />
-          <Property Name="BuildNoDatetime" Type="datetime" />
-          <Property Name="Model" Type="varchar" MaxLength="100" />
-          <Property Name="Variant" Type="varchar" MaxLength="100" />
-          <Property Name="FG_PartNumber" Type="varchar" MaxLength="50" />
-          <Property Name="SeatType" Type="varchar" MaxLength="100" />
-          <Property Name="ModelVariant" Type="varchar" MaxLength="100" />
-          <Property Name="StationNo" Type="int" />
-          <Property Name="STAUS" Type="varchar" MaxLength="50" />
-          <Property Name="SCAN_BOM1" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM2" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM3" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM4" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM5" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM6" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM7" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM8" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM9" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM10" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM11" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM12" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM13" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM14" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM15" Type="varchar" MaxLength="300" />
-          <Property Name="SCAN_BOM1_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM2_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM3_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM4_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM5_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM6_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM7_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM8_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM9_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM10_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM11_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM12_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM13_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM14_DATETIME" Type="datetime" />
-          <Property Name="SCAN_BOM15_DATETIME" Type="datetime" />
-          <Property Name="ODS" Type="varchar" MaxLength="50" />
-          <Property Name="BELT_BUCKLE" Type="varchar" MaxLength="50" />
-          <Property Name="SAB" Type="varchar" MaxLength="50" />
-          <Property Name="FSC" Type="varchar" MaxLength="50" />
-          <Property Name="FSB" Type="varchar" MaxLength="50" />
+          <Property Name="SequenceNo" Type="bigint" />
+          <Property Name="Model" Type="nvarchar(max)" />
+          <Property Name="Varient" Type="nvarchar(max)" />
+          <Property Name="PartNumber" Type="nvarchar(max)" />
+          <Property Name="Station" Type="int" />
+          <Property Name="FinalQRCode" Type="nvarchar(max)" />
+          <Property Name="FinalQRDateTime" Type="datetime" />
+          <Property Name="FinalStatus" Type="nvarchar(max)" />
         </EntityType>
-        <EntityType Name="ShiftSetting">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="ShiftName" Type="varchar" MaxLength="50" />
-          <Property Name="StartTime" Type="time" Precision="7" />
-          <Property Name="EndTime" Type="time" Precision="7" />
-        </EntityType>
-        <EntityType Name="StationAssignment">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="Station_Name" Type="varchar" MaxLength="100" />
-          <Property Name="StationNameID" Type="varchar" MaxLength="100" />
-        </EntityType>
-        <EntityType Name="STD_TorqueTable">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="TorqueToolIPAddress" Type="varchar" MaxLength="50" />
-          <Property Name="Station" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="TaskListTable">
+        <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="StationNameID" Type="varchar" MaxLength="50" />
-          <Property Name="ImageSeq" Type="int" />
-          <Property Name="TaskName" Type="varchar" MaxLength="100" />
-          <Property Name="TaskType" Type="varchar" MaxLength="50" />
-          <Property Name="TaskCurrentValue" Type="varchar" MaxLength="150" />
-          <Property Name="TaskStatus" Type="varchar" MaxLength="50" />
-          <Property Name="BomSeq" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant1" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant2" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant3" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant4" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant5" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant6" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant7" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant8" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant9" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant10" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant11" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant12" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant13" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant14" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant15" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant16" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant17" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant18" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant19" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant20" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant21" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant22" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant23" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant24" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant25" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant26" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant27" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant28" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant29" Type="varchar" MaxLength="50" />
-          <Property Name="ModelVariant30" Type="varchar" MaxLength="50" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar" MaxLength="10" />
+          <Property Name="Roll" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="Tool_IPAddress">
+        <EntityType Name="YFG_PowerLineData">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="int" Nullable="false" />
-          <Property Name="ToolName" Type="varchar" MaxLength="50" />
-          <Property Name="SttaionNameID" Type="varchar" MaxLength="50" />
-          <Property Name="IPaddress" Type="varchar" MaxLength="50" />
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SequenceNo" Type="bigint" />
+          <Property Name="Model" Type="nvarchar(max)" />
+          <Property Name="Varient" Type="nvarchar(max)" />
+          <Property Name="PartNumber" Type="nvarchar(max)" />
+          <Property Name="Station" Type="int" />
+          <Property Name="FinalQRCode" Type="nvarchar(max)" />
+          <Property Name="FinalQRDateTime" Type="datetime" />
+          <Property Name="BuiltTkt" Type="varchar" MaxLength="100" />
+          <Property Name="BuiltTktDateTime" Type="datetime" />
+          <Property Name="UpperBktClinchingStatus" Type="nvarchar(max)" />
+          <Property Name="UpperBktClinchingDateTime" Type="datetime" />
+          <Property Name="UpperGearBoxToq_Ang" Type="nvarchar(max)" />
+          <Property Name="UpperGearBoxStatus" Type="nvarchar(max)" />
+          <Property Name="UpperGearBoxDateTime" Type="datetime" />
+          <Property Name="UpperLowerFittingStatus" Type="nvarchar(max)" />
+          <Property Name="UpperLowerFittingDateTime" Type="datetime" />
+          <Property Name="LowerScrewToq_Ang1" Type="nvarchar(max)" />
+          <Property Name="LowerScrewToq_Ang2" Type="nvarchar(max)" />
+          <Property Name="LowerScrewStatus" Type="nvarchar(max)" />
+          <Property Name="LowerScrewDateTime" Type="datetime" />
+          <Property Name="Front_To_RearForceMax" Type="nvarchar(max)" />
+          <Property Name="Front_To_RearForceMin" Type="nvarchar(max)" />
+          <Property Name="Rear_To_FrontForceMax" Type="nvarchar(max)" />
+          <Property Name="Rear_To_FrontForceMin" Type="nvarchar(max)" />
+          <Property Name="Rear_To_FrontForceAvg" Type="nvarchar(max)" />
+          <Property Name="Front_To_RearForceAvg" Type="nvarchar(max)" />
+          <Property Name="SlideForceStatus" Type="nvarchar(max)" />
+          <Property Name="SlideForceDateTime" Type="datetime" />
+          <Property Name="LowerBoltToq1" Type="nvarchar(max)" />
+          <Property Name="LowerBoltToq2" Type="nvarchar(max)" />
+          <Property Name="LowerBoltStatus" Type="nvarchar(max)" />
+          <Property Name="LowerBoltDateTime" Type="datetime" />
+          <Property Name="RailGearBoxToq_Ang" Type="nvarchar(max)" />
+          <Property Name="RailGearBoxStatus" Type="nvarchar(max)" />
+          <Property Name="RailGearBoxDateTime" Type="datetime" />
+          <Property Name="RailQA_FR_MaxToq" Type="nvarchar(max)" />
+          <Property Name="RailQA_FR_MinToq" Type="nvarchar(max)" />
+          <Property Name="RailQA_FR_Dist" Type="nvarchar(max)" />
+          <Property Name="RailQA_RF_MaxToq" Type="nvarchar(max)" />
+          <Property Name="RailQA_RF_MinToq" Type="nvarchar(max)" />
+          <Property Name="RailQA_RF_Dist" Type="nvarchar(max)" />
+          <Property Name="RailQA_Status" Type="nvarchar(max)" />
+          <Property Name="RailQA_DateTime" Type="datetime" />
+          <Property Name="RailVisualInspectionDateTime" Type="datetime" />
+          <Property Name="FinalStatus" Type="nvarchar(max)" />
         </EntityType>
-        <EntityType Name="TorquePset">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="TorqueName" Type="varchar" MaxLength="50" />
-          <Property Name="Pset" Type="int" />
-        </EntityType>
-        <EntityType Name="USER">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserID" Type="varchar" MaxLength="50" />
-          <Property Name="UserName" Type="varchar" MaxLength="50" />
-          <Property Name="Password" Type="varchar" MaxLength="100" />
-          <Property Name="Roll" Type="varchar" MaxLength="50" />
-          <Property Name="Authenticated" Type="int" Nullable="false" />
-          <Property Name="WorkingAtStationID" Type="varchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <EntityType Name="VarTable">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="VarName" Type="varchar" MaxLength="100" />
-          <Property Name="VarValue" Type="varchar" MaxLength="500" />
-        </EntityType>
-        <EntityContainer Name="TMdbModelStoreContainer">
-          <EntitySet Name="Andon" EntityType="Self.Andon" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="BOM" EntityType="Self.BOM" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="DelayRecord" EntityType="Self.DelayRecord" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="InspectionList" EntityType="Self.InspectionList" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="JITLineSeatMfgReport" EntityType="Self.JITLineSeatMfgReport" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="MODEL" EntityType="Self.MODEL" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="MODEL_DEATILS" EntityType="Self.MODEL_DEATILS" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="OperatorWorkTime" EntityType="Self.OperatorWorkTime" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="PLCAddressList" EntityType="Self.PLCAddressList" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="PrnFile" EntityType="Self.PrnFile" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ReworkTable" EntityType="Self.ReworkTable" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="SEAT_DATA" EntityType="Self.SEAT_DATA" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ShiftSetting" EntityType="Self.ShiftSetting" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="StationAssignment" EntityType="Self.StationAssignment" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="STD_TorqueTable" EntityType="Self.STD_TorqueTable" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="TaskListTable" EntityType="Self.TaskListTable" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Tool_IPAddress" EntityType="Self.Tool_IPAddress" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="TorquePset" EntityType="Self.TorquePset" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="USER" EntityType="Self.USER" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="VarTable" EntityType="Self.VarTable" Schema="dbo" store:Type="Tables" />
+        <EntityContainer Name="ModelStoreContainer">
+          <EntitySet Name="BarcodeList" EntityType="Self.BarcodeList" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Line2_Data" EntityType="Self.Line2_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Line3_Data" EntityType="Self.Line3_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OperatorWorkTimes" EntityType="Self.OperatorWorkTimes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServerVariables" EntityType="Self.ServerVariables" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ShiftInfo" EntityType="Self.ShiftInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SideBraketLineData" EntityType="Self.SideBraketLineData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StationInfo" EntityType="Self.StationInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TaskInfo" EntityType="Self.TaskInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TILTCOM_LineData" EntityType="Self.TILTCOM_LineData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="YFG_PowerLineData" EntityType="Self.YFG_PowerLineData" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="TMdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityContainer Name="TMdbEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Andons" EntityType="TMdbModel.Andon" />
-          <EntitySet Name="BOMs" EntityType="TMdbModel.BOM" />
-          <EntitySet Name="DelayRecords" EntityType="TMdbModel.DelayRecord" />
-          <EntitySet Name="InspectionLists" EntityType="TMdbModel.InspectionList" />
-          <EntitySet Name="JITLineSeatMfgReports" EntityType="TMdbModel.JITLineSeatMfgReport" />
-          <EntitySet Name="MODELs" EntityType="TMdbModel.MODEL" />
-          <EntitySet Name="MODEL_DEATILS" EntityType="TMdbModel.MODEL_DEATILS" />
-          <EntitySet Name="OperatorWorkTimes" EntityType="TMdbModel.OperatorWorkTime" />
-          <EntitySet Name="PLCAddressLists" EntityType="TMdbModel.PLCAddressList" />
-          <EntitySet Name="PrnFiles" EntityType="TMdbModel.PrnFile" />
-          <EntitySet Name="ReworkTables" EntityType="TMdbModel.ReworkTable" />
-          <EntitySet Name="SEAT_DATA" EntityType="TMdbModel.SEAT_DATA" />
-          <EntitySet Name="ShiftSettings" EntityType="TMdbModel.ShiftSetting" />
-          <EntitySet Name="StationAssignments" EntityType="TMdbModel.StationAssignment" />
-          <EntitySet Name="STD_TorqueTable" EntityType="TMdbModel.STD_TorqueTable" />
-          <EntitySet Name="TaskListTables" EntityType="TMdbModel.TaskListTable" />
-          <EntitySet Name="Tool_IPAddress" EntityType="TMdbModel.Tool_IPAddress" />
-          <EntitySet Name="TorquePsets" EntityType="TMdbModel.TorquePset" />
-          <EntitySet Name="USERs" EntityType="TMdbModel.USER" />
-          <EntitySet Name="VarTables" EntityType="TMdbModel.VarTable" />
+      <Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="Entities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BarcodeLists" EntityType="Model.BarcodeList" />
+          <EntitySet Name="Line2_Data" EntityType="Model.Line2_Data" />
+          <EntitySet Name="Line3_Data" EntityType="Model.Line3_Data" />
+          <EntitySet Name="OperatorWorkTimes" EntityType="Model.OperatorWorkTime" />
+          <EntitySet Name="ServerVariables" EntityType="Model.ServerVariable" />
+          <EntitySet Name="ShiftInfoes" EntityType="Model.ShiftInfo" />
+          <EntitySet Name="SideBraketLineDatas" EntityType="Model.SideBraketLineData" />
+          <EntitySet Name="StationInfoes" EntityType="Model.StationInfo" />
+          <EntitySet Name="TaskInfoes" EntityType="Model.TaskInfo" />
+          <EntitySet Name="TILTCOM_LineData" EntityType="Model.TILTCOM_LineData" />
+          <EntitySet Name="Users" EntityType="Model.User" />
+          <EntitySet Name="YFG_PowerLineData" EntityType="Model.YFG_PowerLineData" />
         </EntityContainer>
-        <EntityType Name="Andon">
+        <EntityType Name="BarcodeList">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="HourName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Target" Type="Int32" />
-          <Property Name="ShiftName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Production" Type="Int32" />
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Handside" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ModelCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DerivationCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LineNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CountryNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="BOM">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PartName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PartNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Variant" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="FG_PartNumber" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Side" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="ScanSequence" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="IsDuplicate" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="DelayRecord">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" />
-          <Property Name="DelayType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DelayTime" Type="DateTime" Precision="3" />
-          <Property Name="DelaySecond" Type="Int32" />
-          <Property Name="StationNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="InspectionList">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="InspectionName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Reworkable" Type="Boolean" />
-          <Property Name="InspectionType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="JITLineSeatMfgReport">
+        <EntityType Name="Line2_Data">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Date" Type="DateTime" Precision="0" />
-          <Property Name="Time" Type="Time" Precision="7" />
-          <Property Name="Shift" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SeatSerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BuildLabelNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="StationNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="StationDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ParameterDescription" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DataValues" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OverallStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OperatorName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SEQNo" Type="Int64" />
+          <Property Name="MODEL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="VARIENT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FINALBARCODE" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SCAN_DATA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DATE_TIME" Type="DateTime" Precision="3" />
+          <Property Name="STATUS" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="MODEL">
+        <EntityType Name="Line3_Data">
           <Key>
-            <PropertyRef Name="ID" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ModelName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PartNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CustomerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="MODEL_DEATILS">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Variant" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="C5S_7F" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Seat" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CustPartNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FG_PartNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Features" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PartName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Destination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="VariantID" Type="Int32" />
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SequenceNo" Type="Int64" />
+          <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Variant" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Shift" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FinalQRCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FinalQR_DateTime" Type="DateTime" Precision="3" />
+          <Property Name="Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OperatorWorkTime">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="StationNameID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Station" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="LoginTime" Type="DateTime" Precision="3" />
-          <Property Name="LogoutTime" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="PLCAddressList">
+        <EntityType Name="ServerVariable">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Line" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ShiftInfo">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="PLCTagName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station5" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station6" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station7" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station8" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station9" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station10" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station11" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station12" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station13" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station14" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station15" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station16" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station17" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station18" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station19" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station20" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station21" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station22" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station23" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station24" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station25" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShiftName" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="Value" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
         </EntityType>
-        <EntityType Name="PrnFile">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Label" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Width" Type="Double" />
-          <Property Name="Height" Type="Double" />
-          <Property Name="Top" Type="Double" />
-          <Property Name="Left" Type="Double" />
-        </EntityType>
-        <EntityType Name="ReworkTable">
+        <EntityType Name="SideBraketLineData">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BuildLabelNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="InspectionName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="InspectionType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="StationNameID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="OperatorName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="InspectionDateTime" Type="DateTime" Precision="3" />
-          <Property Name="SeatID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SeatStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ReworkDatetime" Type="DateTime" Precision="3" />
+          <Property Name="SequenceNo" Type="Int64" />
+          <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Varient" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Station" Type="Int32" />
+          <Property Name="FinalQRCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FinalQRDateTime" Type="DateTime" Precision="3" />
+          <Property Name="InnerCell_ScanData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InnerCell_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InnerCell_DateTime" Type="DateTime" Precision="3" />
+          <Property Name="OuterCellScanData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OuterCell_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OuterCell_DateTime1" Type="DateTime" Precision="3" />
+          <Property Name="Bush_Assy_scanData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Bush_Assy_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Bush_Assy_DateTime" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="SEAT_DATA">
+        <EntityType Name="StationInfo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="StationDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StationName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PLC" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Printer" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CycleRunningBitAddrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartOK_BitAdrdrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartNG_BitAdrdrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CycleTimeBitAddrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CycleCompleteBitAddrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ScanBitAddrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TorqueDataReg" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResetBitAddrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TorqueStatusBitAdrrs" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TaskInfo">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="TaskName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CurrentStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StationName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TILTCOM_LineData">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SequenceNo" Type="Int32" />
-          <Property Name="FinalBarcodeData" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="FinalPrintDateTime" Type="DateTime" Precision="3" />
-          <Property Name="Shift" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <Property Name="BuildLabelBarcode" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="BuildNoDatetime" Type="DateTime" Precision="3" />
-          <Property Name="Model" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Variant" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="FG_PartNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SeatType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="StationNo" Type="Int32" />
-          <Property Name="STAUS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM1" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM2" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM3" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM4" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM5" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM6" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM7" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM8" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM9" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM10" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM11" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM12" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM13" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM14" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM15" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Name="SCAN_BOM1_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM2_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM3_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM4_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM5_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM6_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM7_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM8_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM9_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM10_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM11_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM12_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM13_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM14_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="SCAN_BOM15_DATETIME" Type="DateTime" Precision="3" />
-          <Property Name="ODS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BELT_BUCKLE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SAB" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FSC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="FSB" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SequenceNo" Type="Int64" />
+          <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Varient" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Station" Type="Int32" />
+          <Property Name="FinalQRCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FinalQRDateTime" Type="DateTime" Precision="3" />
+          <Property Name="FinalStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="ShiftSetting">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="ShiftName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="StartTime" Type="Time" Precision="7" />
-          <Property Name="EndTime" Type="Time" Precision="7" />
-        </EntityType>
-        <EntityType Name="StationAssignment">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="Station_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="StationNameID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="STD_TorqueTable">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="TorqueToolIPAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Station" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="TaskListTable">
+        <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="StationNameID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ImageSeq" Type="Int32" />
-          <Property Name="TaskName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="TaskType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TaskCurrentValue" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="TaskStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="BomSeq" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant5" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant6" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant7" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant8" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant9" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant10" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant11" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant12" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant13" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant14" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant15" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant16" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant17" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant18" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant19" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant20" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant21" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant22" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant23" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant24" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant25" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant26" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant27" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant28" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant29" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ModelVariant30" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Roll" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Tool_IPAddress">
+        <EntityType Name="YFG_PowerLineData">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" />
-          <Property Name="ToolName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SttaionNameID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IPaddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="TorquePset">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TorqueName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Pset" Type="Int32" />
-        </EntityType>
-        <EntityType Name="USER">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Roll" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Authenticated" Type="Int32" Nullable="false" />
-          <Property Name="WorkingAtStationID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="VarTable">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="VarName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="VarValue" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SequenceNo" Type="Int64" />
+          <Property Name="Model" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Varient" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PartNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Station" Type="Int32" />
+          <Property Name="FinalQRCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FinalQRDateTime" Type="DateTime" Precision="3" />
+          <Property Name="BuiltTkt" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="BuiltTktDateTime" Type="DateTime" Precision="3" />
+          <Property Name="UpperBktClinchingStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UpperBktClinchingDateTime" Type="DateTime" Precision="3" />
+          <Property Name="UpperGearBoxToq_Ang" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UpperGearBoxStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UpperGearBoxDateTime" Type="DateTime" Precision="3" />
+          <Property Name="UpperLowerFittingStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="UpperLowerFittingDateTime" Type="DateTime" Precision="3" />
+          <Property Name="LowerScrewToq_Ang1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LowerScrewToq_Ang2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LowerScrewStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LowerScrewDateTime" Type="DateTime" Precision="3" />
+          <Property Name="Front_To_RearForceMax" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Front_To_RearForceMin" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Rear_To_FrontForceMax" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Rear_To_FrontForceMin" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Rear_To_FrontForceAvg" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Front_To_RearForceAvg" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SlideForceStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SlideForceDateTime" Type="DateTime" Precision="3" />
+          <Property Name="LowerBoltToq1" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LowerBoltToq2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LowerBoltStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LowerBoltDateTime" Type="DateTime" Precision="3" />
+          <Property Name="RailGearBoxToq_Ang" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailGearBoxStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailGearBoxDateTime" Type="DateTime" Precision="3" />
+          <Property Name="RailQA_FR_MaxToq" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_FR_MinToq" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_FR_Dist" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_RF_MaxToq" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_RF_MinToq" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_RF_Dist" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_Status" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RailQA_DateTime" Type="DateTime" Precision="3" />
+          <Property Name="RailVisualInspectionDateTime" Type="DateTime" Precision="3" />
+          <Property Name="FinalStatus" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="TMdbModelStoreContainer" CdmEntityContainer="TMdbEntities">
-          <EntitySetMapping Name="Andons">
-            <EntityTypeMapping TypeName="TMdbModel.Andon">
-              <MappingFragment StoreEntitySet="Andon">
-                <ScalarProperty Name="Production" ColumnName="Production" />
-                <ScalarProperty Name="ShiftName" ColumnName="ShiftName" />
-                <ScalarProperty Name="Target" ColumnName="Target" />
-                <ScalarProperty Name="HourName" ColumnName="HourName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BOMs">
-            <EntityTypeMapping TypeName="TMdbModel.BOM">
-              <MappingFragment StoreEntitySet="BOM">
-                <ScalarProperty Name="IsDuplicate" ColumnName="IsDuplicate" />
-                <ScalarProperty Name="ScanSequence" ColumnName="ScanSequence" />
-                <ScalarProperty Name="Side" ColumnName="Side" />
-                <ScalarProperty Name="FG_PartNumber" ColumnName="FG_PartNumber" />
-                <ScalarProperty Name="Variant" ColumnName="Variant" />
-                <ScalarProperty Name="Model" ColumnName="Model" />
+        <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="Entities1">
+          <EntitySetMapping Name="BarcodeLists">
+            <EntityTypeMapping TypeName="Model.BarcodeList">
+              <MappingFragment StoreEntitySet="BarcodeList">
+                <ScalarProperty Name="CountryNumber" ColumnName="CountryNumber" />
+                <ScalarProperty Name="LineNumber" ColumnName="LineNumber" />
+                <ScalarProperty Name="DerivationCode" ColumnName="DerivationCode" />
+                <ScalarProperty Name="ModelCode" ColumnName="ModelCode" />
+                <ScalarProperty Name="PartCode" ColumnName="PartCode" />
                 <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="Handside" ColumnName="Handside" />
                 <ScalarProperty Name="PartName" ColumnName="PartName" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Line2_Data">
+            <EntityTypeMapping TypeName="Model.Line2_Data">
+              <MappingFragment StoreEntitySet="Line2_Data">
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="DATE_TIME" ColumnName="DATE_TIME" />
+                <ScalarProperty Name="SCAN_DATA" ColumnName="SCAN_DATA" />
+                <ScalarProperty Name="FINALBARCODE" ColumnName="FINALBARCODE" />
+                <ScalarProperty Name="VARIENT" ColumnName="VARIENT" />
+                <ScalarProperty Name="MODEL" ColumnName="MODEL" />
+                <ScalarProperty Name="SEQNo" ColumnName="SEQNo" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="DelayRecords">
-            <EntityTypeMapping TypeName="TMdbModel.DelayRecord">
-              <MappingFragment StoreEntitySet="DelayRecord">
-                <ScalarProperty Name="StationNo" ColumnName="StationNo" />
-                <ScalarProperty Name="DelaySecond" ColumnName="DelaySecond" />
-                <ScalarProperty Name="DelayTime" ColumnName="DelayTime" />
-                <ScalarProperty Name="DelayType" ColumnName="DelayType" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="InspectionLists">
-            <EntityTypeMapping TypeName="TMdbModel.InspectionList">
-              <MappingFragment StoreEntitySet="InspectionList">
-                <ScalarProperty Name="InspectionType" ColumnName="InspectionType" />
-                <ScalarProperty Name="Reworkable" ColumnName="Reworkable" />
-                <ScalarProperty Name="InspectionName" ColumnName="InspectionName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="JITLineSeatMfgReports">
-            <EntityTypeMapping TypeName="TMdbModel.JITLineSeatMfgReport">
-              <MappingFragment StoreEntitySet="JITLineSeatMfgReport">
-                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
-                <ScalarProperty Name="OverallStatus" ColumnName="OverallStatus" />
-                <ScalarProperty Name="DataValues" ColumnName="DataValues" />
-                <ScalarProperty Name="ParameterDescription" ColumnName="ParameterDescription" />
-                <ScalarProperty Name="StationDescription" ColumnName="StationDescription" />
-                <ScalarProperty Name="StationNo" ColumnName="StationNo" />
-                <ScalarProperty Name="BuildLabelNumber" ColumnName="BuildLabelNumber" />
-                <ScalarProperty Name="SeatSerialNumber" ColumnName="SeatSerialNumber" />
+          <EntitySetMapping Name="Line3_Data">
+            <EntityTypeMapping TypeName="Model.Line3_Data">
+              <MappingFragment StoreEntitySet="Line3_Data">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="FinalQR_DateTime" ColumnName="FinalQR_DateTime" />
+                <ScalarProperty Name="FinalQRCode" ColumnName="FinalQRCode" />
                 <ScalarProperty Name="Shift" ColumnName="Shift" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MODELs">
-            <EntityTypeMapping TypeName="TMdbModel.MODEL">
-              <MappingFragment StoreEntitySet="MODEL">
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
-                <ScalarProperty Name="ModelName" ColumnName="ModelName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MODEL_DEATILS">
-            <EntityTypeMapping TypeName="TMdbModel.MODEL_DEATILS">
-              <MappingFragment StoreEntitySet="MODEL_DEATILS">
-                <ScalarProperty Name="VariantID" ColumnName="VariantID" />
-                <ScalarProperty Name="Destination" ColumnName="Destination" />
-                <ScalarProperty Name="PartName" ColumnName="PartName" />
-                <ScalarProperty Name="Features" ColumnName="Features" />
-                <ScalarProperty Name="FG_PartNumber" ColumnName="FG_PartNumber" />
-                <ScalarProperty Name="CustPartNumber" ColumnName="CustPartNumber" />
-                <ScalarProperty Name="Seat" ColumnName="Seat" />
-                <ScalarProperty Name="C5S_7F" ColumnName="5S/7F" />
-                <ScalarProperty Name="ModelVariant" ColumnName="ModelVariant" />
                 <ScalarProperty Name="Variant" ColumnName="Variant" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="OperatorWorkTimes">
-            <EntityTypeMapping TypeName="TMdbModel.OperatorWorkTime">
-              <MappingFragment StoreEntitySet="OperatorWorkTime">
-                <ScalarProperty Name="LogoutTime" ColumnName="LogoutTime" />
+            <EntityTypeMapping TypeName="Model.OperatorWorkTime">
+              <MappingFragment StoreEntitySet="OperatorWorkTimes">
                 <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
-                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
-                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Station" ColumnName="Station" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PLCAddressLists">
-            <EntityTypeMapping TypeName="TMdbModel.PLCAddressList">
-              <MappingFragment StoreEntitySet="PLCAddressList">
-                <ScalarProperty Name="Station25" ColumnName="Station25" />
-                <ScalarProperty Name="Station24" ColumnName="Station24" />
-                <ScalarProperty Name="Station23" ColumnName="Station23" />
-                <ScalarProperty Name="Station22" ColumnName="Station22" />
-                <ScalarProperty Name="Station21" ColumnName="Station21" />
-                <ScalarProperty Name="Station20" ColumnName="Station20" />
-                <ScalarProperty Name="Station19" ColumnName="Station19" />
-                <ScalarProperty Name="Station18" ColumnName="Station18" />
-                <ScalarProperty Name="Station17" ColumnName="Station17" />
-                <ScalarProperty Name="Station16" ColumnName="Station16" />
-                <ScalarProperty Name="Station15" ColumnName="Station15" />
-                <ScalarProperty Name="Station14" ColumnName="Station14" />
-                <ScalarProperty Name="Station13" ColumnName="Station13" />
-                <ScalarProperty Name="Station12" ColumnName="Station12" />
-                <ScalarProperty Name="Station11" ColumnName="Station11" />
-                <ScalarProperty Name="Station10" ColumnName="Station10" />
-                <ScalarProperty Name="Station9" ColumnName="Station9" />
-                <ScalarProperty Name="Station8" ColumnName="Station8" />
-                <ScalarProperty Name="Station7" ColumnName="Station7" />
-                <ScalarProperty Name="Station6" ColumnName="Station6" />
-                <ScalarProperty Name="Station5" ColumnName="Station5" />
-                <ScalarProperty Name="Station4" ColumnName="Station4" />
-                <ScalarProperty Name="Station3" ColumnName="Station3" />
-                <ScalarProperty Name="Station2" ColumnName="Station2" />
-                <ScalarProperty Name="Station1" ColumnName="Station1" />
-                <ScalarProperty Name="PLCTagName" ColumnName="PLCTagName" />
+          <EntitySetMapping Name="ServerVariables">
+            <EntityTypeMapping TypeName="Model.ServerVariable">
+              <MappingFragment StoreEntitySet="ServerVariables">
+                <ScalarProperty Name="Line" ColumnName="Line" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ShiftInfoes">
+            <EntityTypeMapping TypeName="Model.ShiftInfo">
+              <MappingFragment StoreEntitySet="ShiftInfo">
+                <ScalarProperty Name="Value" ColumnName="Value" />
+                <ScalarProperty Name="ShiftName" ColumnName="ShiftName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="PrnFiles">
-            <EntityTypeMapping TypeName="TMdbModel.PrnFile">
-              <MappingFragment StoreEntitySet="PrnFile">
-                <ScalarProperty Name="Left" ColumnName="Left" />
-                <ScalarProperty Name="Top" ColumnName="Top" />
-                <ScalarProperty Name="Height" ColumnName="Height" />
-                <ScalarProperty Name="Width" ColumnName="Width" />
-                <ScalarProperty Name="Label" ColumnName="Label" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ReworkTables">
-            <EntityTypeMapping TypeName="TMdbModel.ReworkTable">
-              <MappingFragment StoreEntitySet="ReworkTable">
-                <ScalarProperty Name="ReworkDatetime" ColumnName="ReworkDatetime" />
-                <ScalarProperty Name="SeatStatus" ColumnName="SeatStatus" />
-                <ScalarProperty Name="SeatID" ColumnName="SeatID" />
-                <ScalarProperty Name="InspectionDateTime" ColumnName="InspectionDateTime" />
-                <ScalarProperty Name="OperatorName" ColumnName="OperatorName" />
-                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
-                <ScalarProperty Name="InspectionType" ColumnName="InspectionType" />
-                <ScalarProperty Name="InspectionName" ColumnName="InspectionName" />
-                <ScalarProperty Name="BuildLabelNumber" ColumnName="BuildLabelNumber" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SEAT_DATA">
-            <EntityTypeMapping TypeName="TMdbModel.SEAT_DATA">
-              <MappingFragment StoreEntitySet="SEAT_DATA">
-                <ScalarProperty Name="FSB" ColumnName="FSB" />
-                <ScalarProperty Name="FSC" ColumnName="FSC" />
-                <ScalarProperty Name="SAB" ColumnName="SAB" />
-                <ScalarProperty Name="BELT_BUCKLE" ColumnName="BELT_BUCKLE" />
-                <ScalarProperty Name="ODS" ColumnName="ODS" />
-                <ScalarProperty Name="SCAN_BOM15_DATETIME" ColumnName="SCAN_BOM15_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM14_DATETIME" ColumnName="SCAN_BOM14_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM13_DATETIME" ColumnName="SCAN_BOM13_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM12_DATETIME" ColumnName="SCAN_BOM12_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM11_DATETIME" ColumnName="SCAN_BOM11_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM10_DATETIME" ColumnName="SCAN_BOM10_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM9_DATETIME" ColumnName="SCAN_BOM9_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM8_DATETIME" ColumnName="SCAN_BOM8_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM7_DATETIME" ColumnName="SCAN_BOM7_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM6_DATETIME" ColumnName="SCAN_BOM6_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM5_DATETIME" ColumnName="SCAN_BOM5_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM4_DATETIME" ColumnName="SCAN_BOM4_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM3_DATETIME" ColumnName="SCAN_BOM3_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM2_DATETIME" ColumnName="SCAN_BOM2_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM1_DATETIME" ColumnName="SCAN_BOM1_DATETIME" />
-                <ScalarProperty Name="SCAN_BOM15" ColumnName="SCAN_BOM15" />
-                <ScalarProperty Name="SCAN_BOM14" ColumnName="SCAN_BOM14" />
-                <ScalarProperty Name="SCAN_BOM13" ColumnName="SCAN_BOM13" />
-                <ScalarProperty Name="SCAN_BOM12" ColumnName="SCAN_BOM12" />
-                <ScalarProperty Name="SCAN_BOM11" ColumnName="SCAN_BOM11" />
-                <ScalarProperty Name="SCAN_BOM10" ColumnName="SCAN_BOM10" />
-                <ScalarProperty Name="SCAN_BOM9" ColumnName="SCAN_BOM9" />
-                <ScalarProperty Name="SCAN_BOM8" ColumnName="SCAN_BOM8" />
-                <ScalarProperty Name="SCAN_BOM7" ColumnName="SCAN_BOM7" />
-                <ScalarProperty Name="SCAN_BOM6" ColumnName="SCAN_BOM6" />
-                <ScalarProperty Name="SCAN_BOM5" ColumnName="SCAN_BOM5" />
-                <ScalarProperty Name="SCAN_BOM4" ColumnName="SCAN_BOM4" />
-                <ScalarProperty Name="SCAN_BOM3" ColumnName="SCAN_BOM3" />
-                <ScalarProperty Name="SCAN_BOM2" ColumnName="SCAN_BOM2" />
-                <ScalarProperty Name="SCAN_BOM1" ColumnName="SCAN_BOM1" />
-                <ScalarProperty Name="STAUS" ColumnName="STAUS" />
-                <ScalarProperty Name="StationNo" ColumnName="StationNo" />
-                <ScalarProperty Name="ModelVariant" ColumnName="ModelVariant" />
-                <ScalarProperty Name="SeatType" ColumnName="SeatType" />
-                <ScalarProperty Name="FG_PartNumber" ColumnName="FG_PartNumber" />
-                <ScalarProperty Name="Variant" ColumnName="Variant" />
+          <EntitySetMapping Name="SideBraketLineDatas">
+            <EntityTypeMapping TypeName="Model.SideBraketLineData">
+              <MappingFragment StoreEntitySet="SideBraketLineData">
+                <ScalarProperty Name="Bush_Assy_DateTime" ColumnName="Bush_Assy_DateTime" />
+                <ScalarProperty Name="Bush_Assy_Status" ColumnName="Bush_Assy_Status" />
+                <ScalarProperty Name="Bush_Assy_scanData" ColumnName="Bush_Assy_scanData" />
+                <ScalarProperty Name="OuterCell_DateTime1" ColumnName="OuterCell_DateTime1" />
+                <ScalarProperty Name="OuterCell_Status" ColumnName="OuterCell_Status" />
+                <ScalarProperty Name="OuterCellScanData" ColumnName="OuterCellScanData" />
+                <ScalarProperty Name="InnerCell_DateTime" ColumnName="InnerCell_DateTime" />
+                <ScalarProperty Name="InnerCell_Status" ColumnName="InnerCell_Status" />
+                <ScalarProperty Name="InnerCell_ScanData" ColumnName="InnerCell_ScanData" />
+                <ScalarProperty Name="FinalQRDateTime" ColumnName="FinalQRDateTime" />
+                <ScalarProperty Name="FinalQRCode" ColumnName="FinalQRCode" />
+                <ScalarProperty Name="Station" ColumnName="Station" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="Varient" ColumnName="Varient" />
                 <ScalarProperty Name="Model" ColumnName="Model" />
-                <ScalarProperty Name="BuildNoDatetime" ColumnName="BuildNoDatetime" />
-                <ScalarProperty Name="BuildLabelBarcode" ColumnName="BuildLabelBarcode" />
-                <ScalarProperty Name="Shift" ColumnName="Shift" />
-                <ScalarProperty Name="FinalPrintDateTime" ColumnName="FinalPrintDateTime" />
-                <ScalarProperty Name="FinalBarcodeData" ColumnName="FinalBarcodeData" />
                 <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="ShiftSettings">
-            <EntityTypeMapping TypeName="TMdbModel.ShiftSetting">
-              <MappingFragment StoreEntitySet="ShiftSetting">
-                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
-                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
-                <ScalarProperty Name="ShiftName" ColumnName="ShiftName" />
+          <EntitySetMapping Name="StationInfoes">
+            <EntityTypeMapping TypeName="Model.StationInfo">
+              <MappingFragment StoreEntitySet="StationInfo">
+                <ScalarProperty Name="TorqueStatusBitAdrrs" ColumnName="TorqueStatusBitAdrrs" />
+                <ScalarProperty Name="ResetBitAddrs" ColumnName="ResetBitAddrs" />
+                <ScalarProperty Name="TorqueDataReg" ColumnName="TorqueDataReg" />
+                <ScalarProperty Name="ScanBitAddrs" ColumnName="ScanBitAddrs" />
+                <ScalarProperty Name="CycleCompleteBitAddrs" ColumnName="CycleCompleteBitAddrs" />
+                <ScalarProperty Name="CycleTimeBitAddrs" ColumnName="CycleTimeBitAddrs" />
+                <ScalarProperty Name="PartNG_BitAdrdrs" ColumnName="PartNG_BitAdrdrs" />
+                <ScalarProperty Name="PartOK_BitAdrdrs" ColumnName="PartOK_BitAdrdrs" />
+                <ScalarProperty Name="CycleRunningBitAddrs" ColumnName="CycleRunningBitAddrs" />
+                <ScalarProperty Name="Printer" ColumnName="Printer" />
+                <ScalarProperty Name="PLC" ColumnName="PLC" />
+                <ScalarProperty Name="StationName" ColumnName="StationName" />
+                <ScalarProperty Name="StationDesc" ColumnName="StationDesc" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="StationAssignments">
-            <EntityTypeMapping TypeName="TMdbModel.StationAssignment">
-              <MappingFragment StoreEntitySet="StationAssignment">
-                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
-                <ScalarProperty Name="Station_Name" ColumnName="Station_Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="STD_TorqueTable">
-            <EntityTypeMapping TypeName="TMdbModel.STD_TorqueTable">
-              <MappingFragment StoreEntitySet="STD_TorqueTable">
-                <ScalarProperty Name="Station" ColumnName="Station" />
-                <ScalarProperty Name="TorqueToolIPAddress" ColumnName="TorqueToolIPAddress" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TaskListTables">
-            <EntityTypeMapping TypeName="TMdbModel.TaskListTable">
-              <MappingFragment StoreEntitySet="TaskListTable">
-                <ScalarProperty Name="ModelVariant30" ColumnName="ModelVariant30" />
-                <ScalarProperty Name="ModelVariant29" ColumnName="ModelVariant29" />
-                <ScalarProperty Name="ModelVariant28" ColumnName="ModelVariant28" />
-                <ScalarProperty Name="ModelVariant27" ColumnName="ModelVariant27" />
-                <ScalarProperty Name="ModelVariant26" ColumnName="ModelVariant26" />
-                <ScalarProperty Name="ModelVariant25" ColumnName="ModelVariant25" />
-                <ScalarProperty Name="ModelVariant24" ColumnName="ModelVariant24" />
-                <ScalarProperty Name="ModelVariant23" ColumnName="ModelVariant23" />
-                <ScalarProperty Name="ModelVariant22" ColumnName="ModelVariant22" />
-                <ScalarProperty Name="ModelVariant21" ColumnName="ModelVariant21" />
-                <ScalarProperty Name="ModelVariant20" ColumnName="ModelVariant20" />
-                <ScalarProperty Name="ModelVariant19" ColumnName="ModelVariant19" />
-                <ScalarProperty Name="ModelVariant18" ColumnName="ModelVariant18" />
-                <ScalarProperty Name="ModelVariant17" ColumnName="ModelVariant17" />
-                <ScalarProperty Name="ModelVariant16" ColumnName="ModelVariant16" />
-                <ScalarProperty Name="ModelVariant15" ColumnName="ModelVariant15" />
-                <ScalarProperty Name="ModelVariant14" ColumnName="ModelVariant14" />
-                <ScalarProperty Name="ModelVariant13" ColumnName="ModelVariant13" />
-                <ScalarProperty Name="ModelVariant12" ColumnName="ModelVariant12" />
-                <ScalarProperty Name="ModelVariant11" ColumnName="ModelVariant11" />
-                <ScalarProperty Name="ModelVariant10" ColumnName="ModelVariant10" />
-                <ScalarProperty Name="ModelVariant9" ColumnName="ModelVariant9" />
-                <ScalarProperty Name="ModelVariant8" ColumnName="ModelVariant8" />
-                <ScalarProperty Name="ModelVariant7" ColumnName="ModelVariant7" />
-                <ScalarProperty Name="ModelVariant6" ColumnName="ModelVariant6" />
-                <ScalarProperty Name="ModelVariant5" ColumnName="ModelVariant5" />
-                <ScalarProperty Name="ModelVariant4" ColumnName="ModelVariant4" />
-                <ScalarProperty Name="ModelVariant3" ColumnName="ModelVariant3" />
-                <ScalarProperty Name="ModelVariant2" ColumnName="ModelVariant2" />
-                <ScalarProperty Name="ModelVariant1" ColumnName="ModelVariant1" />
-                <ScalarProperty Name="BomSeq" ColumnName="BomSeq" />
-                <ScalarProperty Name="TaskStatus" ColumnName="TaskStatus" />
-                <ScalarProperty Name="TaskCurrentValue" ColumnName="TaskCurrentValue" />
-                <ScalarProperty Name="TaskType" ColumnName="TaskType" />
+          <EntitySetMapping Name="TaskInfoes">
+            <EntityTypeMapping TypeName="Model.TaskInfo">
+              <MappingFragment StoreEntitySet="TaskInfo">
+                <ScalarProperty Name="StationName" ColumnName="StationName" />
+                <ScalarProperty Name="CurrentStatus" ColumnName="CurrentStatus" />
                 <ScalarProperty Name="TaskName" ColumnName="TaskName" />
-                <ScalarProperty Name="ImageSeq" ColumnName="ImageSeq" />
-                <ScalarProperty Name="StationNameID" ColumnName="StationNameID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Tool_IPAddress">
-            <EntityTypeMapping TypeName="TMdbModel.Tool_IPAddress">
-              <MappingFragment StoreEntitySet="Tool_IPAddress">
-                <ScalarProperty Name="IPaddress" ColumnName="IPaddress" />
-                <ScalarProperty Name="SttaionNameID" ColumnName="SttaionNameID" />
-                <ScalarProperty Name="ToolName" ColumnName="ToolName" />
+          <EntitySetMapping Name="TILTCOM_LineData">
+            <EntityTypeMapping TypeName="Model.TILTCOM_LineData">
+              <MappingFragment StoreEntitySet="TILTCOM_LineData">
+                <ScalarProperty Name="FinalStatus" ColumnName="FinalStatus" />
+                <ScalarProperty Name="FinalQRDateTime" ColumnName="FinalQRDateTime" />
+                <ScalarProperty Name="FinalQRCode" ColumnName="FinalQRCode" />
+                <ScalarProperty Name="Station" ColumnName="Station" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="Varient" ColumnName="Varient" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="TorquePsets">
-            <EntityTypeMapping TypeName="TMdbModel.TorquePset">
-              <MappingFragment StoreEntitySet="TorquePset">
-                <ScalarProperty Name="Pset" ColumnName="Pset" />
-                <ScalarProperty Name="TorqueName" ColumnName="TorqueName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="USERs">
-            <EntityTypeMapping TypeName="TMdbModel.USER">
-              <MappingFragment StoreEntitySet="USER">
-                <ScalarProperty Name="WorkingAtStationID" ColumnName="WorkingAtStationID" />
-                <ScalarProperty Name="Authenticated" ColumnName="Authenticated" />
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="Model.User">
+              <MappingFragment StoreEntitySet="User">
                 <ScalarProperty Name="Roll" ColumnName="Roll" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="VarTables">
-            <EntityTypeMapping TypeName="TMdbModel.VarTable">
-              <MappingFragment StoreEntitySet="VarTable">
-                <ScalarProperty Name="VarValue" ColumnName="VarValue" />
-                <ScalarProperty Name="VarName" ColumnName="VarName" />
+          <EntitySetMapping Name="YFG_PowerLineData">
+            <EntityTypeMapping TypeName="Model.YFG_PowerLineData">
+              <MappingFragment StoreEntitySet="YFG_PowerLineData">
+                <ScalarProperty Name="FinalStatus" ColumnName="FinalStatus" />
+                <ScalarProperty Name="RailVisualInspectionDateTime" ColumnName="RailVisualInspectionDateTime" />
+                <ScalarProperty Name="RailQA_DateTime" ColumnName="RailQA_DateTime" />
+                <ScalarProperty Name="RailQA_Status" ColumnName="RailQA_Status" />
+                <ScalarProperty Name="RailQA_RF_Dist" ColumnName="RailQA_RF_Dist" />
+                <ScalarProperty Name="RailQA_RF_MinToq" ColumnName="RailQA_RF_MinToq" />
+                <ScalarProperty Name="RailQA_RF_MaxToq" ColumnName="RailQA_RF_MaxToq" />
+                <ScalarProperty Name="RailQA_FR_Dist" ColumnName="RailQA_FR_Dist" />
+                <ScalarProperty Name="RailQA_FR_MinToq" ColumnName="RailQA_FR_MinToq" />
+                <ScalarProperty Name="RailQA_FR_MaxToq" ColumnName="RailQA_FR_MaxToq" />
+                <ScalarProperty Name="RailGearBoxDateTime" ColumnName="RailGearBoxDateTime" />
+                <ScalarProperty Name="RailGearBoxStatus" ColumnName="RailGearBoxStatus" />
+                <ScalarProperty Name="RailGearBoxToq_Ang" ColumnName="RailGearBoxToq_Ang" />
+                <ScalarProperty Name="LowerBoltDateTime" ColumnName="LowerBoltDateTime" />
+                <ScalarProperty Name="LowerBoltStatus" ColumnName="LowerBoltStatus" />
+                <ScalarProperty Name="LowerBoltToq2" ColumnName="LowerBoltToq2" />
+                <ScalarProperty Name="LowerBoltToq1" ColumnName="LowerBoltToq1" />
+                <ScalarProperty Name="SlideForceDateTime" ColumnName="SlideForceDateTime" />
+                <ScalarProperty Name="SlideForceStatus" ColumnName="SlideForceStatus" />
+                <ScalarProperty Name="Front_To_RearForceAvg" ColumnName="Front_To_RearForceAvg" />
+                <ScalarProperty Name="Rear_To_FrontForceAvg" ColumnName="Rear_To_FrontForceAvg" />
+                <ScalarProperty Name="Rear_To_FrontForceMin" ColumnName="Rear_To_FrontForceMin" />
+                <ScalarProperty Name="Rear_To_FrontForceMax" ColumnName="Rear_To_FrontForceMax" />
+                <ScalarProperty Name="Front_To_RearForceMin" ColumnName="Front_To_RearForceMin" />
+                <ScalarProperty Name="Front_To_RearForceMax" ColumnName="Front_To_RearForceMax" />
+                <ScalarProperty Name="LowerScrewDateTime" ColumnName="LowerScrewDateTime" />
+                <ScalarProperty Name="LowerScrewStatus" ColumnName="LowerScrewStatus" />
+                <ScalarProperty Name="LowerScrewToq_Ang2" ColumnName="LowerScrewToq_Ang2" />
+                <ScalarProperty Name="LowerScrewToq_Ang1" ColumnName="LowerScrewToq_Ang1" />
+                <ScalarProperty Name="UpperLowerFittingDateTime" ColumnName="UpperLowerFittingDateTime" />
+                <ScalarProperty Name="UpperLowerFittingStatus" ColumnName="UpperLowerFittingStatus" />
+                <ScalarProperty Name="UpperGearBoxDateTime" ColumnName="UpperGearBoxDateTime" />
+                <ScalarProperty Name="UpperGearBoxStatus" ColumnName="UpperGearBoxStatus" />
+                <ScalarProperty Name="UpperGearBoxToq_Ang" ColumnName="UpperGearBoxToq_Ang" />
+                <ScalarProperty Name="UpperBktClinchingDateTime" ColumnName="UpperBktClinchingDateTime" />
+                <ScalarProperty Name="UpperBktClinchingStatus" ColumnName="UpperBktClinchingStatus" />
+                <ScalarProperty Name="BuiltTktDateTime" ColumnName="BuiltTktDateTime" />
+                <ScalarProperty Name="BuiltTkt" ColumnName="BuiltTkt" />
+                <ScalarProperty Name="FinalQRDateTime" ColumnName="FinalQRDateTime" />
+                <ScalarProperty Name="FinalQRCode" ColumnName="FinalQRCode" />
+                <ScalarProperty Name="Station" ColumnName="Station" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="Varient" ColumnName="Varient" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

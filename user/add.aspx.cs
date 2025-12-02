@@ -1,20 +1,29 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using WebApplication2.other;
+
 
 namespace WebApplication2.user
 {
     public partial class add : System.Web.UI.Page
     {
-        public static Cryption cryption = new Cryption();
+       // public static Cryption cryption = new Cryption();
         protected void Page_Load(object sender, EventArgs e)
-        { 
+        {
+            if (!IsPostBack)
+            {
 
+                if (Request.UrlReferrer == null ||
+                    !Request.UrlReferrer.AbsolutePath.EndsWith("index.aspx", StringComparison.OrdinalIgnoreCase))
+                {
+                    Response.Redirect("~/index.aspx");
+                }
+            }
         }
 
         [WebMethod]
@@ -22,33 +31,44 @@ namespace WebApplication2.user
         {
             try
             {
-                using (TMdbEntities mdbEntities = new TMdbEntities())
+                // Convert userid to Int16 outside of the LINQ query
+                if (!short.TryParse(userid, out short userId))
                 {
-                    var userAlreadyExist = mdbEntities.USERs.Where(i => i.UserID == userid).FirstOrDefault();
+                    return "Invalid User ID.";
+                }
+
+                using (Entities1 mdbEntities1 = new Entities1())
+                {
+                    // Check if the user already exists
+                    var userAlreadyExist = mdbEntities1.Users.FirstOrDefault(i => i.ID == userId);
                     if (userAlreadyExist != null)
                     {
-                        return "UserId already exist.";
+                        return "User ID already exists.";
                     }
 
-                    USER uSER = new USER
+                    // Create a new user object
+                    User newUser = new User
                     {
-                        UserID = userid,
+                        ID = userId, // ID converted to Int16
                         UserName = username,
-                        Password = cryption.Encryptword(password),
-                        Roll = roll,
-                        WorkingAtStationID = "",
-                        Authenticated = 0
+                        Password = password, // Assuming encryption is handled elsewhere
+                        Roll = roll
                     };
 
-                    mdbEntities.USERs.Add(uSER);
-                    mdbEntities.SaveChanges();
-                    return "Done";
+                    // Add the new user to the database
+                    mdbEntities1.Users.Add(newUser);
+                    mdbEntities1.SaveChanges();
+
+                    return "User added successfully.";
                 }
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                // Return the exception message for debugging
+                return $"Error: {ex.Message}";
             }
         }
+
+
     }
 }

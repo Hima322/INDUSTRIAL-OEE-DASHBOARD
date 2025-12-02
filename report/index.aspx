@@ -1,586 +1,317 @@
-﻿
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication2.report.Index" %>
-
-<%@ Import Namespace="System.Data" %>
-
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="index.aspx.cs" Inherits="WebApplication2.report.Index" %>
 <!DOCTYPE html>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Sample Report</title>
+    <title>Change Size</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="../css/libs/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../css/libs/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="../css/libs/toastify.min.css" /> 
+    
+    <!-- Bootstrap & Font Awesome CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <link rel="stylesheet" href="../css/libs/toastify.min.css"/>
 
-    <script type="text/javascript" src="../js/libs/toastify-js.js"></script>
-    <script type="text/javascript" src="../js/libs/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript" src="../js/libs/jquery.min.js"></script>   
-     <script type="text/javascript" src="../js/libs/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/libs/toastify-js.js"></script>
 
-
-    <script>
-
-
-        const table = {
-            show: _ => {
-                $("#table").show()
-                $(".downloadBtn").show()
-            },
-            hide: _ => {
-                $("#table").hide()
-                $(".downloadBtn").hide()
-            }
-        }
-
-        $(document).ready(function () {
-            getModelList();
-            getVariantList()
-            table.hide()
-
-        })
-
-        function ExportToExcel(type, fn, dl) {
-            var elt = document.getElementById('table');
-            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-            return dl ?
-                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-                XLSX.writeFile(wb, fn || ('SampleReport.' + (type || 'xlsx')));
-        }
-             
-        const getModelList = _ => {
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_MODEL_LIST",
-                data: "",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-                        $("#modelContainer").html(
-                            data.map(e => `
-                                <option value="${e.PartNumber}">${e.ModelName}</option>
-                            `)
-                        )
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-        
-        const getVariantList = _ => {
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_VARIANT_LIST",
-                data: "",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-                        $("#variantContainer").html(
-                            data.map(e => `
-                                <option value="${e.FG_PartNumber}">${e.Variant} (${e.FG_PartNumber})</option>
-                            `)
-                        )
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-
-        const handleShowModelReport = _ => {
-            let model = $("#modelContainer").val()
-            let from = $("#modelFrom").val()
-            let to = $("#modelTo").val()
-
-            if (!from || !to) return toast("Please select date.")
-
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_MODEL_REPORT",
-                data: `{model:'${model}',from:'${from}',to:'${to}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-
-                        $("#table tbody").html(
-                            data.map(e => `
-                                <tr>
-                                    <td>${e.Date.split("T")[0]}</td>
-                                    <td>${e.Time.split(".")[0]}</td>
-                                    <td>${e.Shift}</td>
-                                    <td>${e.SeatSerialNumber}</td>
-                                    <td>${e.BuildLabelNumber}</td>
-                                    <td>${e.StationNo}</td>
-                                    <td>${e.StationDescription}</td>
-                                    <td>${e.ParameterDescription}</td>
-                                    <td>${e.DataValues}</td>
-                                    <td>${e.OverallStatus}</td>
-                                    <td>${e.OperatorName}</td>
-                                </tr>
-                            `)
-                        )
-                        table.show()
-                    } else {
-                        toast("Record not found.")
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-         
-
-        const handleShowVariantReport = _ => {
-            let variant = $("#variantContainer").val()
-            let from = $("#variantFrom").val()
-            let to = $("#variantTo").val()
-
-            if (!from || !to) return toast("Please select date.")
-
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_VARIANT_REPORT",
-                data: `{variant:'${variant}',from:'${from}',to:'${to}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-
-                        $("#table tbody").html(
-                            data.map(e => `
-                                <tr>
-                                    <td>${e.Date.split("T")[0]}</td>
-                                    <td>${e.Time.split(".")[0]}</td>
-                                    <td>${e.Shift}</td>
-                                    <td>${e.SeatSerialNumber}</td>
-                                    <td>${e.BuildLabelNumber}</td>
-                                    <td>${e.StationNo}</td>
-                                    <td>${e.StationDescription}</td>
-                                    <td>${e.ParameterDescription}</td>
-                                    <td>${e.DataValues}</td>
-                                    <td>${e.OverallStatus}</td>
-                                    <td>${e.OperatorName}</td>
-                                </tr>
-                            `)
-                        )
-                        table.show()
-                    } else {
-                        toast("Record not found.")
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-         
-        const handleShowShiftReport = _ => { 
-            let from = $("#shiftFrom").val()
-            let to = $("#shiftTo").val()
-            let shift = $("#currentshift").val()
-
-            if (!from || !to) return toast("Please select date.")
-
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_SHIFT_REPORT",
-                data: `{shift : '${shift}',from:'${from}',to:'${to}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-
-                        $("#table tbody").html(
-                            data.map(e => `
-                                <tr>
-                                    <td>${e.Date.split("T")[0]}</td>
-                                    <td>${e.Time.split(".")[0]}</td>
-                                    <td>${e.Shift}</td>
-                                    <td>${e.SeatSerialNumber}</td>
-                                    <td>${e.BuildLabelNumber}</td>
-                                    <td>${e.StationNo}</td>
-                                    <td>${e.StationDescription}</td>
-                                    <td>${e.ParameterDescription}</td>
-                                    <td>${e.DataValues}</td>
-                                    <td>${e.OverallStatus}</td>
-                                    <td>${e.OperatorName}</td>
-                                </tr>
-                            `)
-                        )
-                        table.show()
-                    } else {
-                        toast("Record not found.")
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-
-        const handleShowDayReport = _ => { 
-            let from = $("#dayFrom").val()
-            let to = $("#dayTo").val()
-
-            if (!from || !to) return toast("Please select date.")
-
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_DAY_REPORT",
-                data: `{from:'${from}',to:'${to}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let data = JSON.parse(res.d)
-
-                        $("#table tbody").html(
-                            data.map(e => `
-                                <tr>
-                                    <td>${e.Date.split("T")[0]}</td>
-                                    <td>${e.Time.split(".")[0]}</td>
-                                    <td>${e.Shift}</td>
-                                    <td>${e.SeatSerialNumber}</td>
-                                    <td>${e.BuildLabelNumber}</td>
-                                    <td>${e.StationNo}</td>
-                                    <td>${e.StationDescription}</td>
-                                    <td>${e.ParameterDescription}</td>
-                                    <td>${e.DataValues}</td>
-                                    <td>${e.OverallStatus}</td>
-                                    <td>${e.OperatorName}</td>
-                                </tr>
-                            `)
-                        )
-                        table.show()
-                    } else {
-                        toast("Record not found.")
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-
-        const handleShowSerialNumberReport = _ => { 
-            let serial = $("#serialNumber").val() 
-
-            if (!serial) return toast("Please enter serial number.")
-
-            $.ajax({
-                type: "POST",
-                url: "index.aspx/GET_SERIAL_REPORT",
-                data: `{serial:'${serial}'}`,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                async: "true",
-                cache: "false",
-                success: (res) => {
-                    if (res.d != "Error") {
-                        let e = JSON.parse(res.d)
-
-                        $("#table tbody").html(`<tr>
-                                <td>${e.Date.split("T")[0]}</td>
-                                <td>${e.Time.split(".")[0]}</td>
-                                <td>${e.Shift}</td>
-                                <td>${e.SeatSerialNumber}</td>
-                                <td>${e.BuildLabelNumber}</td>
-                                <td>${e.StationNo}</td>
-                                <td>${e.StationDescription}</td>
-                                <td>${e.ParameterDescription}</td>
-                                <td>${e.DataValues}</td>
-                                <td>${e.OverallStatus}</td>
-                                <td>${e.OperatorName}</td>
-                           </tr> `)
-                        table.show()
-                    } else {
-                        toast("Record not found.")
-                    }
-                },
-                Error: function (x, e) {
-                    console.log(e);
-                }
-            })
-        }
-
-        //alert toast function for notification 
-        const toast = txt =>
-
-            Toastify({
-                text: txt,
-                duration: 5000,
-                gravity: "bottom",
-                position: "right",
-                style: {
-                    background: 'lightgray',
-                    color: 'black',
-                    fontSize: '20px',
-                    fontWeight: 600,
-                    borderRadius: '5px'
-                }
-            }).showToast();
-
-    </script> 
     <style>
-        table{
-            table-layout:auto !important;
-        }
-        table thead tr th:first-child{
-            min-width:110px;
-        }
-        table thead tr th:nth-child(5){
-            min-width:178px;
-        }
-        table thead tr th:nth-child(9){
-            min-width:120px;
-        }
+        body{background:#f8f9fa;}
+        .card{border-radius:12px;}
+        .table thead{background:#343a40;color:#fff;}
+        .table tbody tr:hover{background:#e9ecef;}
+        .back-icon{font-size:1.2rem;margin-right:0.5rem;}
+        .running-row{background-color:#d1e7dd !important;}
+        @media(max-width:576px){.btn{margin-bottom:4px;width:100%;}}
+        .inline-box{background:#e2e3e5;padding:8px;border-radius:6px;margin-top:4px;}
     </style>
 </head>
-<body class="bg-light">
-    <form id="form1" runat="server">
-        <div>   
+<body>
+<form id="form1" runat="server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true"></asp:ScriptManager>
 
-              
-            <%--navbar header--%>
-            <div class="navbar navbar-light d-flex p-3">
-                <big>
-                    <img src="../image/icon/arrow-left.svg" onclick="history.back()" class="btn" />
-                    <b>GENERATE REPORT</b>
-                </big>
+<div class="container mt-4">
 
-                <%--filter report button group--%>
-                <ul class="nav nav-pills" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active border" id="model-tab" data-bs-toggle="tab" data-bs-target="#model" type="button" role="tab" aria-controls="model" aria-selected="true" onclick="table.hide()">Model</button>
-                    </li>
-
-                    <li class="nav-item ms-2" role="presentation">
-                        <button class="nav-link border " id="variant-tab" data-bs-toggle="tab" data-bs-target="#variant" type="button" role="tab" aria-controls="variant" aria-selected="false" onclick="table.hide()">Variant</button>
-                    </li>
-                    
-                    <li class="nav-item ms-2" role="presentation">
-                        <button class="nav-link border " id="day-tab" data-bs-toggle="tab" data-bs-target="#day" type="button" role="tab" aria-controls="day" aria-selected="false" onclick="table.hide()">Date</button>
-                    </li>
-
-                    <li class="nav-item ms-2" role="presentation">
-                        <button class="nav-link border" id="shift-tab" data-bs-toggle="tab" data-bs-target="#shift" type="button" role="tab" aria-controls="shift" aria-selected="false" onclick="table.hide()">Shift</button>
-                    </li>
-
-                    <li class="nav-item ms-2" role="presentation">
-                        <button class="nav-link border" id="serial-tab" data-bs-toggle="tab" data-bs-target="#serial" type="button" role="tab" aria-controls="serial" aria-selected="false" onclick="table.hide()">Serial</button>
-                    </li>
-                </ul>
-                 
-
-            </div>
-
-            <%--body content--%>
-            <div class="container ">
-                <div class="tab-content">
-
-                    <%--model wise report code--%>
-                    <div class="row tab-pane fade show active" id="model">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <b>Model :</b>
-                                <select class="form-select" id="modelContainer">
-                                    <option>Model</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-2">
-                                <b>From :</b>
-                                <input type="date" class="form-control" id="modelFrom" />
-                            </div>
-                            <div class="col-sm-2">
-                                <b>To : </b>
-                                <input type="date" class="form-control" id="modelTo" />
-                            </div>
-                            <div class="col-sm-1">
-                                <br />
-                                <button class="btn btn-primary" type="button" onclick="handleShowModelReport()">SHOW</button> 
-                            </div>
-                            <div class="col-sm-2">
-                                <br />
-                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <%--day wise report code--%>
-                    <div class=" collapse tab-pane fade" id="variant">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <b>Variant :</b> 
-                                <select class="form-select" id="variantContainer">
-                                    <option>Variant</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-2">
-                                <b>From :</b>
-                                <input type="date" class="form-control" id="variantFrom" />
-                            </div>
-                            <div class="col-sm-2">
-                                <b>To : </b>
-                                <input type="date" class="form-control" id="variantTo" />
-                            </div>
-                            <div class="col-sm-1">
-                                <br />
-                                <button class="btn btn-primary" type="button" onclick="handleShowVariantReport()">SHOW</button> 
-                            </div>
-                            <div class="col-sm-2">
-                                <br />
-                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <%--day wise report code--%>
-                    <div class=" collapse tab-pane fade" id="day">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <b>From :</b>
-                                <input type="date" class="form-control" id="dayFrom" />
-                            </div>
-                            <div class="col-sm-2">
-                                <b>To : </b>
-                                <input type="date" class="form-control" id="dayTo" />
-                            </div>
-                            <div class="col-sm-1">
-                                <br />
-                                <button class="btn btn-primary" type="button" onclick="handleShowDayReport()">SHOW</button> 
-                            </div>
-                            <div class="col-sm-2">
-                                <br />
-                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <%--shift wise report code--%>
-                    <div class="collapse tab-pane fade" id="shift">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <b>Shift :</b>
-                                <select class="form-select" id="currentshift">
-                                    <option>A</option>
-                                    <option>B</option>
-                                    <option>C</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-2">
-                                <b>From :</b>
-                                <input type="date" class="form-control" id="shiftFrom" />
-                            </div>
-                            <div class="col-sm-2">
-                                <b>To : </b>
-                                <input type="date" class="form-control" id="shiftTo" />
-                            </div>
-                            <div class="col-sm-1">
-                                <br />
-                                <button class="btn btn-primary" type="button" onclick="handleShowShiftReport()">SHOW</button> 
-                            </div>
-                            <div class="col-sm-2">
-                                <br />
-                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <%--serial wise report code--%>
-                    <div class="collapse tab-pane fade" id="serial">
-                        <div class="row">
-                            <div class="col-sm-5">
-                                <b>Serial Number :</b>
-                                <input class="form-control" placeholder="eg. ER4NS5-32000-00042241220021022" id="serialNumber" />
-                            </div>
-                            <div class="col-sm-1">
-                                <br />
-                                <button class="btn btn-primary" type="button" onclick="handleShowSerialNumberReport()">SHOW</button>  
-                            </div>
-                            <div class="col-sm-2">
-                                <br />
-                                <button type="button" class="btn btn-primary downloadBtn" onclick="ExportToExcel()">Download Report</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-             
-
-            <div class="container-fluid px-4 mt-4 table-responsive">
-                <%--code for show reported data--%>
-
-                <table id="table" class="table text-center table-sm table-bordered table-striped " style="width: 100%">
-                    <thead class="table-secondary" >
-                        <tr>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Shift</th>
-                            <th>SerialNo</th>
-                            <th>Build Label No</th>
-                            <th>StationNo.</th>
-                            <th>Station Description</th>
-                            <th>Parameter Description</th>
-                            <th>Data Values</th>
-                            <th>Overall Status</th>
-                            <th>Operator Name</th>
-                        </tr>
-                    </thead>
-                    <tbody> </tbody> 
-                </table>
-
-
-
-            <div id="singleReportContainer" class="table-responsive container">
-                <h5>Torque Details</h5>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Shift</th> 
-                            <th>StationNo.</th>
-                            <th>Station Description</th>
-                            <th>Parameter Description</th>
-                            <th>Data Values</th>
-                            <th>Overall Status</th>
-                            <th>Operator Name</th>
-                        </tr>
-                    </thead>
-                    <tbody> </tbody> 
-                </table>
-            </div>
-
-                
-            </div>
-            <br /><br />
+    <div class="d-flex align-items-center mb-3">
+        <a href="javascript:history.back();" class="text-decoration-none text-dark me-2">
+            <i class="fa fa-arrow-left back-icon"></i> 
+        </a>
+        <h4 class="mb-0">Change Size</h4>
+        <div class="ms-auto text-muted">
+            User: <span id="usernameDisplay"></span> | Role: <span id="roleDisplay"></span>
         </div>
-    </form>
+    </div>
+
+    <!-- Dropdown for running model -->
+    <div class="mb-3  d-flex justify-content-center">
+        <select id="modelDropdown" class="form-select d-inline-block me-2" style="width:200px;"></select>
+        <select id="SizeDropDown" class="form-select d-inline-block me-3" style="width: 200px;"></select>
+
+
+        <button type="button" class="btn btn-success btn-sm" onclick="selectRunningModel()">Set Running Model</button>
+    </div>
+    <div class="mb-3">
+        <button type="button" class="btn btn-success btn-sm" onclick="showAddBox()">Add Model</button>
+    </div>
+  <div id="addBox" class="inline-box d-none">
+    <label class="me-2 fw-bold">Add Model:</label>
+    
+    <input type="text" id="addInput1" class="form-control d-inline-block w-auto me-2" placeholder="Name" />
+    <input type="text" id="addInput2" class="form-control d-inline-block w-auto me-2" placeholder="SIZE" />
+    <input type="text" id="addInput3" class="form-control d-inline-block w-auto me-2" placeholder="STDNAME" />
+    
+    <button type="button" class="btn btn-primary btn-sm" onclick="saveAdd()">Save</button>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="cancelAdd()">Cancel</button>
+</div>
+
+
+    <!-- Models Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered text-center" id="modelsTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Size</th>
+                            <th>STDName</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+   <script>
+       let currentRole = (localStorage.getItem("role") || "user").toLowerCase();
+       let currentUser = localStorage.getItem("username") || "User";
+       let allModels = [];
+       let runningStdName = null;
+       let runningSize = null;
+
+       // Display username and role
+       $("#usernameDisplay").text(currentUser);
+       $("#roleDisplay").text(currentRole.charAt(0).toUpperCase() + currentRole.slice(1));
+
+       // Toast helper
+       function showToast(msg, color) {
+           Toastify({
+               text: msg,
+               duration: 3000,
+               gravity: "top",
+               position: "right",
+               backgroundColor: color,
+               close: true
+           }).showToast();
+       }
+
+       // Load models
+       function loadModels() {
+           PageMethods.GetModels(function (response) {
+               allModels = response.models || [];
+               runningStdName = response.runningStdName;
+               runningSize = response.runningSize;
+
+               const tbody = $("#modelsTable tbody");
+               const modelDropdown = $("#modelDropdown");
+               const sizeDropdown = $("#SizeDropDown");
+
+               tbody.empty();
+               modelDropdown.empty();
+               sizeDropdown.empty();
+
+               const modelSet = new Set();
+
+               allModels.forEach(model => {
+                   // Table row
+                   const rowClass = (model.STDName === runningStdName && model.Size === runningSize) ? 'running-row' : '';
+                   tbody.append(`
+                <tr class="${rowClass}" id="row_${model.ID}">
+                    <td>${model.ModelName}</td>
+                    <td>${model.Size}</td>
+                    <td>${model.STDName || '-'}</td>
+                    <td>${getActionButtons(model)}</td>
+                </tr>
+            `);
+
+                   // Unique model dropdown
+                   if (!modelSet.has(model.ModelName)) {
+                       modelSet.add(model.ModelName);
+                       modelDropdown.append(`<option value="${model.ModelName}">${model.ModelName}</option>`);
+                   }
+               });
+
+               // Populate size dropdown for selected model
+               updateSizeDropdown(modelDropdown.val());
+
+               modelDropdown.off("change").on("change", function () {
+                   updateSizeDropdown($(this).val());
+               });
+
+           }, function () {
+               showToast("Error loading models", "red");
+           });
+       }
+
+       // Update size dropdown based on selected model
+       function updateSizeDropdown(modelName) {
+           const sizeDropdown = $("#SizeDropDown");
+           sizeDropdown.empty();
+
+           if (!modelName) return;
+
+           const sizes = allModels
+               .filter(m => m.ModelName === modelName)
+               .map(m => m.Size);
+
+           [...new Set(sizes)].forEach(size => {
+               sizeDropdown.append(`<option value="${size}">${size}</option>`);
+           });
+       }
+
+       // Action buttons
+       function getActionButtons(model) {
+           if (currentRole === 'administrator') {
+               return `
+            <button type="button" class="btn btn-primary btn-sm me-1"
+                onclick='editModel(${model.ID}, ${JSON.stringify(model.ModelName)}, ${JSON.stringify(model.Size)}, ${JSON.stringify(model.STDName)})'>
+                Update
+            </button>
+            <button type="button" class="btn btn-danger btn-sm"
+                onclick="deleteModel(${model.ID})">
+                Delete
+            </button>`;
+           } else if (currentRole === 'administrator') {
+               return `<button type="button" class="btn btn-success btn-sm" onclick="selectRunningModel()">
+                    Select
+                </button>`;
+           } else {
+               return 'No Permission';
+           }
+       }
+
+       // Edit model inline
+       function editModel(id, name, size, stdName) {
+           $(".inline-box-row").remove();
+
+           const inline = `
+    <tr class="inline-box-row">
+        <td colspan="4">
+            <input type="text" id="updateName_${id}" class="form-control d-inline-block w-auto me-2" value="${name}" placeholder="Model Name" />
+            <input type="text" id="updateSize_${id}" class="form-control d-inline-block w-auto me-2" value="${size}" placeholder="Size" />
+            <input type="text" id="updateSTDName_${id}" class="form-control d-inline-block w-auto me-2" value="${stdName}" placeholder="STD Name" />
+            <button type="button" class="btn btn-primary btn-sm" onclick="saveUpdateRow(${id})">Save</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="$(this).closest('tr').remove()">Cancel</button>
+        </td>
+    </tr>
+    `;
+           $(`#row_${id}`).after(inline);
+       }
+
+       // Save edited model
+       function saveUpdateRow(id) {
+           const newName = $(`#updateName_${id}`).val().trim();
+           const newSize = $(`#updateSize_${id}`).val().trim();
+           const newSTDName = $(`#updateSTDName_${id}`).val().trim();
+
+           if (!newName || !newSize || !newSTDName) {
+               showToast("All fields are required!", "red");
+               return;
+           }
+
+           PageMethods.UpdateModel(id, newName, newSize, newSTDName,
+               function () {
+                   showToast("Model updated successfully!", "green");
+                   $(".inline-box-row").remove();
+                   loadModels();
+               },
+               function (err) {
+                   console.error(err);
+                   showToast("Error updating model", "red");
+               }
+           );
+       }
+
+       // Add new model
+       function showAddBox() { $("#addBox").removeClass('d-none'); }
+       function cancelAdd() { $("#addBox").addClass('d-none'); $("#addInput1, #addInput2, #addInput3").val(''); }
+
+       function saveAdd() {
+           const name = $("#addInput1").val().trim();
+           const size = $("#addInput2").val().trim();
+           const stdName = $("#addInput3").val().trim();
+           if (currentRole === "administrator") {
+               if (!name || !size || !stdName) {
+                   showToast("Please fill all fields", "red");
+                   return;
+               }
+
+               PageMethods.AddModel(name, size, stdName,
+                   function () {
+                       showToast("Model added successfully!", "green");
+                       cancelAdd();
+                       loadModels();
+                   },
+                   function () { showToast("Error adding model", "red"); }
+               );
+           }
+           else { showToast("Only Admin Add Size"); }
+       }
+
+       // Delete model
+       function deleteModel(id) {
+           if (!confirm("Are you sure you want to delete this model?")) return;
+
+           PageMethods.DeleteModel(id,
+               function () {
+                   showToast("Model deleted successfully!", "red");
+                   loadModels();
+               },
+               function (err) {
+                   console.error(err);
+                   showToast("Error deleting model", "red");
+               }
+           );
+       }
+
+       // Select running model
+       function selectRunningModel() {
+           const modelName = $("#modelDropdown").val();
+           const size = $("#SizeDropDown").val();
+
+           if (!modelName || !size) { showToast("Select model and size first", "red"); return; }
+
+           PageMethods.SelectModel(modelName, size,
+               function (res) {
+                   runningStdName = res;
+                   runningSize = size;
+                   showToast(`Selected Running Model: ${modelName} - ${size}`, "blue");
+
+                   // Highlight running row
+                   $("#modelsTable tbody tr").removeClass('running-row');
+                   $("#modelsTable tbody tr").each(function () {
+                       const rowModel = $(this).find('td:nth-child(1)').text();
+                       const rowSize = $(this).find('td:nth-child(2)').text();
+                       if (rowModel === modelName && rowSize === size) {
+                           $(this).addClass('running-row');
+                           return false;
+                       }
+                   });
+               },
+               function () { showToast("Error selecting model", "red"); }
+           );
+       }
+
+       // Initialize
+       $(document).ready(loadModels);
+
+   </script>
+
+
+
+
+
 </body>
 </html>
-

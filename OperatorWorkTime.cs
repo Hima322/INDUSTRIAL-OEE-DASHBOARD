@@ -14,10 +14,9 @@ namespace WebApplication2
     
     public partial class OperatorWorkTime
     {
-        public long ID { get; set; }
-        public string StationNameID { get; set; }
-        public string OperatorName { get; set; }
+        public int ID { get; set; }
+        public string Station { get; set; }
+        public string UserName { get; set; }
         public Nullable<System.DateTime> LoginTime { get; set; }
-        public Nullable<System.DateTime> LogoutTime { get; set; }
     }
 }

@@ -37,9 +37,10 @@
                         success: (res) => {
                             if (res.d == "Done") {
                                 toast("Success")
-                                setTimeout(function () {
-                                    location.replace(`/user/index.aspx`)
-                                }, 1000)
+                                $("#ROLL").value("")
+                                $("#USERNAME").val("")
+                                $("#PASSWORD").val("")
+                              
                             } else {
                                 toast(res.d)
                                 $(this).attr("disabled", false)
@@ -100,7 +101,7 @@
                                         </label>  
                                         <select id="ROLL" class="form-control"> 
                                             <option>Admin</option>
-                                            <option>Operator</option>
+                                            <option>Production</option>
                                             <option>Maintenance</option>
                                         </select>
                                     </div>  
@@ -133,9 +134,10 @@
      <script> 
 
          // code for check authentication
-         if (localStorage.getItem("admin") == null) {
+         if (localStorage.getItem("admin") !== "Himanshu") {
              location.href = "/login.aspx"
-         } 
+             alert("Only Admin Acess This File")
+         }
           
     
      </script>
